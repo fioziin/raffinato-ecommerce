@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(New-Item -ItemType Directory -Force \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\\\\backend\\\\uploads\\\\products\")",
+      "Bash(Out-Null)",
+      "Bash(New-Item -ItemType File -Force \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\\\\backend\\\\uploads\\\\products\\\\.gitkeep\")",
+      "PowerShell(New-Item -ItemType Directory -Force \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\\\\backend\\\\uploads\\\\products\")",
+      "PowerShell(New-Item -ItemType File -Force \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\\\\backend\\\\uploads\\\\products\\\\.gitkeep\")"
+    ]
+  }
+}

@@ -568,12 +568,13 @@
 <script src="admin.js"></script>
 <script>
 /* ── UPLOAD HELPER ── */
-async function uploadImageToCloudinary(file, onSuccess, btnEl) {
+async function uploadImage(file, onSuccess, btnEl) {
+  const origLabel = btnEl ? btnEl.textContent : '';
   if (btnEl) { btnEl.disabled = true; btnEl.textContent = 'Enviando...'; }
   try {
     const form = new FormData();
     form.append('image', file);
-    const res = await fetch(Admin.API + '/admin/upload/image', {
+    const res = await fetch(Admin.API + '/upload/product-image', {
       method: 'POST',
       headers: { Authorization: `Bearer ${Admin.getToken()}` },
       body: form
@@ -585,7 +586,7 @@ async function uploadImageToCloudinary(file, onSuccess, btnEl) {
   } catch (e) {
     Admin.toast('Erro no upload: ' + e.message, 'error');
   } finally {
-    if (btnEl) { btnEl.disabled = false; btnEl.textContent = 'Enviar imagem'; }
+    if (btnEl) { btnEl.disabled = false; btnEl.textContent = origLabel || 'Enviar imagem'; }
   }
 }
 
@@ -599,7 +600,7 @@ function bindUploadBtn(btnId, inputId, previewId, onUrlChange) {
     fileInput.addEventListener('change', async () => {
       const file = fileInput.files[0];
       if (!file) return;
-      await uploadImageToCloudinary(file, (url) => {
+      await uploadImage(file, (url) => {
         const inp = document.getElementById(inputId);
         if (inp) { inp.value = url; if (onUrlChange) onUrlChange(url); }
         if (previewId) {
@@ -886,18 +887,30 @@ function bindUploadBtn(btnId, inputId, previewId, onUrlChange) {
                 <label class="form-label">Imagem Principal</label>
                 <div class="img-input-row">
                   <img src="${variant.imagem || ''}" class="img-preview ${variant.imagem ? 'visible' : ''}" id="vimg-${ci}" alt="preview">
-                  <input type="text" class="form-input" style="font-size:12px" placeholder="https://..."
-                    value="${variant.imagem || ''}"
-                    oninput="_pe.v[${ci}].imagem=this.value; var el=document.getElementById('vimg-${ci}'); if(this.value){el.src=this.value;el.classList.add('visible');}else{el.classList.remove('visible');}">
+                  <div class="img-input-with-upload">
+                    <input type="text" class="form-input" style="font-size:12px" placeholder="https://..."
+                      value="${variant.imagem || ''}" id="vinput-${ci}"
+                      oninput="_pe.v[${ci}].imagem=this.value; var el=document.getElementById('vimg-${ci}'); if(this.value){el.src=this.value;el.classList.add('visible');}else{el.classList.remove('visible');}">
+                    <button type="button" class="upload-btn" onclick="_pe.triggerUpload(${ci},'imagem','vimg-${ci}','vinput-${ci}',this)">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                      Enviar
+                    </button>
+                  </div>
                 </div>
               </div>
               <div class="form-group" style="margin-bottom:0">
                 <label class="form-label">Imagem Hover</label>
                 <div class="img-input-row">
                   <img src="${variant.hoverImagem || ''}" class="img-preview ${variant.hoverImagem ? 'visible' : ''}" id="vhov-${ci}" alt="preview">
-                  <input type="text" class="form-input" style="font-size:12px" placeholder="https://..."
-                    value="${variant.hoverImagem || ''}"
-                    oninput="_pe.v[${ci}].hoverImagem=this.value; var el=document.getElementById('vhov-${ci}'); if(this.value){el.src=this.value;el.classList.add('visible');}else{el.classList.remove('visible');}">
+                  <div class="img-input-with-upload">
+                    <input type="text" class="form-input" style="font-size:12px" placeholder="https://..."
+                      value="${variant.hoverImagem || ''}" id="vhovinput-${ci}"
+                      oninput="_pe.v[${ci}].hoverImagem=this.value; var el=document.getElementById('vhov-${ci}'); if(this.value){el.src=this.value;el.classList.add('visible');}else{el.classList.remove('visible');}">
+                    <button type="button" class="upload-btn" onclick="_pe.triggerUpload(${ci},'hoverImagem','vhov-${ci}','vhovinput-${ci}',this)">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                      Enviar
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -949,7 +962,25 @@ function bindUploadBtn(btnId, inputId, previewId, onUrlChange) {
       this.render();
     },
 
-    removeSize(ci, si) { this.v[ci].tamanhos.splice(si, 1); this.render(); }
+    removeSize(ci, si) { this.v[ci].tamanhos.splice(si, 1); this.render(); },
+
+    triggerUpload(ci, field, previewId, inputId, btnEl) {
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/*';
+      fileInput.addEventListener('change', async () => {
+        const file = fileInput.files[0];
+        if (!file) return;
+        await uploadImage(file, (url) => {
+          this.v[ci][field] = url;
+          const inp = document.getElementById(inputId);
+          if (inp) inp.value = url;
+          const img = document.getElementById(previewId);
+          if (img) { img.src = url; img.classList.add('visible'); }
+        }, btnEl);
+      });
+      fileInput.click();
+    }
   };
 
   window.openProductModal = id => _pe.open(id || null);

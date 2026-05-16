@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const path      = require('path');
 const express   = require('express');
 const cors      = require('cors');
 const helmet    = require('helmet');
@@ -36,6 +37,9 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+/* ── UPLOADS ESTÁTICOS ── */
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 /* ── BODY PARSER ── */
 app.use(express.json({ limit: '10mb' }));
