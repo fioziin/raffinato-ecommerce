@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAFFINATO — Minha Conta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --black: #0d0d0d;
+      --white: #ffffff;
+      --gold:  #c8a96e;
+      --muted: #888;
+      --border: rgba(0,0,0,0.11);
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans:  'Montserrat', sans-serif;
+      --t: 0.22s ease;
+    }
+    html, body {
+      height: 100%;
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── BACKGROUND ── */
+    .ca-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+    }
+    .ca-bg-img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center 30%;
+    }
+    .ca-bg-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(5,5,5,0.72) 0%,
+        rgba(10,10,10,0.55) 50%,
+        rgba(5,5,5,0.68) 100%
+      );
+    }
+
+    /* ── PAGE ── */
+    .ca-page {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 16px;
+    }
+
+    /* ── BACK LINK ── */
+    .ca-back {
+      position: fixed;
+      top: 24px; left: 28px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #fff;
+      text-decoration: none;
+      z-index: 10;
+      background: rgba(255,255,255,0.13);
+      border: 1px solid rgba(255,255,255,0.28);
+      backdrop-filter: blur(8px);
+      padding: 10px 18px;
+      transition: background var(--t), border-color var(--t);
+    }
+    .ca-back:hover {
+      background: rgba(255,255,255,0.22);
+      border-color: rgba(255,255,255,0.55);
+    }
+
+    /* ── CARD ── */
+    .ca-card {
+      width: 100%;
+      max-width: 420px;
+      background: #fff;
+      padding: 48px 44px 44px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.35), 0 4px 16px rgba(0,0,0,0.12);
+    }
+
+    .ca-card-logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+    .ca-card-logo img {
+      height: 38px;
+      object-fit: contain;
+    }
+
+    .ca-card-title {
+      font-family: var(--sans);
+      font-size: 17px;
+      font-weight: 300;
+      color: var(--black);
+      text-align: center;
+      margin-bottom: 8px;
+      letter-spacing: 0.48em;
+      text-transform: uppercase;
+      text-indent: 0.48em;
+    }
+    .ca-card-sub {
+      font-size: 10px;
+      color: #bbb;
+      text-align: center;
+      margin-bottom: 32px;
+      letter-spacing: 0.14em;
+      font-weight: 400;
+      text-transform: uppercase;
+    }
+
+    /* TABS */
+    .ca-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 30px;
+    }
+    .ca-tab {
+      flex: 1;
+      text-align: center;
+      padding-bottom: 12px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 1.5px solid transparent;
+      margin-bottom: -1px;
+      transition: color var(--t), border-color var(--t);
+    }
+    .ca-tab.active {
+      color: var(--black);
+      border-bottom-color: var(--black);
+    }
+
+    /* FORM */
+    .ca-form { display: none; }
+    .ca-form.active { display: block; }
+
+    .cf-field {
+      margin-bottom: 22px;
+    }
+    .cf-label {
+      display: block;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #aaa;
+      margin-bottom: 8px;
+      transition: color var(--t);
+    }
+    .cf-field:focus-within .cf-label { color: var(--black); }
+    .cf-input {
+      width: 100%;
+      height: 42px;
+      border: none;
+      border-bottom: 1px solid rgba(0,0,0,0.15);
+      background: transparent;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--black);
+      outline: none;
+      transition: border-color var(--t);
+    }
+    .cf-input::placeholder { color: rgba(0,0,0,0.22); }
+    .cf-input:focus { border-bottom-color: var(--black); }
+
+    .cf-btn {
+      width: 100%;
+      height: 52px;
+      background: var(--black);
+      color: #fff;
+      font-family: var(--sans);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background var(--t), transform var(--t), box-shadow var(--t);
+    }
+    .cf-btn:hover {
+      background: #1a1a1a;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.22);
+    }
+    .cf-btn:active { transform: none; box-shadow: none; }
+
+    .cf-switch {
+      text-align: center;
+      font-size: 11.5px;
+      color: var(--muted);
+      margin-top: 22px;
+      letter-spacing: 0.02em;
+    }
+    .cf-switch a {
+      color: var(--black);
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      transition: opacity var(--t);
+    }
+    .cf-switch a:hover { opacity: 0.5; }
+
+    .cf-error {
+      font-size: 11px;
+      color: #b71c1c;
+      background: #fff5f5;
+      border-left: 2.5px solid #e53935;
+      padding: 9px 13px;
+      margin-bottom: 18px;
+      letter-spacing: 0.02em;
+      display: none;
+    }
+    .cf-success {
+      font-size: 11px;
+      color: #1b5e20;
+      background: #f1fff4;
+      border-left: 2.5px solid #43a047;
+      padding: 9px 13px;
+      margin-bottom: 18px;
+      letter-spacing: 0.02em;
+      display: none;
+    }
+
+    /* ── DASHBOARD ── */
+    .ca-dash { display: none; }
+
+    .cd-avatar-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 28px;
+      margin-bottom: 28px;
+      border-bottom: 1px solid var(--border);
+    }
+    .cd-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--black);
+      color: #fff;
+      font-family: var(--serif);
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+    .cd-name {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-weight: 500;
+      font-style: italic;
+      color: var(--black);
+      margin-bottom: 2px;
+    }
+    .cd-email-txt { font-size: 11px; color: var(--muted); }
+
+    .cd-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-bottom: 24px;
+      border: 1px solid var(--border);
+    }
+    .cd-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 15px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--black);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background var(--t);
+    }
+    .cd-menu-item:last-child { border-bottom: none; }
+    .cd-menu-item:hover { background: #f7f6f4; }
+    .cd-menu-item svg { color: var(--muted); }
+    .cd-menu-item span { flex: 1; }
+    .cd-menu-item .arr { color: rgba(0,0,0,0.2); }
+
+    .cd-logout {
+      width: 100%;
+      height: 42px;
+      background: transparent;
+      border: 1px solid var(--border);
+      font-family: var(--sans);
+      font-size: 8.5px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      cursor: pointer;
+      transition: border-color var(--t), color var(--t);
+    }
+    .cd-logout:hover { border-color: #c62828; color: #c62828; }
+
+    /* ── MODALS ── */
+    .ca-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(5,5,5,0.65);
+      backdrop-filter: blur(6px);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .ca-overlay.open { display: flex; }
+    .ca-modal {
+      background: #fff;
+      width: 100%; max-width: 380px;
+      padding: 40px 36px 36px;
+      position: relative;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.3);
+    }
+    .ca-modal-x {
+      position: absolute; top: 14px; right: 18px;
+      background: none; border: none;
+      font-size: 20px; color: var(--muted); cursor: pointer;
+      line-height: 1;
+    }
+    .ca-modal-title {
+      font-family: var(--serif);
+      font-size: 22px; font-weight: 400;
+      color: var(--black);
+      margin-bottom: 26px;
+    }
+
+    /* responsive */
+    @media (max-width: 480px) {
+      .ca-card { padding: 36px 24px 32px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- BACKGROUND -->
+<div class="ca-bg">
+  <img
+    class="ca-bg-img"
+    src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1920&q=85"
+    alt=""
+  >
+  <div class="ca-bg-overlay"></div>
+</div>
+
+<!-- BACK -->
+<a href="index.html" class="ca-back">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+  Voltar à loja
+</a>
+
+<!-- PAGE -->
+<div class="ca-page">
+  <div class="ca-card">
+
+    <!-- logo -->
+    <div class="ca-card-logo">
+      <img src="assets/logo-raffinato-header.png" alt="RAFFINATO">
+    </div>
+
+    <!-- AUTH -->
+    <div id="authSection">
+      <h1 class="ca-card-title" id="formTitle">Bem-vindo</h1>
+      <p class="ca-card-sub" id="formSub">Entre na sua conta para continuar</p>
+
+      <div class="ca-tabs">
+        <div class="ca-tab active" id="tabLogin" onclick="switchTab('login')">Entrar</div>
+        <div class="ca-tab" id="tabCad" onclick="switchTab('cad')">Criar conta</div>
+      </div>
+
+      <!-- LOGIN -->
+      <form class="ca-form active" id="formLogin" novalidate>
+        <div class="cf-error" id="loginErr"></div>
+        <div class="cf-field">
+          <label class="cf-label">E-mail</label>
+          <input type="email" class="cf-input" id="loginEmail" placeholder="seu@email.com" autocomplete="email">
+        </div>
+        <div class="cf-field">
+          <label class="cf-label">Senha</label>
+          <input type="password" class="cf-input" id="loginSenha" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button type="submit" class="cf-btn">Entrar</button>
+        <p class="cf-switch">Ainda não tem conta? <a href="#" onclick="switchTab('cad');return false;">Criar agora</a></p>
+      </form>
+
+      <!-- CADASTRO -->
+      <form class="ca-form" id="formCad" novalidate>
+        <div class="cf-error" id="cadErr"></div>
+        <div class="cf-field">
+          <label class="cf-label">Nome completo</label>
+          <input type="text" class="cf-input" id="cadNome" placeholder="Seu nome" autocomplete="name">
+        </div>
+        <div class="cf-field">
+          <label class="cf-label">E-mail</label>
+          <input type="email" class="cf-input" id="cadEmail" placeholder="seu@email.com" autocomplete="email">
+        </div>
+        <div class="cf-field">
+          <label class="cf-label">Senha</label>
+          <input type="password" class="cf-input" id="cadSenha" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+        </div>
+        <div class="cf-field">
+          <label class="cf-label">Confirmar senha</label>
+          <input type="password" class="cf-input" id="cadConf" placeholder="Repita a senha" autocomplete="new-password">
+        </div>
+        <button type="submit" class="cf-btn">Criar conta</button>
+        <p class="cf-switch">Já tem conta? <a href="#" onclick="switchTab('login');return false;">Entrar</a></p>
+      </form>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="ca-dash" id="dashSection">
+      <div class="cd-avatar-wrap">
+        <div class="cd-avatar" id="dashAvatar">?</div>
+        <div class="cd-name" id="dashName">—</div>
+        <div class="cd-email-txt" id="dashEmail">—</div>
+      </div>
+
+      <div class="cd-menu">
+        <a href="rastrear.html" class="cd-menu-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>Rastrear pedido</span>
+          <svg class="arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <div class="cd-menu-item" onclick="openModal('editModal')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>Editar dados</span>
+          <svg class="arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="cd-menu-item" onclick="openModal('senhaModal')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span>Alterar senha</span>
+          <svg class="arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+
+      <button class="cd-logout" onclick="logout()">Sair da conta</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL: Editar dados -->
+<div class="ca-overlay" id="editModal">
+  <div class="ca-modal">
+    <button class="ca-modal-x" onclick="closeModal('editModal')">×</button>
+    <h3 class="ca-modal-title">Editar dados</h3>
+    <div class="cf-error" id="editErr"></div>
+    <div class="cf-success" id="editOk"></div>
+    <div class="cf-field">
+      <label class="cf-label">Nome completo</label>
+      <input type="text" class="cf-input" id="editNome">
+    </div>
+    <div class="cf-field">
+      <label class="cf-label">E-mail</label>
+      <input type="email" class="cf-input" id="editEmail">
+    </div>
+    <button class="cf-btn" onclick="saveEdit()">Salvar alterações</button>
+  </div>
+</div>
+
+<!-- MODAL: Alterar senha -->
+<div class="ca-overlay" id="senhaModal">
+  <div class="ca-modal">
+    <button class="ca-modal-x" onclick="closeModal('senhaModal')">×</button>
+    <h3 class="ca-modal-title">Alterar senha</h3>
+    <div class="cf-error" id="senhaErr"></div>
+    <div class="cf-success" id="senhaOk"></div>
+    <div class="cf-field">
+      <label class="cf-label">Senha atual</label>
+      <input type="password" class="cf-input" id="senhaAtual" placeholder="••••••••">
+    </div>
+    <div class="cf-field">
+      <label class="cf-label">Nova senha</label>
+      <input type="password" class="cf-input" id="senhaNova" placeholder="Mínimo 6 caracteres">
+    </div>
+    <div class="cf-field">
+      <label class="cf-label">Confirmar nova senha</label>
+      <input type="password" class="cf-input" id="senhaConf" placeholder="Repita a nova senha">
+    </div>
+    <button class="cf-btn" onclick="saveSenha()">Alterar senha</button>
+  </div>
+</div>
+
+<script>
+  const getUsers   = () => JSON.parse(localStorage.getItem('raffinato_users') || '[]');
+  const saveUsers  = u  => localStorage.setItem('raffinato_users', JSON.stringify(u));
+  const getSession = () => JSON.parse(localStorage.getItem('raffinato_session') || 'null');
+  const setSession = u  => localStorage.setItem('raffinato_session', JSON.stringify(u));
+  const clearSess  = () => localStorage.removeItem('raffinato_session');
+
+  function msg(id, txt, err) {
+    const el = document.getElementById(id);
+    el.textContent = txt; el.style.display = 'block';
+    if (!err) setTimeout(() => el.style.display = 'none', 4000);
+  }
+  function hideMsg(id) { document.getElementById(id).style.display = 'none'; }
+
+  /* tabs */
+  function switchTab(tab) {
+    const isLogin = tab === 'login';
+    document.getElementById('tabLogin').classList.toggle('active', isLogin);
+    document.getElementById('tabCad').classList.toggle('active', !isLogin);
+    document.getElementById('formLogin').classList.toggle('active', isLogin);
+    document.getElementById('formCad').classList.toggle('active', !isLogin);
+    document.getElementById('formTitle').textContent = isLogin ? 'Bem-vindo' : 'Criar conta';
+    document.getElementById('formSub').textContent = isLogin
+      ? 'Entre na sua conta para continuar'
+      : 'Preencha os dados para se cadastrar';
+  }
+
+  /* render */
+  function renderDash(u) {
+    document.getElementById('authSection').style.display = 'none';
+    document.getElementById('dashSection').style.display = 'block';
+    document.getElementById('dashAvatar').textContent = u.nome.charAt(0).toUpperCase();
+    document.getElementById('dashName').textContent   = u.nome;
+    document.getElementById('dashEmail').textContent  = u.email;
+  }
+  function renderAuth() {
+    document.getElementById('authSection').style.display = 'block';
+    document.getElementById('dashSection').style.display = 'none';
+  }
+
+  const _s = getSession();
+  if (_s) renderDash(_s); else renderAuth();
+
+  /* login */
+  document.getElementById('formLogin').addEventListener('submit', e => {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+    const senha = document.getElementById('loginSenha').value;
+    if (!email || !senha) { msg('loginErr', 'Preencha todos os campos.', true); return; }
+    const user = getUsers().find(u => u.email === email && u.senha === senha);
+    if (!user) { msg('loginErr', 'E-mail ou senha incorretos.', true); return; }
+    hideMsg('loginErr');
+    setSession(user); renderDash(user);
+  });
+
+  /* cadastro */
+  document.getElementById('formCad').addEventListener('submit', e => {
+    e.preventDefault();
+    const nome  = document.getElementById('cadNome').value.trim();
+    const email = document.getElementById('cadEmail').value.trim().toLowerCase();
+    const senha = document.getElementById('cadSenha').value;
+    const conf  = document.getElementById('cadConf').value;
+    if (!nome || !email || !senha || !conf) { msg('cadErr', 'Preencha todos os campos.', true); return; }
+    if (senha.length < 6) { msg('cadErr', 'Senha deve ter pelo menos 6 caracteres.', true); return; }
+    if (senha !== conf)   { msg('cadErr', 'As senhas não coincidem.', true); return; }
+    const users = getUsers();
+    if (users.find(u => u.email === email)) { msg('cadErr', 'E-mail já cadastrado.', true); return; }
+    const user = { nome, email, senha, criadoEm: new Date().toISOString() };
+    users.push(user); saveUsers(users); setSession(user);
+    hideMsg('cadErr'); renderDash(user);
+  });
+
+  /* logout */
+  function logout() { clearSess(); renderAuth(); switchTab('login'); }
+
+  /* modals */
+  function openModal(id) {
+    if (id === 'editModal') {
+      const u = getSession();
+      document.getElementById('editNome').value  = u.nome;
+      document.getElementById('editEmail').value = u.email;
+      hideMsg('editErr'); hideMsg('editOk');
+    } else {
+      ['senhaAtual','senhaNova','senhaConf'].forEach(i => document.getElementById(i).value = '');
+      hideMsg('senhaErr'); hideMsg('senhaOk');
+    }
+    document.getElementById(id).classList.add('open');
+  }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+  document.querySelectorAll('.ca-overlay').forEach(o => {
+    o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+  });
+
+  /* save edit */
+  function saveEdit() {
+    const nome  = document.getElementById('editNome').value.trim();
+    const email = document.getElementById('editEmail').value.trim().toLowerCase();
+    if (!nome || !email) { msg('editErr', 'Preencha todos os campos.', true); return; }
+    const s = getSession(), users = getUsers(), idx = users.findIndex(u => u.email === s.email);
+    if (idx === -1) return;
+    if (email !== s.email && users.find(u => u.email === email)) { msg('editErr', 'E-mail já em uso.', true); return; }
+    users[idx].nome = nome; users[idx].email = email;
+    saveUsers(users); setSession(users[idx]); renderDash(users[idx]);
+    msg('editOk', 'Dados atualizados!', false);
+    setTimeout(() => closeModal('editModal'), 1500);
+  }
+
+  /* save senha */
+  function saveSenha() {
+    const atual = document.getElementById('senhaAtual').value;
+    const nova  = document.getElementById('senhaNova').value;
+    const conf  = document.getElementById('senhaConf').value;
+    if (!atual || !nova || !conf) { msg('senhaErr', 'Preencha todos os campos.', true); return; }
+    if (nova.length < 6) { msg('senhaErr', 'Mínimo 6 caracteres.', true); return; }
+    if (nova !== conf)   { msg('senhaErr', 'As senhas não coincidem.', true); return; }
+    const s = getSession();
+    if (s.senha !== atual) { msg('senhaErr', 'Senha atual incorreta.', true); return; }
+    const users = getUsers(), idx = users.findIndex(u => u.email === s.email);
+    if (idx === -1) return;
+    users[idx].senha = nova; saveUsers(users); setSession(users[idx]);
+    msg('senhaOk', 'Senha alterada com sucesso!', false);
+    setTimeout(() => closeModal('senhaModal'), 1500);
+  }
+</script>
+</body>
+</html>

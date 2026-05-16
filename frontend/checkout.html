@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout — RAFFINATO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black: #0a0a0a; --white: #fff; --text: #111; --muted: #777;
+      --border: #e4e4e4; --bg: #f7f6f4; --gold: #c8a96e; --green: #2d6a4f;
+      --error: #c0392b; --font: 'Montserrat', system-ui, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+    body { font-family: var(--font); color: var(--text); background: var(--bg); }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: var(--font); cursor: pointer; background: none; border: none; padding: 0; }
+    ul { list-style: none; }
+    img { display: block; max-width: 100%; }
+    input, select { font-family: var(--font); }
+
+    .topbar { background: #050505; height: 36px; display: flex; align-items: center; justify-content: center; }
+    .topbar p { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; color: #fff; }
+
+    .ck-header { background: #fff; border-bottom: 1px solid var(--border); height: 80px; display: flex; align-items: center; justify-content: center; position: sticky; top: 0; z-index: 50; }
+    .ck-header__inner { width: 100%; max-width: 1200px; padding: 0 48px; display: flex; align-items: center; justify-content: space-between; }
+    .ck-header__logo { height: 60px; object-fit: contain; }
+    .ck-header__back { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: var(--muted); display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+    .ck-header__back:hover { color: var(--black); }
+    .ck-header__secure { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; color: var(--green); letter-spacing: 0.06em; }
+
+    .ck-body { max-width: 1200px; margin: 0 auto; padding: 48px 48px 100px; display: grid; grid-template-columns: 1fr 420px; gap: 48px; align-items: start; }
+
+    .ck-section { background: #fff; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 20px; }
+    .ck-section__head { padding: 22px 28px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 14px; }
+    .ck-section__num { width: 28px; height: 28px; border-radius: 50%; background: var(--black); color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .ck-section__title { font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+    .ck-section__body { padding: 28px; }
+
+    .field-row { display: grid; gap: 16px; margin-bottom: 16px; }
+    .field-row--2 { grid-template-columns: 1fr 1fr; }
+    .field-row--3 { grid-template-columns: 1fr 1fr 1fr; }
+    .field-row--cep { grid-template-columns: 180px 1fr; }
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    .field label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text); }
+    .field input, .field select { height: 50px; padding: 0 16px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px; color: var(--text); background: #fff; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+    .field input:focus, .field select:focus { border-color: var(--black); box-shadow: 0 0 0 3px rgba(0,0,0,0.06); }
+    .field input.is-error { border-color: var(--error); }
+    .field__err { font-size: 11px; color: var(--error); display: none; }
+    .field input.is-error + .field__err, .field.has-error .field__err { display: block; }
+
+    .delivery-opts { display: flex; flex-direction: column; gap: 12px; }
+    .delivery-opt { display: flex; align-items: center; gap: 16px; padding: 18px 20px; border: 1.5px solid var(--border); border-radius: 12px; cursor: pointer; transition: border-color 0.2s, background 0.2s; position: relative; }
+    .delivery-opt.is-selected { border-color: var(--black); background: #fafaf9; }
+    .delivery-opt input[type=radio] { width: 18px; height: 18px; accent-color: var(--black); flex-shrink: 0; }
+    .delivery-opt__info { flex: 1; }
+    .delivery-opt__name { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+    .delivery-opt__desc { font-size: 11px; color: var(--muted); }
+    .delivery-opt__price { font-size: 13px; font-weight: 700; }
+    .delivery-badge { position: absolute; top: -8px; right: 14px; background: var(--gold); color: #fff; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; padding: 3px 10px; border-radius: 999px; }
+
+    .frete-loading { font-size: 12px; color: var(--muted); padding: 16px 0; display: flex; align-items: center; gap: 8px; }
+    .frete-spinner { width: 16px; height: 16px; border: 2px solid var(--border); border-top-color: var(--black); border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
+    .frete-hint { font-size: 12px; color: var(--muted); padding: 12px 0; }
+    .frete-error { font-size: 12px; color: var(--error); padding: 8px 0; }
+
+    .coupon-row { display: flex; gap: 10px; }
+    .coupon-row input { flex: 1; height: 48px; padding: 0 16px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; font-family: var(--font); outline: none; transition: border-color 0.2s; }
+    .coupon-row input:focus { border-color: var(--black); }
+    .coupon-btn { height: 48px; padding: 0 20px; border: 1.5px solid var(--black); border-radius: 10px; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; transition: background 0.2s, color 0.2s; }
+    .coupon-btn:hover { background: var(--black); color: #fff; }
+
+    /* Mercado Pago info box */
+    .mp-info { background: #f0f7ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 24px; display: flex; gap: 16px; align-items: flex-start; }
+    .mp-info svg { flex-shrink: 0; margin-top: 2px; }
+    .mp-info h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+    .mp-info p { font-size: 12px; color: #555; line-height: 1.6; }
+    .mp-methods { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    .mp-method-tag { background: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: 0.06em; }
+
+    .ck-summary { background: #fff; border-radius: 16px; border: 1px solid var(--border); position: sticky; top: 100px; }
+    .ck-summary__head { padding: 22px 24px; border-bottom: 1px solid var(--border); }
+    .ck-summary__head h2 { font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+    .ck-summary__items { padding: 16px 24px; max-height: 320px; overflow-y: auto; }
+    .ck-item { display: flex; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .ck-item:last-child { border-bottom: none; }
+    .ck-item__img { width: 64px; height: 80px; object-fit: cover; border-radius: 8px; background: #f5f2ed; flex-shrink: 0; }
+    .ck-item__info { flex: 1; min-width: 0; }
+    .ck-item__name { font-size: 12px; font-weight: 600; margin-bottom: 3px; line-height: 1.3; }
+    .ck-item__meta { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+    .ck-item__price { font-size: 13px; font-weight: 700; }
+    .ck-summary__divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+    .ck-summary__totals { padding: 16px 24px; }
+    .ck-total-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .ck-total-row span { font-size: 13px; color: var(--muted); }
+    .ck-total-row strong { font-size: 13px; font-weight: 600; }
+    .ck-total-row--final span { font-size: 14px; color: var(--text); font-weight: 600; }
+    .ck-total-row--final strong { font-size: 20px; font-weight: 700; }
+    .ck-total-row--free strong { color: var(--green); }
+    .ck-summary__cta { padding: 0 24px 24px; }
+    .ck-submit-btn { width: 100%; height: 56px; background: var(--black); color: #fff; font-size: 13px; font-weight: 700; letter-spacing: 0.16em; border-radius: 999px; transition: background 0.2s, transform 0.2s, box-shadow 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .ck-submit-btn:hover { background: #1c1c1c; transform: translateY(-2px); box-shadow: 0 14px 36px rgba(0,0,0,0.2); }
+    .ck-submit-btn:active { transform: none; box-shadow: none; }
+    .ck-submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+    .ck-trust { display: flex; justify-content: center; gap: 16px; padding: 16px 24px 0; flex-wrap: wrap; }
+    .ck-trust-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--muted); }
+
+    .ck-empty { text-align: center; padding: 80px 48px; }
+    .ck-empty h2 { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+    .ck-empty p { color: var(--muted); margin-bottom: 28px; }
+    .ck-empty a { display: inline-block; padding: 14px 32px; background: var(--black); color: #fff; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 0.14em; }
+
+    .ck-loading { position: fixed; inset: 0; background: rgba(255,255,255,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 999; gap: 16px; }
+    .ck-loading.is-active { display: flex; }
+    .ck-spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--black); border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .ck-loading p { font-size: 13px; font-weight: 600; letter-spacing: 0.1em; }
+    .ck-loading-sub { font-size: 11px; color: var(--muted); margin-top: -8px; }
+
+    @media (max-width: 1023px) { .ck-header__inner { padding: 0 24px; } .ck-body { padding: 32px 24px 80px; gap: 32px; } }
+    @media (max-width: 860px) { .ck-body { grid-template-columns: 1fr; } .ck-summary { position: static; } .field-row--3 { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 540px) { .ck-header__inner { padding: 0 16px; } .ck-header__logo { height: 44px; } .ck-body { padding: 20px 16px 80px; gap: 20px; } .ck-section__body { padding: 20px; } .field-row--2, .field-row--3 { grid-template-columns: 1fr; } .field-row--cep { grid-template-columns: 140px 1fr; } }
+  </style>
+</head>
+<body>
+
+  <div class="topbar"><p>🔒 COMPRA 100% SEGURA · DADOS CRIPTOGRAFADOS</p></div>
+
+  <header class="ck-header">
+    <div class="ck-header__inner">
+      <a href="index.html" class="ck-header__back">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+        Voltar
+      </a>
+      <a href="index.html">
+        <img src="assets/logo-raffinato-header.png" alt="RAFFINATO" class="ck-header__logo">
+      </a>
+      <div class="ck-header__secure">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Compra segura
+      </div>
+    </div>
+  </header>
+
+  <!-- LOADING -->
+  <div class="ck-loading" id="ckLoading">
+    <div class="ck-spinner"></div>
+    <p id="ckLoadingMsg">Processando seu pedido...</p>
+    <span class="ck-loading-sub" id="ckLoadingSub"></span>
+  </div>
+
+  <div id="ckRoot"></div>
+
+  <script src="config.js"></script>
+  <script src="products.js"></script>
+  <script>
+  (function() {
+    'use strict';
+
+    const CART_KEY  = 'raffinato_cart';
+    const ORDER_KEY = 'raffinato_orders';
+    const _API      = (window.RAFFINATO_CONFIG && window.RAFFINATO_CONFIG.API_URL) || 'http://localhost:5000/api';
+    const isSandbox = !window.location.hostname || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const fmt       = n => 'R$ ' + Number(n || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+
+    function getCart() {
+      try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch { return []; }
+    }
+
+    const cart = getCart();
+    const root = document.getElementById('ckRoot');
+
+    if (!cart.length) {
+      root.innerHTML = `<div class="ck-empty"><h2>Carrinho vazio</h2><p>Adicione produtos antes de finalizar a compra.</p><a href="index.html">Ver produtos</a></div>`;
+      return;
+    }
+
+    /* URL param: ?payment=failed */
+    const urlParams = new URLSearchParams(location.search);
+    if (urlParams.get('payment') === 'failed') {
+      setTimeout(() => {
+        const err = document.getElementById('ckPayErr');
+        if (err) err.style.display = 'block';
+      }, 300);
+    }
+
+    const subtotal = cart.reduce((s, i) => s + i.preco * i.qty, 0);
+    let shippingCost   = subtotal >= 299 ? 0 : 29.90;
+    let selectedShipping = null;
+    let discount = 0;
+
+    function getTotal() { return subtotal - discount + shippingCost; }
+
+    function updateSummaryTotals() {
+      const freteEl = document.getElementById('freteSummary');
+      const totalEl = document.getElementById('totalSummary');
+      const discEl  = document.getElementById('discountRow');
+      const discVal = document.getElementById('discountVal');
+      if (freteEl) freteEl.textContent = shippingCost === 0 ? 'GRÁTIS' : fmt(shippingCost);
+      if (totalEl) totalEl.textContent = fmt(getTotal());
+      if (discEl)  discEl.style.display = discount > 0 ? 'flex' : 'none';
+      if (discVal) discVal.textContent = '-' + fmt(discount);
+    }
+
+    function itemsHTML() {
+      return cart.map(i => `
+        <div class="ck-item">
+          <img class="ck-item__img" src="${i.imagem}" alt="${i.nome}">
+          <div class="ck-item__info">
+            <p class="ck-item__name">${i.nome}</p>
+            <p class="ck-item__meta">Tam: ${i.size}&nbsp;·&nbsp;Qtd: ${i.qty}</p>
+            <p class="ck-item__price">${fmt(i.preco * i.qty)}</p>
+          </div>
+        </div>`).join('');
+    }
+
+    root.innerHTML = `
+      <div class="ck-body">
+        <div class="ck-form-col">
+
+          <!-- ERRO PAGAMENTO MP -->
+          <div id="ckPayErr" style="display:none;background:#fff0f0;border:1px solid #fecaca;border-radius:12px;padding:16px 20px;margin-bottom:20px;font-size:13px;color:var(--error);font-weight:600">
+            ⚠ O pagamento não foi concluído. Verifique os dados e tente novamente.
+          </div>
+
+          <!-- DADOS PESSOAIS -->
+          <div class="ck-section">
+            <div class="ck-section__head"><div class="ck-section__num">1</div><span class="ck-section__title">Dados Pessoais</span></div>
+            <div class="ck-section__body">
+              <div class="field-row"><div class="field"><label>Nome completo *</label><input type="text" id="fNome" placeholder="Seu nome completo"><p class="field__err">Preencha seu nome</p></div></div>
+              <div class="field-row field-row--2">
+                <div class="field"><label>E-mail *</label><input type="email" id="fEmail" placeholder="seu@email.com"><p class="field__err">E-mail inválido</p></div>
+                <div class="field"><label>Telefone *</label><input type="tel" id="fTel" placeholder="(11) 99999-9999"><p class="field__err">Preencha o telefone</p></div>
+              </div>
+              <div class="field-row"><div class="field"><label>CPF *</label><input type="text" id="fCpf" placeholder="000.000.000-00" maxlength="14"><p class="field__err">CPF inválido</p></div></div>
+            </div>
+          </div>
+
+          <!-- ENDEREÇO -->
+          <div class="ck-section">
+            <div class="ck-section__head"><div class="ck-section__num">2</div><span class="ck-section__title">Endereço de Entrega</span></div>
+            <div class="ck-section__body">
+              <div class="field-row field-row--cep">
+                <div class="field"><label>CEP *</label><input type="text" id="fCep" placeholder="00000-000" maxlength="9"><p class="field__err">CEP inválido</p></div>
+                <div class="field"><label>Rua *</label><input type="text" id="fRua" placeholder="Nome da rua"><p class="field__err">Preencha a rua</p></div>
+              </div>
+              <div class="field-row field-row--2">
+                <div class="field"><label>Número *</label><input type="text" id="fNum" placeholder="123"><p class="field__err">Preencha o número</p></div>
+                <div class="field"><label>Complemento</label><input type="text" id="fComp" placeholder="Apto, bloco..."></div>
+              </div>
+              <div class="field-row field-row--3">
+                <div class="field"><label>Bairro *</label><input type="text" id="fBairro" placeholder="Bairro"><p class="field__err">Preencha o bairro</p></div>
+                <div class="field"><label>Cidade *</label><input type="text" id="fCidade" placeholder="Cidade"><p class="field__err">Preencha a cidade</p></div>
+                <div class="field"><label>Estado *</label>
+                  <select id="fEstado">
+                    <option value="">UF</option>
+                    <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+                    <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+                    <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+                    <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+                    <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+                    <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+                    <option selected>SP</option><option>SE</option><option>TO</option>
+                  </select>
+                  <p class="field__err">Selecione o estado</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ENTREGA -->
+          <div class="ck-section">
+            <div class="ck-section__head"><div class="ck-section__num">3</div><span class="ck-section__title">Forma de Entrega</span></div>
+            <div class="ck-section__body">
+              <div id="freteContainer">
+                <p class="frete-hint">Digite o CEP acima para calcular o frete.</p>
+              </div>
+              <div style="margin-top:20px">
+                <p style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px">Cupom de desconto</p>
+                <div class="coupon-row">
+                  <input type="text" id="fCupom" placeholder="RAFFINATO10">
+                  <button class="coupon-btn" id="cupomBtn">APLICAR</button>
+                </div>
+                <p id="cupomMsg" style="font-size:11px;margin-top:6px;display:none"></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- PAGAMENTO -->
+          <div class="ck-section">
+            <div class="ck-section__head"><div class="ck-section__num">4</div><span class="ck-section__title">Pagamento</span></div>
+            <div class="ck-section__body">
+              <div class="mp-info">
+                <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
+                  <rect width="40" height="40" rx="8" fill="#009EE3"/>
+                  <path d="M8 22l6-6 6 6 12-12" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div>
+                  <h4>Pagamento via Mercado Pago</h4>
+                  <p>Você será redirecionado ao Mercado Pago para escolher a forma de pagamento com segurança.</p>
+                  <div class="mp-methods">
+                    <span class="mp-method-tag">PIX</span>
+                    <span class="mp-method-tag">CARTÃO</span>
+                    <span class="mp-method-tag">BOLETO</span>
+                    <span class="mp-method-tag">ATÉ 12×</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /form col -->
+
+        <!-- RESUMO -->
+        <div>
+          <div class="ck-summary">
+            <div class="ck-summary__head"><h2>Resumo do pedido</h2></div>
+            <div class="ck-summary__items">${itemsHTML()}</div>
+            <hr class="ck-summary__divider">
+            <div class="ck-summary__totals">
+              <div class="ck-total-row">
+                <span>Subtotal (${cart.length} ${cart.length === 1 ? 'item' : 'itens'})</span>
+                <strong>${fmt(subtotal)}</strong>
+              </div>
+              <div class="ck-total-row" id="discountRow" style="display:none;color:var(--green)">
+                <span>Desconto</span>
+                <strong id="discountVal" style="color:var(--green)"></strong>
+              </div>
+              <div class="ck-total-row ck-total-row--free">
+                <span>Frete</span>
+                <strong id="freteSummary">${shippingCost === 0 ? 'GRÁTIS' : fmt(shippingCost)}</strong>
+              </div>
+              <div class="ck-total-row ck-total-row--final" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+                <span>Total</span>
+                <strong id="totalSummary">${fmt(getTotal())}</strong>
+              </div>
+            </div>
+            <div class="ck-summary__cta">
+              <button class="ck-submit-btn" id="submitBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                IR PARA PAGAMENTO
+              </button>
+              <div class="ck-trust">
+                <div class="ck-trust-item">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  Compra segura
+                </div>
+                <div class="ck-trust-item">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  Dados criptografados
+                </div>
+                <div class="ck-trust-item">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v5h-7V8z"/></svg>
+                  Entrega garantida
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>`;
+
+    /* ── FRETE DINÂMICO ── */
+    function showFreteLoading() {
+      document.getElementById('freteContainer').innerHTML =
+        '<div class="frete-loading"><div class="frete-spinner"></div>Calculando frete...</div>';
+    }
+
+    function renderFreteOptions(quotes) {
+      selectedShipping = null;
+      shippingCost = quotes[0]?.price ?? (subtotal >= 299 ? 0 : 29.90);
+      selectedShipping = quotes[0] || null;
+
+      const html = quotes.map((q, i) => `
+        <label class="delivery-opt ${i === 0 ? 'is-selected' : ''}" data-idx="${i}">
+          <input type="radio" name="frete" value="${i}" ${i === 0 ? 'checked' : ''}>
+          <div class="delivery-opt__info">
+            <p class="delivery-opt__name">${q.companyName ? q.companyName + ' — ' : ''}${q.name}</p>
+            <p class="delivery-opt__desc">${q.deadline ? q.deadline + ' dias úteis' : ''}</p>
+          </div>
+          <span class="delivery-opt__price">${q.price === 0 ? 'GRÁTIS' : fmt(q.price)}</span>
+        </label>`).join('');
+
+      document.getElementById('freteContainer').innerHTML = `<div class="delivery-opts">${html}</div>`;
+
+      document.querySelectorAll('.delivery-opt').forEach(opt => {
+        opt.addEventListener('click', () => {
+          document.querySelectorAll('.delivery-opt').forEach(o => o.classList.remove('is-selected'));
+          opt.classList.add('is-selected');
+          const idx = parseInt(opt.dataset.idx);
+          selectedShipping = quotes[idx];
+          shippingCost     = quotes[idx].price;
+          updateSummaryTotals();
+        });
+      });
+
+      updateSummaryTotals();
+    }
+
+    function renderFallbackFrete() {
+      shippingCost     = subtotal >= 299 ? 0 : 29.90;
+      selectedShipping = null;
+      document.getElementById('freteContainer').innerHTML = `
+        <div class="delivery-opts">
+          <label class="delivery-opt is-selected">
+            <input type="radio" name="frete" value="padrao" checked>
+            <div class="delivery-opt__info">
+              <p class="delivery-opt__name">Envio Padrão</p>
+              <p class="delivery-opt__desc">5 a 10 dias úteis · Correios / Transportadora</p>
+            </div>
+            <span class="delivery-opt__price">${shippingCost === 0 ? 'GRÁTIS' : fmt(shippingCost)}</span>
+          </label>
+        </div>`;
+      updateSummaryTotals();
+    }
+
+    async function quoteFrete(cleanCep) {
+      showFreteLoading();
+      try {
+        const items = cart.map(i => ({
+          name:     i.nome,
+          quantity: i.qty,
+          price:    i.preco,
+          weight:   i.weight || 0.3,
+          width:    i.width  || 20,
+          height:   i.height || 5,
+          length:   i.length || 25
+        }));
+        const res    = await fetch(`${_API}/shipping/quote`, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ to: { postal_code: cleanCep }, items })
+        });
+        const quotes = await res.json();
+        if (Array.isArray(quotes) && quotes.length) {
+          renderFreteOptions(quotes);
+        } else {
+          renderFallbackFrete();
+        }
+      } catch {
+        renderFallbackFrete();
+      }
+    }
+
+    /* ── ViaCEP AUTO-FILL ── */
+    async function autoFillCep(cleanCep) {
+      try {
+        const res  = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+        const addr = await res.json();
+        if (!addr.erro) {
+          const set = (id, val) => { const el = document.getElementById(id); if (el && !el.value) el.value = val || ''; };
+          set('fRua',    addr.logradouro);
+          set('fBairro', addr.bairro);
+          set('fCidade', addr.localidade);
+          const est = document.getElementById('fEstado');
+          if (est && !est.value) est.value = addr.uf || '';
+        }
+      } catch {}
+    }
+
+    /* ── CEP MASK + TRIGGER ── */
+    const fCep = document.getElementById('fCep');
+    if (fCep) {
+      fCep.addEventListener('input', async () => {
+        let v = fCep.value.replace(/\D/g,'').slice(0,8);
+        if (v.length > 5) v = v.slice(0,5) + '-' + v.slice(5);
+        fCep.value = v;
+        const clean = v.replace(/\D/g,'');
+        if (clean.length === 8) {
+          await autoFillCep(clean);
+          quoteFrete(clean);
+        } else if (clean.length < 8) {
+          document.getElementById('freteContainer').innerHTML = '<p class="frete-hint">Digite o CEP completo para calcular o frete.</p>';
+        }
+      });
+    }
+
+    /* ── MASKS ── */
+    const fCpf = document.getElementById('fCpf');
+    if (fCpf) fCpf.addEventListener('input', () => {
+      let v = fCpf.value.replace(/\D/g,'').slice(0,11);
+      if (v.length > 9) v = v.slice(0,3)+'.'+v.slice(3,6)+'.'+v.slice(6,9)+'-'+v.slice(9);
+      else if (v.length > 6) v = v.slice(0,3)+'.'+v.slice(3,6)+'.'+v.slice(6);
+      else if (v.length > 3) v = v.slice(0,3)+'.'+v.slice(3);
+      fCpf.value = v;
+    });
+    const fTel = document.getElementById('fTel');
+    if (fTel) fTel.addEventListener('input', () => {
+      let v = fTel.value.replace(/\D/g,'').slice(0,11);
+      if (v.length > 6) v = '('+v.slice(0,2)+') '+v.slice(2,7)+'-'+v.slice(7);
+      else if (v.length > 2) v = '('+v.slice(0,2)+') '+v.slice(2);
+      fTel.value = v;
+    });
+
+    /* ── CUPOM ── */
+    document.getElementById('cupomBtn')?.addEventListener('click', () => {
+      const cod = document.getElementById('fCupom').value.trim().toUpperCase();
+      const msg = document.getElementById('cupomMsg');
+      msg.style.display = 'block';
+      if (cod === 'RAFFINATO10') {
+        discount = subtotal * 0.10;
+        msg.style.color = '#2d6a4f';
+        msg.textContent = '✓ Cupom aplicado! 10% de desconto.';
+      } else {
+        discount = 0;
+        msg.style.color = '#c0392b';
+        msg.textContent = 'Cupom inválido ou expirado.';
+      }
+      updateSummaryTotals();
+    });
+
+    /* ── VALIDAÇÃO ── */
+    function required(id) {
+      const el = document.getElementById(id);
+      if (!el) return true;
+      const ok = el.value.trim().length > 0;
+      el.classList.toggle('is-error', !ok);
+      return ok;
+    }
+    function validEmail(id) {
+      const el = document.getElementById(id);
+      if (!el) return true;
+      const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim());
+      el.classList.toggle('is-error', !ok);
+      return ok;
+    }
+
+    function setLoading(msg, sub) {
+      document.getElementById('ckLoadingMsg').textContent = msg || 'Processando...';
+      document.getElementById('ckLoadingSub').textContent = sub || '';
+      document.getElementById('ckLoading').classList.add('is-active');
+    }
+    function clearLoading() {
+      document.getElementById('ckLoading').classList.remove('is-active');
+    }
+
+    /* ── SUBMIT → MP ── */
+    document.getElementById('submitBtn')?.addEventListener('click', async () => {
+      const ok = [
+        required('fNome'), validEmail('fEmail'), required('fTel'), required('fCpf'),
+        required('fCep'),  required('fRua'),     required('fNum'),
+        required('fBairro'), required('fCidade')
+      ].every(Boolean);
+
+      if (!ok) {
+        document.querySelector('.is-error')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      setLoading('Criando pedido...', 'Aguarde um momento');
+
+      const orderPayload = {
+        customer: {
+          name:  document.getElementById('fNome').value.trim(),
+          email: document.getElementById('fEmail').value.trim(),
+          phone: document.getElementById('fTel').value.trim(),
+          cpf:   document.getElementById('fCpf').value.trim()
+        },
+        address: {
+          cep:         document.getElementById('fCep').value.trim(),
+          rua:         document.getElementById('fRua').value.trim(),
+          numero:      document.getElementById('fNum').value.trim(),
+          complemento: document.getElementById('fComp')?.value.trim() || '',
+          bairro:      document.getElementById('fBairro').value.trim(),
+          cidade:      document.getElementById('fCidade').value.trim(),
+          estado:      document.getElementById('fEstado').value.trim()
+        },
+        items: cart.map(i => ({
+          productId:  i.id,
+          nome:       i.nome,
+          imagem:     i.imagem,
+          tamanho:    i.size,
+          cor:        i.cor    || null,
+          corHex:     i.corHex || null,
+          quantidade: i.qty,
+          preco:      i.preco
+        })),
+        subtotal,
+        discount,
+        shipping:  shippingCost,
+        total:     getTotal(),
+        paymentMethod: 'mercadopago',
+        shippingOption: selectedShipping ? {
+          serviceId:   String(selectedShipping.id),
+          companyId:   selectedShipping.companyId ? String(selectedShipping.companyId) : undefined,
+          serviceName: selectedShipping.name,
+          companyName: selectedShipping.companyName,
+          deadline:    selectedShipping.deadline
+        } : undefined
+      };
+
+      try {
+        /* 1. Criar pedido */
+        const orderRes = await fetch(`${_API}/orders`, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify(orderPayload)
+        });
+
+        if (!orderRes.ok) {
+          const errData = await orderRes.json().catch(() => ({}));
+          clearLoading();
+          btn.disabled = false;
+          alert(errData.message || 'Erro ao criar pedido. Tente novamente.');
+          return;
+        }
+
+        const { orderNumber, id: orderId } = await orderRes.json();
+
+        /* Salvar no localStorage como fallback para obrigado.html */
+        localStorage.setItem('raffinato_last_order', JSON.stringify({
+          orderNumber,
+          orderId,
+          data: new Date().toISOString(),
+          cliente:  orderPayload.customer,
+          endereco: orderPayload.address,
+          itens:    cart,
+          subtotal,
+          frete:    shippingCost,
+          total:    getTotal()
+        }));
+
+        /* 2. Criar preference no Mercado Pago */
+        setLoading('Abrindo pagamento...', 'Redirecionando para o Mercado Pago');
+
+        const mpRes = await fetch(`${_API}/payments/mercadopago/create-preference`, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ orderId })
+        });
+
+        if (!mpRes.ok) {
+          clearLoading();
+          btn.disabled = false;
+          const payErr = document.getElementById('ckPayErr');
+          if (payErr) { payErr.style.display = 'block'; payErr.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+          return;
+        }
+
+        const mpData = await mpRes.json();
+
+        /* 3. Redirecionar para MP — só remove o carrinho agora */
+        const checkoutUrl = isSandbox
+          ? (mpData.sandbox_init_point || mpData.init_point)
+          : mpData.init_point;
+
+        localStorage.removeItem(CART_KEY);
+        window.location.href = checkoutUrl;
+
+      } catch (err) {
+        clearLoading();
+        btn.disabled = false;
+        alert('Erro de conexão. Verifique sua internet e tente novamente.');
+        console.error(err);
+      }
+    });
+
+  })();
+  </script>
+</body>
+</html>

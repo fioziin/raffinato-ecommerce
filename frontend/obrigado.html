@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pedido Confirmado — RAFFINATO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black: #0a0a0a; --white: #fff; --text: #111; --muted: #777;
+      --border: #e4e4e4; --bg: #f7f6f4; --gold: #c8a96e; --green: #2d6a4f;
+      --font: 'Montserrat', system-ui, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+    body { font-family: var(--font); color: var(--text); background: var(--bg); min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: var(--font); cursor: pointer; background: none; border: none; padding: 0; }
+    img { display: block; max-width: 100%; }
+
+    .topbar { background: #050505; height: 36px; display: flex; align-items: center; justify-content: center; }
+    .topbar p { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; color: #fff; }
+
+    .ok-header { background: #fff; border-bottom: 1px solid var(--border); height: 80px; display: flex; align-items: center; justify-content: center; }
+    .ok-header img { height: 56px; object-fit: contain; }
+
+    .ok-hero {
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+      padding: 80px 24px 88px; text-align: center; position: relative; overflow: hidden;
+    }
+    .ok-hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(200,169,110,0.15) 0%, transparent 70%);
+    }
+    .ok-check {
+      width: 80px; height: 80px; border-radius: 50%; background: var(--green);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 28px; position: relative; z-index: 1;
+      animation: popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275) both;
+    }
+    @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .ok-title {
+      font-size: clamp(24px, 4vw, 42px); font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; color: #fff; margin-bottom: 16px; position: relative; z-index: 1;
+    }
+    .ok-sub { font-size: 15px; color: rgba(255,255,255,0.6); max-width: 500px; margin: 0 auto 32px; line-height: 1.7; position: relative; z-index: 1; }
+    .ok-order-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 999px; padding: 12px 24px; color: #fff; position: relative; z-index: 1;
+    }
+    .ok-order-badge span { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; opacity: 0.6; }
+    .ok-order-badge strong { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; }
+
+    .ok-body { max-width: 860px; margin: 0 auto; padding: 48px 24px 100px; }
+
+    .ok-card { background: #fff; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 20px; overflow: hidden; }
+    .ok-card__head { padding: 20px 28px; border-bottom: 1px solid var(--border); }
+    .ok-card__head h3 { font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; }
+    .ok-card__body { padding: 24px 28px; }
+
+    /* ORDER ITEMS */
+    .ok-item { display: flex; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+    .ok-item:last-child { border-bottom: none; }
+    .ok-item__img { width: 72px; height: 90px; object-fit: cover; border-radius: 8px; background: var(--bg); flex-shrink: 0; }
+    .ok-item__info { flex: 1; }
+    .ok-item__name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .ok-item__meta { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+    .ok-item__price { font-size: 14px; font-weight: 700; }
+
+    /* TOTALS */
+    .ok-totals { display: flex; flex-direction: column; gap: 10px; }
+    .ok-total-row { display: flex; justify-content: space-between; font-size: 13px; }
+    .ok-total-row span { color: var(--muted); }
+    .ok-total-row strong { font-weight: 600; }
+    .ok-total-row--final { border-top: 1px solid var(--border); padding-top: 14px; margin-top: 4px; }
+    .ok-total-row--final span { font-size: 14px; font-weight: 600; color: var(--text); }
+    .ok-total-row--final strong { font-size: 20px; font-weight: 700; }
+
+    /* TIMELINE */
+    .ok-timeline { display: flex; flex-direction: column; gap: 0; }
+    .ok-step { display: flex; gap: 16px; }
+    .ok-step__left { display: flex; flex-direction: column; align-items: center; width: 28px; flex-shrink: 0; }
+    .ok-step__dot {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .ok-step__dot--done { background: var(--green); color: #fff; }
+    .ok-step__dot--pending { background: var(--border); color: var(--muted); }
+    .ok-step__line { flex: 1; width: 1.5px; background: var(--border); margin: 4px 0; min-height: 24px; }
+    .ok-step:last-child .ok-step__line { display: none; }
+    .ok-step__info { padding: 4px 0 24px 0; }
+    .ok-step__name { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+    .ok-step__date { font-size: 11px; color: var(--muted); }
+
+    /* CTA */
+    .ok-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 40px; justify-content: center; }
+    .ok-btn {
+      display: inline-flex; align-items: center; gap: 8px; justify-content: center;
+      height: 52px; padding: 0 36px; border-radius: 999px;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+    .ok-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,0,0,0.15); }
+    .ok-btn--primary { background: var(--black); color: #fff; }
+    .ok-btn--outline { border: 1.5px solid rgba(0,0,0,0.2); color: var(--text); }
+    .ok-btn--outline:hover { border-color: var(--black); background: var(--black); color: #fff; }
+
+    .ok-addr { font-size: 13px; color: var(--text); line-height: 1.7; }
+
+    @media (max-width: 600px) {
+      .ok-body { padding: 32px 16px 80px; }
+      .ok-card__body { padding: 20px; }
+      .ok-card__head { padding: 16px 20px; }
+      .ok-actions { flex-direction: column; }
+      .ok-btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar"><p>🚚 FRETE GRÁTIS ACIMA DE R$ 299,00</p></div>
+
+  <header class="ok-header">
+    <a href="index.html"><img src="assets/logo-raffinato-header.png" alt="RAFFINATO"></a>
+  </header>
+
+  <div class="ok-hero">
+    <div class="ok-check">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h1 class="ok-title">Pedido confirmado!</h1>
+    <p class="ok-sub">Obrigado por comprar na RAFFINATO. Em breve você receberá os detalhes do seu pedido por e-mail.</p>
+    <div class="ok-order-badge">
+      <span>Nº DO PEDIDO</span>
+      <strong id="orderNum">—</strong>
+    </div>
+  </div>
+
+  <div class="ok-body" id="okBody">
+    <p style="text-align:center;color:var(--muted);padding:40px">Carregando pedido...</p>
+  </div>
+
+  <script>
+  (function() {
+    const fmt = n => 'R$ ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+
+    /* Parâmetros de retorno do Mercado Pago */
+    const urlParams   = new URLSearchParams(location.search);
+    const urlOrderNum = urlParams.get('orderNumber');
+    const paymentParam= urlParams.get('payment');
+
+    let order;
+    try { order = JSON.parse(localStorage.getItem('raffinato_last_order')); } catch {}
+
+    /* Se veio via redirect do MP com orderNumber na URL e não há dado local */
+    if (urlOrderNum && (!order || order.orderNumber !== urlOrderNum)) {
+      document.getElementById('orderNum').textContent = urlOrderNum;
+      document.title = 'Pedido ' + urlOrderNum + ' — RAFFINATO';
+
+      const isPending = paymentParam === 'pending';
+      document.getElementById('okBody').innerHTML = `
+        <div class="ok-card">
+          <div class="ok-card__body" style="text-align:center;padding:40px 28px">
+            ${isPending
+              ? '<p style="font-size:14px;font-weight:600;color:#b45309;margin-bottom:8px">⏳ Pagamento em análise</p><p style="font-size:13px;color:var(--muted);line-height:1.7">Seu pedido foi recebido e o pagamento está sendo processado. Você receberá a confirmação por e-mail.</p>'
+              : '<p style="font-size:14px;font-weight:600;color:var(--green);margin-bottom:8px">✓ Pedido confirmado!</p><p style="font-size:13px;color:var(--muted);line-height:1.7">Obrigado pela compra. Acompanhe o status do seu pedido abaixo.</p>'}
+          </div>
+        </div>
+        <div class="ok-actions">
+          <a href="index.html" class="ok-btn ok-btn--primary">Voltar para a loja</a>
+          <a href="rastrear.html" class="ok-btn ok-btn--outline">Rastrear pedido</a>
+        </div>`;
+      return;
+    }
+
+    if (!order) {
+      document.getElementById('okBody').innerHTML = `
+        <div style="text-align:center;padding:60px 24px">
+          <h2 style="font-size:18px;font-weight:700;margin-bottom:12px">Nenhum pedido encontrado.</h2>
+          <a href="index.html" style="display:inline-block;margin-top:16px;padding:14px 32px;background:#0a0a0a;color:#fff;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:0.14em">Voltar para a loja</a>
+        </div>`;
+      return;
+    }
+
+    document.getElementById('orderNum').textContent = order.orderNumber || order.id;
+    document.title = 'Pedido ' + order.id + ' — RAFFINATO';
+
+    const frete = order.frete || 0;
+    const dt = new Date(order.data);
+    const dtStr = dt.toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' });
+
+    document.getElementById('okBody').innerHTML = `
+
+      <!-- ITENS -->
+      <div class="ok-card">
+        <div class="ok-card__head"><h3>Produtos do pedido</h3></div>
+        <div class="ok-card__body">
+          ${order.itens.map(i => `
+            <div class="ok-item">
+              <img class="ok-item__img" src="${i.imagem}" alt="${i.nome}">
+              <div class="ok-item__info">
+                <p class="ok-item__name">${i.nome}</p>
+                <p class="ok-item__meta">Tamanho: ${i.size} &nbsp;·&nbsp; Qtd: ${i.qty}</p>
+                <p class="ok-item__price">${fmt(i.preco * i.qty)}</p>
+              </div>
+            </div>`).join('')}
+          <div class="ok-totals" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+            <div class="ok-total-row"><span>Subtotal</span><strong>${fmt(order.subtotal)}</strong></div>
+            <div class="ok-total-row"><span>Frete</span><strong style="color:${frete===0?'#2d6a4f':'inherit'}">${frete===0?'GRÁTIS':fmt(frete)}</strong></div>
+            <div class="ok-total-row ok-total-row--final"><span>Total</span><strong>${fmt(order.total)}</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ENDEREÇO -->
+      <div class="ok-card">
+        <div class="ok-card__head"><h3>Endereço de entrega</h3></div>
+        <div class="ok-card__body">
+          <p class="ok-addr">
+            ${order.cliente.nome}<br>
+            ${order.endereco.rua}, ${order.endereco.num}${order.endereco.comp ? ', '+order.endereco.comp : ''}<br>
+            ${order.endereco.bairro} — ${order.endereco.cidade} / ${order.endereco.estado}<br>
+            CEP: ${order.endereco.cep}
+          </p>
+        </div>
+      </div>
+
+      <!-- TIMELINE -->
+      <div class="ok-card">
+        <div class="ok-card__head"><h3>Status do pedido</h3></div>
+        <div class="ok-card__body">
+          <div class="ok-timeline">
+            <div class="ok-step">
+              <div class="ok-step__left"><div class="ok-step__dot ok-step__dot--done"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="ok-step__line"></div></div>
+              <div class="ok-step__info"><p class="ok-step__name">Pedido recebido</p><p class="ok-step__date">${dtStr}</p></div>
+            </div>
+            <div class="ok-step">
+              <div class="ok-step__left"><div class="ok-step__dot ok-step__dot--pending"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="ok-step__line"></div></div>
+              <div class="ok-step__info"><p class="ok-step__name">Pagamento em análise</p><p class="ok-step__date">Aguardando confirmação</p></div>
+            </div>
+            <div class="ok-step">
+              <div class="ok-step__left"><div class="ok-step__dot ok-step__dot--pending"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div><div class="ok-step__line"></div></div>
+              <div class="ok-step__info"><p class="ok-step__name">Pedido em separação</p><p class="ok-step__date">—</p></div>
+            </div>
+            <div class="ok-step">
+              <div class="ok-step__left"><div class="ok-step__dot ok-step__dot--pending"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v5h-7V8z"/></svg></div><div class="ok-step__line"></div></div>
+              <div class="ok-step__info"><p class="ok-step__name">Enviado</p><p class="ok-step__date">—</p></div>
+            </div>
+            <div class="ok-step">
+              <div class="ok-step__left"><div class="ok-step__dot ok-step__dot--pending"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div></div>
+              <div class="ok-step__info"><p class="ok-step__name">Entregue</p><p class="ok-step__date">—</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ok-actions">
+        <a href="index.html" class="ok-btn ok-btn--primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Voltar para a loja
+        </a>
+        <a href="rastrear.html" class="ok-btn ok-btn--outline">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Rastrear pedido
+        </a>
+      </div>`;
+  })();
+  </script>
+</body>
+</html>

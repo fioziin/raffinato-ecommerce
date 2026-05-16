@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAFFINATO — Moda Premium</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <div class="topbar" id="topbar">
+    <div class="topbar__inner">
+      <p class="topbar__message">🚚 FRETE GRÁTIS ACIMA DE R$ 299,00 &nbsp;·&nbsp; PARCELE EM ATÉ 3X SEM JUROS</p>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="header" id="header">
+    <div class="header__inner">
+
+      <!-- LEFT: NAV -->
+      <nav class="header__nav" id="desktopNav" aria-label="Menu principal">
+        <ul class="nav__list">
+          <li><a href="#" class="nav__link" data-scroll="top">INÍCIO</a></li>
+          <li><a href="produtos.html?genero=masculino" class="nav__link">MASCULINO</a></li>
+          <li><a href="produtos.html?genero=feminino" class="nav__link">FEMININO</a></li>
+          <li><a href="#" class="nav__link" data-scroll="section-promocoes">PROMOÇÕES</a></li>
+          <li><a href="#" class="nav__link" data-scroll="section-mais-vendidos">MAIS VENDIDOS</a></li>
+          <li><a href="#" class="nav__link">RASTREAR PEDIDO</a></li>
+        </ul>
+      </nav>
+
+      <!-- CENTER: LOGO -->
+      <a href="index.html" class="header__logo">
+        <img src="assets/logo-raffinato-header.png" alt="RAFFINATO" class="header__logo-img">
+      </a>
+
+      <!-- RIGHT: ACTIONS -->
+      <div class="header__actions">
+        <button class="action-btn" id="searchBtn" aria-label="Buscar">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+        <a href="conta.html" class="action-btn" aria-label="Minha conta">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </a>
+        <button class="action-btn action-btn--cart" id="cartBtn" aria-label="Carrinho">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="cart-badge" id="cartCount" data-empty="true">0</span>
+        </button>
+        <button class="hamburger" id="hamburgerBtn" aria-label="Abrir menu" aria-expanded="false">
+          <span class="hamburger__bar"></span>
+          <span class="hamburger__bar"></span>
+          <span class="hamburger__bar"></span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- SEARCH OVERLAY -->
+  <div class="search-overlay" id="searchOverlay" role="dialog" aria-label="Busca" aria-hidden="true">
+    <button class="search-overlay__close" id="searchClose" aria-label="Fechar busca">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="search-overlay__inner">
+      <span class="search-overlay__hint">O QUE VOCÊ PROCURA?</span>
+      <div class="search-overlay__field">
+        <svg class="search-overlay__icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" class="search-overlay__input" id="searchInput" placeholder="Buscar produtos..." autocomplete="off">
+      </div>
+      <div class="search-overlay__cats">
+        <span class="search-overlay__cats-label">EXPLORE:</span>
+        <a href="produtos.html?genero=masculino" class="search-cat">Masculino</a>
+        <a href="produtos.html?genero=feminino" class="search-cat">Feminino</a>
+        <a href="#section-promocoes" class="search-cat" data-scroll="section-promocoes">Promoções</a>
+        <a href="#section-lancamentos" class="search-cat" data-scroll="section-lancamentos">Lançamentos</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOBILE OVERLAY -->
+  <div class="mobile-overlay" id="mobileOverlay" aria-hidden="true"></div>
+
+  <!-- MOBILE MENU -->
+  <nav class="mobile-menu" id="mobileMenu" aria-label="Menu mobile" aria-hidden="true">
+    <div class="mobile-menu__header">
+      <span class="mobile-menu__brand">RAFFINATO</span>
+      <button class="mobile-menu__close" id="mobileClose" aria-label="Fechar menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <ul class="mobile-menu__list">
+      <li class="mobile-item"><a href="#" class="mobile-item__link" data-scroll="top">Início</a></li>
+      <li class="mobile-item"><a href="produtos.html?genero=masculino" class="mobile-item__link">Masculino</a></li>
+      <li class="mobile-item"><a href="produtos.html?genero=feminino" class="mobile-item__link">Feminino</a></li>
+      <li class="mobile-item"><a href="#" class="mobile-item__link" data-scroll="section-promocoes">Promoções</a></li>
+      <li class="mobile-item"><a href="#" class="mobile-item__link" data-scroll="section-mais-vendidos">Mais Vendidos</a></li>
+      <li class="mobile-item"><a href="#" class="mobile-item__link" data-scroll="section-lancamentos">Lançamentos</a></li>
+      <li class="mobile-item"><a href="#" class="mobile-item__link">Rastrear Pedido</a></li>
+    </ul>
+    <div class="mobile-menu__footer">
+      <a href="#" class="mobile-footer-link">Minha Conta</a>
+      <a href="#" class="mobile-footer-link">Fale Conosco</a>
+    </div>
+  </nav>
+
+  <!-- CART OVERLAY -->
+  <div class="cart-overlay" id="cartOverlay" aria-hidden="true"></div>
+
+  <!-- CART DRAWER -->
+  <div class="cart-drawer" id="cartDrawer" aria-hidden="true">
+    <div class="cart-drawer__header">
+      <span class="cart-drawer__title">CARRINHO</span>
+      <button class="cart-drawer__close" id="cartClose" aria-label="Fechar carrinho">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="cart-drawer__body" id="cartBody"></div>
+    <div class="cart-drawer__footer" id="cartFooter">
+      <div class="cart-summary">
+        <span class="cart-summary__label">Subtotal</span>
+        <strong class="cart-summary__value" id="cartTotal">R$ 0,00</strong>
+      </div>
+      <a href="checkout.html" class="cart-checkout-btn">FINALIZAR COMPRA</a>
+      <p class="cart-shipping-note">🚚 Frete grátis acima de R$ 299,00</p>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <main class="site-content">
+
+    <!-- HERO -->
+    <section class="hero" aria-label="Banner principal">
+      <div class="hero__bg">
+        <img
+          class="hero__img"
+          src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1920&h=1080&q=90"
+          alt=""
+          aria-hidden="true"
+        >
+        <div class="hero__overlay"></div>
+      </div>
+      <div class="hero__content">
+        <p class="hero__eyebrow">COLEÇÃO 2026</p>
+        <h1 class="hero__title">Estilo que<br>define você</h1>
+        <p class="hero__sub">Moda premium com tecidos selecionados e acabamento impecável.</p>
+        <div class="hero__actions">
+          <a href="#section-mais-vendidos" class="hero__btn hero__btn--primary" data-scroll="section-mais-vendidos">Ver coleção</a>
+          <a href="#section-promocoes" class="hero__btn hero__btn--secondary" data-scroll="section-promocoes">Promoções</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRUST BAR -->
+    <div class="trust-bar">
+      <div class="trust-bar__inner">
+        <div class="trust-item reveal">
+          <div class="trust-item__icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="trust-item__text"><strong>Compra Segura</strong><span>Dados 100% criptografados</span></div>
+        </div>
+        <div class="trust-item reveal reveal--d1">
+          <div class="trust-item__icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          </div>
+          <div class="trust-item__text"><strong>Envio para todo Brasil</strong><span>Correios e transportadoras</span></div>
+        </div>
+        <div class="trust-item reveal reveal--d2">
+          <div class="trust-item__icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3"/></svg>
+          </div>
+          <div class="trust-item__text"><strong>Troca Fácil</strong><span>Até 7 dias corridos</span></div>
+        </div>
+        <div class="trust-item reveal reveal--d3">
+          <div class="trust-item__icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div class="trust-item__text"><strong>Atendimento Especializado</strong><span>Suporte premium</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATS BAR -->
+    <div class="stats-bar">
+      <div class="stats-bar__inner">
+        <div class="stat-item reveal">
+          <strong class="stat-item__num" data-count="5000" data-suffix="+">5.000+</strong>
+          <span class="stat-item__label">Clientes satisfeitos</span>
+        </div>
+        <div class="stat-item reveal reveal--d1">
+          <strong class="stat-item__num">4.9★</strong>
+          <span class="stat-item__label">Avaliação média</span>
+        </div>
+        <div class="stat-item reveal reveal--d2">
+          <strong class="stat-item__num" data-count="200" data-suffix="+">200+</strong>
+          <span class="stat-item__label">Peças na coleção</span>
+        </div>
+        <div class="stat-item reveal reveal--d3">
+          <strong class="stat-item__num">7 dias</strong>
+          <span class="stat-item__label">Garantia de troca</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIS VENDIDOS -->
+    <section class="prod-section" id="section-mais-vendidos" aria-label="Mais Vendidos">
+      <div class="prod-section__inner">
+        <div class="prod-section__head reveal">
+          <p class="prod-section__eyebrow">SELEÇÃO RAFFINATO</p>
+          <h2 class="prod-section__title">Mais Vendidos</h2>
+          <p class="prod-section__sub">As peças mais desejadas da nossa coleção.</p>
+        </div>
+        <div class="pcard-grid" id="grid-mais-vendidos"></div>
+        <div class="prod-section__foot">
+          <button class="see-all-btn" data-scroll="section-mais-vendidos">Ver todos os mais vendidos</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROMOÇÕES -->
+    <section class="prod-section prod-section--dark" id="section-promocoes" aria-label="Promoções">
+      <div class="prod-section__inner">
+        <div class="prod-section__head reveal">
+          <p class="prod-section__eyebrow prod-section__eyebrow--gold">OFERTAS ESPECIAIS</p>
+          <h2 class="prod-section__title prod-section__title--light">Em Promoção</h2>
+          <p class="prod-section__sub prod-section__sub--light">Peças selecionadas com preços exclusivos.</p>
+        </div>
+        <div class="pcard-grid" id="grid-promocoes"></div>
+        <div class="prod-section__foot">
+          <button class="see-all-btn see-all-btn--light" data-scroll="section-promocoes">Ver todas as promoções</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- LANÇAMENTOS -->
+    <section class="prod-section" id="section-lancamentos" aria-label="Lançamentos">
+      <div class="prod-section__inner">
+        <div class="prod-section__head reveal">
+          <p class="prod-section__eyebrow">NOVIDADES</p>
+          <h2 class="prod-section__title">Lançamentos</h2>
+          <p class="prod-section__sub">As últimas novidades da Raffinato.</p>
+        </div>
+        <div class="pcard-grid" id="grid-lancamentos"></div>
+        <div class="prod-section__foot">
+          <button class="see-all-btn" data-scroll="section-lancamentos">Ver todos os lançamentos</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- NEWSLETTER -->
+  <section class="newsletter">
+    <div class="newsletter__inner">
+      <span class="newsletter__eyebrow">EXCLUSIVIDADE</span>
+      <h2 class="newsletter__title">Receba as novidades em primeira mão</h2>
+      <p class="newsletter__sub">Cadastre-se e tenha acesso antecipado a lançamentos e ofertas exclusivas para assinantes.</p>
+      <form class="newsletter__form" id="newsletterForm" novalidate>
+        <input type="email" class="newsletter__input" placeholder="Seu melhor e-mail" required autocomplete="email">
+        <button type="submit" class="newsletter__btn">INSCREVER</button>
+      </form>
+      <p class="newsletter__success" id="newsletterSuccess">Obrigado! Você receberá nossas novidades em primeira mão.</p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__col footer__col--brand">
+        <img src="assets/logo-raffinato-white.png" alt="RAFFINATO" class="footer__logo">
+        <p class="footer__tagline">Moda premium para quem valoriza estilo e qualidade.</p>
+        <div class="footer__social">
+          <a href="#" class="footer__social-link" aria-label="Instagram">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          <a href="#" class="footer__social-link" aria-label="TikTok">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+          </a>
+          <a href="#" class="footer__social-link" aria-label="WhatsApp">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer__col">
+        <h4 class="footer__col-title">Institucional</h4>
+        <ul class="footer__links">
+          <li><a href="#">Sobre nós</a></li>
+          <li><a href="#">Política de privacidade</a></li>
+          <li><a href="#">Trocas e devoluções</a></li>
+          <li><a href="#">Fale conosco</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h4 class="footer__col-title">Categorias</h4>
+        <ul class="footer__links">
+          <li><a href="produtos.html?genero=masculino">Masculino</a></li>
+          <li><a href="produtos.html?genero=feminino">Feminino</a></li>
+          <li><a href="#" data-scroll="section-lancamentos">Lançamentos</a></li>
+          <li><a href="#" data-scroll="section-promocoes">Promoções</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h4 class="footer__col-title">Atendimento</h4>
+        <ul class="footer__links">
+          <li><a href="#">Rastrear pedido</a></li>
+          <li><a href="#">Central de ajuda</a></li>
+          <li><a href="#">WhatsApp</a></li>
+          <li><a href="#">E-mail</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <p>© 2026 RAFFINATO. Todos os direitos reservados.</p>
+      <div class="footer__payments">
+        <span class="footer__payment-badge">PIX</span>
+        <span class="footer__payment-badge">VISA</span>
+        <span class="footer__payment-badge">MASTER</span>
+        <span class="footer__payment-badge">AMEX</span>
+        <span class="footer__payment-badge">BOLETO</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- BACK TO TOP -->
+  <button class="back-to-top" id="backToTop" aria-label="Voltar ao topo">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+  </button>
+
+  <script src="config.js"></script>
+  <script src="products.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>

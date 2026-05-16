@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAFFINATO Admin — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <span>RAFFINATO</span>
+      <small>Admin Panel</small>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-label">Principal</div>
+      <a href="dashboard.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <div class="nav-label">Loja</div>
+      <a href="products.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+        Produtos
+      </a>
+      <a href="orders.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+        Pedidos
+      </a>
+      <div class="nav-label">Loja</div>
+      <a href="../index.html" class="nav-item" target="_blank">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Ver Site
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="admin-info">
+        <div class="admin-avatar" id="adminAvatar">A</div>
+        <div>
+          <div class="admin-name" id="adminName">Carregando...</div>
+          <div class="admin-role">Administrador</div>
+        </div>
+      </div>
+      <button class="btn-logout" id="logoutBtn">Sair</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <div>
+          <div class="topbar-title">Dashboard</div>
+          <div class="topbar-sub" id="topbarDate"></div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <a href="orders.html" class="btn btn-primary btn-sm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+          Ver Pedidos
+        </a>
+      </div>
+    </header>
+
+    <div class="page-body">
+
+      <!-- STATS -->
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card">
+          <div class="stat-icon gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+          <div><div class="stat-label">Total de Pedidos</div><div class="stat-value" id="statTotal">—</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon yellow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+          <div><div class="stat-label">Aguardando</div><div class="stat-value" id="statPending">—</div><div class="stat-sub">Pedidos pendentes</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+          <div><div class="stat-label">Receita Total</div><div class="stat-value" id="statRevenue">—</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div>
+          <div><div class="stat-label">Produtos Ativos</div><div class="stat-value" id="statProducts">—</div></div>
+        </div>
+      </div>
+
+      <!-- BOTTOM GRID -->
+      <div class="three-col">
+
+        <!-- ÚLTIMOS PEDIDOS -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Últimos Pedidos</span>
+            <a href="orders.html" class="btn btn-ghost btn-sm">Ver todos</a>
+          </div>
+          <div class="table-wrap">
+            <table id="latestOrdersTable">
+              <thead>
+                <tr>
+                  <th>Pedido</th>
+                  <th>Cliente</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="latestOrdersBody">
+                <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:32px">Carregando...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TOP PRODUTOS -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Top Produtos</span>
+          </div>
+          <div class="card-body" id="topProductsList">
+            <div style="text-align:center;color:var(--muted);padding:20px">Carregando...</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../config.js"></script>
+<script src="admin.js"></script>
+<script>
+(async () => {
+  if (!Admin.requireAuth()) return;
+  Admin.initSidebar();
+  Admin.initTopbarDate();
+
+  try {
+    const data = await Admin.apiGet('/admin/dashboard');
+
+    document.getElementById('statTotal').textContent    = data.totalOrders != null ? data.totalOrders : '—';
+    document.getElementById('statPending').textContent  = data.pendingOrders != null ? data.pendingOrders : '—';
+    document.getElementById('statRevenue').textContent  = data.totalRevenue ? Admin.fmtMoney(data.totalRevenue) : '—';
+    document.getElementById('statProducts').textContent = data.activeProducts != null ? data.activeProducts : '—';
+
+    /* últimos pedidos */
+    const tbody  = document.getElementById('latestOrdersBody');
+    const orders = data.latestOrders || [];
+    if (orders.length) {
+      tbody.innerHTML = orders.map(o => `
+        <tr>
+          <td><span style="color:var(--gold);font-weight:500">#${o.orderNumber}</span></td>
+          <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${o.customer?.name || '—'}</td>
+          <td>${Admin.fmtMoney(o.total)}</td>
+          <td>${Admin.statusBadge(o.status || 'pending')}</td>
+        </tr>
+      `).join('');
+    } else {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:32px">Nenhum pedido ainda.</td></tr>';
+    }
+
+    /* top produtos por vendas */
+    const topEl = document.getElementById('topProductsList');
+    const tops  = data.topProducts || [];
+    if (tops.length) {
+      topEl.innerHTML = tops.map((p, i) => `
+        <div class="top-product-item">
+          <span class="top-rank">${i + 1}</span>
+          <span class="top-name">${p._id}</span>
+          <span class="top-qty">${p.total} un.</span>
+        </div>
+      `).join('');
+    } else {
+      topEl.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px">Nenhum pedido registrado ainda.</div>';
+    }
+  } catch (err) {
+    if (err.status === 401) Admin.logout();
+    console.error('Erro ao carregar dashboard:', err);
+  }
+})();
+</script>
+</body>
+</html>

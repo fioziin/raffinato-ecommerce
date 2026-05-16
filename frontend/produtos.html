@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAFFINATO — Produtos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .cat-hero {
+      padding-top: calc(var(--header-h) + var(--topbar-h) + 48px);
+      padding-bottom: 20px;
+      padding-left: var(--px);
+      padding-right: var(--px);
+      max-width: var(--max-w);
+      margin: 0 auto;
+      text-align: center;
+    }
+    .cat-breadcrumb {
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .cat-breadcrumb a { color: var(--muted); text-decoration: none; }
+    .cat-breadcrumb a:hover { color: var(--text); }
+    .cat-breadcrumb span { margin: 0 2px; }
+    .cat-title {
+      font-family: var(--serif);
+      font-size: clamp(36px, 5vw, 64px);
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      line-height: 1.1;
+      margin-bottom: 10px;
+    }
+    .cat-sub {
+      font-size: 14px;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+    }
+    .cat-toolbar {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 24px var(--px) 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--border);
+    }
+    .cat-count { font-size: 13px; color: var(--muted); }
+    .cat-filters { display: flex; gap: 10px; flex-wrap: wrap; }
+    .cat-filter-btn {
+      padding: 7px 16px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 12px;
+      font-family: var(--font);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      background: none;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .cat-filter-btn:hover,
+    .cat-filter-btn.active {
+      background: var(--black);
+      color: #fff;
+      border-color: var(--black);
+    }
+    .cat-sort {
+      padding: 8px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 12px;
+      font-family: var(--font);
+      background: none;
+      color: var(--text);
+      cursor: pointer;
+      outline: none;
+    }
+    .cat-grid-wrap {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 32px var(--px) 64px;
+    }
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px 18px;
+    }
+    @media (max-width: 1100px) { .cat-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 767px)  { .cat-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 440px)  { .cat-grid { grid-template-columns: 1fr; } }
+    .cat-empty {
+      text-align: center;
+      padding: 80px 24px;
+      color: var(--muted);
+      grid-column: 1 / -1;
+    }
+    .cat-empty p { font-size: 15px; margin-top: 12px; }
+  </style>
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <div class="topbar" id="topbar">
+    <div class="topbar__inner">
+      <p class="topbar__message">🚚 FRETE GRÁTIS ACIMA DE R$ 299,00 &nbsp;·&nbsp; PARCELE EM ATÉ 3X SEM JUROS</p>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="header" id="header">
+    <div class="header__inner">
+      <nav class="header__nav" id="desktopNav" aria-label="Menu principal">
+        <ul class="nav__list">
+          <li><a href="index.html" class="nav__link">INÍCIO</a></li>
+          <li><a href="produtos.html?genero=masculino" class="nav__link" id="navMasc">MASCULINO</a></li>
+          <li><a href="produtos.html?genero=feminino" class="nav__link" id="navFem">FEMININO</a></li>
+          <li><a href="index.html#section-promocoes" class="nav__link">PROMOÇÕES</a></li>
+          <li><a href="index.html#section-mais-vendidos" class="nav__link">MAIS VENDIDOS</a></li>
+          <li><a href="rastrear.html" class="nav__link">RASTREAR PEDIDO</a></li>
+        </ul>
+      </nav>
+
+      <a href="index.html" class="header__logo">
+        <img src="assets/logo-raffinato-header.png" alt="RAFFINATO" class="header__logo-img">
+      </a>
+
+      <div class="header__actions">
+        <button class="action-btn" id="searchBtn" aria-label="Buscar">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+        <a href="conta.html" class="action-btn" aria-label="Minha conta">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </a>
+        <button class="action-btn action-btn--cart" id="cartBtn" aria-label="Carrinho">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="cart-badge" id="cartCount" data-empty="true">0</span>
+        </button>
+        <button class="hamburger" id="hamburgerBtn" aria-label="Abrir menu" aria-expanded="false">
+          <span class="hamburger__bar"></span>
+          <span class="hamburger__bar"></span>
+          <span class="hamburger__bar"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- SEARCH OVERLAY -->
+  <div class="search-overlay" id="searchOverlay" role="dialog" aria-label="Busca" aria-hidden="true">
+    <button class="search-overlay__close" id="searchClose" aria-label="Fechar busca">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="search-overlay__inner">
+      <span class="search-overlay__hint">O QUE VOCÊ PROCURA?</span>
+      <div class="search-overlay__field">
+        <svg class="search-overlay__icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" class="search-overlay__input" id="searchInput" placeholder="Buscar produtos..." autocomplete="off">
+      </div>
+      <div class="search-overlay__cats">
+        <span class="search-overlay__cats-label">EXPLORE:</span>
+        <a href="produtos.html?genero=masculino" class="search-cat">Masculino</a>
+        <a href="produtos.html?genero=feminino" class="search-cat">Feminino</a>
+        <a href="index.html#section-promocoes" class="search-cat">Promoções</a>
+        <a href="index.html#section-lancamentos" class="search-cat">Lançamentos</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOBILE OVERLAY -->
+  <div class="mobile-overlay" id="mobileOverlay" aria-hidden="true"></div>
+
+  <!-- MOBILE MENU -->
+  <nav class="mobile-menu" id="mobileMenu" aria-label="Menu mobile" aria-hidden="true">
+    <div class="mobile-menu__header">
+      <span class="mobile-menu__brand">RAFFINATO</span>
+      <button class="mobile-menu__close" id="mobileClose" aria-label="Fechar menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <ul class="mobile-menu__list">
+      <li class="mobile-item"><a href="index.html" class="mobile-item__link">Início</a></li>
+      <li class="mobile-item"><a href="produtos.html?genero=masculino" class="mobile-item__link">Masculino</a></li>
+      <li class="mobile-item"><a href="produtos.html?genero=feminino" class="mobile-item__link">Feminino</a></li>
+      <li class="mobile-item"><a href="index.html" class="mobile-item__link">Promoções</a></li>
+      <li class="mobile-item"><a href="index.html" class="mobile-item__link">Mais Vendidos</a></li>
+      <li class="mobile-item"><a href="rastrear.html" class="mobile-item__link">Rastrear Pedido</a></li>
+    </ul>
+    <div class="mobile-menu__footer">
+      <a href="#" class="mobile-footer-link">Minha Conta</a>
+      <a href="#" class="mobile-footer-link">Fale Conosco</a>
+    </div>
+  </nav>
+
+  <!-- CART OVERLAY -->
+  <div class="cart-overlay" id="cartOverlay" aria-hidden="true"></div>
+
+  <!-- CART DRAWER -->
+  <div class="cart-drawer" id="cartDrawer" aria-hidden="true">
+    <div class="cart-drawer__header">
+      <span class="cart-drawer__title">CARRINHO</span>
+      <button class="cart-drawer__close" id="cartClose" aria-label="Fechar carrinho">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="cart-drawer__body" id="cartBody"></div>
+    <div class="cart-drawer__footer">
+      <div class="cart-drawer__total">
+        <span>Total</span>
+        <strong id="cartTotal">R$ 0,00</strong>
+      </div>
+      <a href="checkout.html" class="cart-checkout-btn">FINALIZAR COMPRA</a>
+    </div>
+  </div>
+
+  <!-- CONTEÚDO -->
+  <main>
+    <!-- TOPO DA CATEGORIA -->
+    <div class="cat-hero">
+      <p class="cat-breadcrumb">
+        <a href="index.html">Início</a>
+        <span>›</span>
+        <span id="breadcrumbCat">Produtos</span>
+      </p>
+      <h1 class="cat-title" id="catTitle">Produtos</h1>
+      <p class="cat-sub" id="catSub">Explore nossa coleção completa.</p>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="cat-toolbar">
+      <span class="cat-count" id="catCount">0 produtos</span>
+      <div class="cat-filters" id="catFilters"></div>
+      <select class="cat-sort" id="catSort">
+        <option value="default">Ordenar</option>
+        <option value="menor">Menor preço</option>
+        <option value="maior">Maior preço</option>
+        <option value="nome">A–Z</option>
+      </select>
+    </div>
+
+    <!-- GRID -->
+    <div class="cat-grid-wrap">
+      <div class="cat-grid pcard-grid" id="catGrid"></div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__col footer__col--brand">
+        <img src="assets/logo-raffinato-white.png" alt="RAFFINATO" class="footer__logo">
+        <p class="footer__tagline">Moda premium para quem valoriza estilo e qualidade.</p>
+      </div>
+      <div class="footer__col">
+        <h4 class="footer__col-title">Institucional</h4>
+        <ul class="footer__links">
+          <li><a href="#">Sobre nós</a></li>
+          <li><a href="#">Política de privacidade</a></li>
+          <li><a href="#">Trocas e devoluções</a></li>
+          <li><a href="#">Fale conosco</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h4 class="footer__col-title">Categorias</h4>
+        <ul class="footer__links">
+          <li><a href="produtos.html?genero=masculino">Masculino</a></li>
+          <li><a href="produtos.html?genero=feminino">Feminino</a></li>
+          <li><a href="index.html">Lançamentos</a></li>
+          <li><a href="index.html">Promoções</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h4 class="footer__col-title">Atendimento</h4>
+        <ul class="footer__links">
+          <li><a href="rastrear.html">Rastrear pedido</a></li>
+          <li><a href="#">Central de ajuda</a></li>
+          <li><a href="#">WhatsApp</a></li>
+          <li><a href="#">E-mail</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <p>© 2026 RAFFINATO. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="config.js"></script>
+  <script src="products.js"></script>
+  <script src="main.js"></script>
+  <script>
+  (function () {
+    const params = new URLSearchParams(location.search);
+    const genero = (params.get('genero') || '').toLowerCase();
+    const fmt    = n => 'R$ ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+
+    /* Atualiza textos de título e breadcrumb */
+    const labels = {
+      masculino: { title: 'Moda Masculina', sub: 'Estilo e sofisticação para o homem moderno.', nav: 'navMasc' },
+      feminino:  { title: 'Moda Feminina',  sub: 'Elegância e modernidade em cada detalhe.', nav: 'navFem' }
+    };
+    const info = labels[genero] || { title: 'Produtos', sub: 'Explore nossa coleção completa.' };
+    document.title = 'RAFFINATO — ' + info.title;
+    document.getElementById('catTitle').textContent       = info.title;
+    document.getElementById('catSub').textContent         = info.sub;
+    document.getElementById('breadcrumbCat').textContent  = info.title;
+    if (info.nav) document.getElementById(info.nav)?.classList.add('nav__link--active');
+
+    /* Filtra produtos pelo gênero da URL */
+    let baseProducts = typeof PRODUCTS !== 'undefined'
+      ? (genero ? PRODUCTS.filter(p => p.genero === genero) : PRODUCTS)
+      : [];
+
+    let activeFilter = 'todos';
+
+    /* Filtros por categoria (slug) ou por flag booleana */
+    const flagFilters = { promocao: 'promocao', lancamento: 'lancamento', destaque: 'destaque' };
+    function applyFilter(products) {
+      if (activeFilter === 'todos') return products;
+      if (flagFilters[activeFilter]) return products.filter(p => p[flagFilters[activeFilter]]);
+      return products.filter(p => p.categoria === activeFilter);
+    }
+
+    function applySort(products) {
+      const val = document.getElementById('catSort').value;
+      const arr = [...products];
+      if (val === 'menor') arr.sort((a, b) => a.preco - b.preco);
+      if (val === 'maior') arr.sort((a, b) => b.preco - a.preco);
+      if (val === 'nome')  arr.sort((a, b) => a.nome.localeCompare(b.nome));
+      return arr;
+    }
+
+    function pcardHTML(p) {
+      const off = p.precoAntigo ? Math.round((1 - p.preco / p.precoAntigo) * 100) : 0;
+      return `
+        <a class="pcard" href="produto.html?id=${p.id || p._id}">
+          <div class="pcard__img-wrap">
+            ${p.promocao && off ? `<span class="pcard__badge pcard__badge--off">${off}% OFF</span>` : ''}
+            ${p.lancamento && !p.promocao ? '<span class="pcard__badge pcard__badge--new">NOVO</span>' : ''}
+            <img class="pcard__img pcard__img--primary" src="${p.imagem}" alt="${p.nome}" loading="lazy">
+            ${p.hoverImagem ? `<img class="pcard__img pcard__img--hover" src="${p.hoverImagem}" alt="" loading="lazy" aria-hidden="true">` : ''}
+            <button class="pcard__buy" data-id="${p.id || p._id}">COMPRAR</button>
+          </div>
+          <div class="pcard__info">
+            <h3 class="pcard__name">${p.nome}</h3>
+            <div class="pcard__prices">
+              ${p.precoAntigo ? `<s class="pcard__old">${fmt(p.precoAntigo)}</s>` : ''}
+              <strong class="pcard__price">${fmt(p.preco)}</strong>
+            </div>
+            <p class="pcard__install">ou 3x de ${fmt(p.preco / 3)} sem juros</p>
+          </div>
+        </a>`;
+    }
+
+    function render() {
+      const grid = document.getElementById('catGrid');
+      const filtered = applySort(applyFilter(baseProducts));
+      document.getElementById('catCount').textContent = filtered.length + ' produto' + (filtered.length !== 1 ? 's' : '');
+
+      if (!filtered.length) {
+        grid.innerHTML = `<div class="cat-empty"><p>Nenhum produto encontrado nesta categoria.</p></div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(pcardHTML).join('');
+
+      grid.querySelectorAll('.pcard__buy').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.preventDefault();
+          e.stopPropagation();
+          window.location.href = 'produto.html?id=' + btn.dataset.id;
+        });
+      });
+    }
+
+    /* Monta os botões de filtro conforme o gênero */
+    const filtersByGenero = {
+      masculino: [
+        { label: 'TODOS',     value: 'todos' },
+        { label: 'CAMISETAS', value: 'camisetas' },
+        { label: 'POLOS',     value: 'polos' },
+        { label: 'SHORTS',    value: 'shorts' },
+        { label: 'CALÇAS',    value: 'calcas' }
+      ],
+      feminino: [
+        { label: 'TODOS',     value: 'todos' },
+        { label: 'BLUSAS',    value: 'blusas' },
+        { label: 'VESTIDOS',  value: 'vestidos' },
+        { label: 'CONJUNTOS', value: 'conjuntos' },
+        { label: 'CALÇAS',    value: 'calcas' }
+      ],
+      default: [
+        { label: 'TODOS',       value: 'todos' },
+        { label: 'PROMOÇÃO',    value: 'promocao' },
+        { label: 'LANÇAMENTOS', value: 'lancamento' },
+        { label: 'MAIS VENDIDOS', value: 'destaque' }
+      ]
+    };
+
+    const filters = filtersByGenero[genero] || filtersByGenero.default;
+    const filtersEl = document.getElementById('catFilters');
+    filtersEl.innerHTML = filters.map((f, i) =>
+      `<button class="cat-filter-btn${i === 0 ? ' active' : ''}" data-filter="${f.value}">${f.label}</button>`
+    ).join('');
+
+    /* Filtros */
+    filtersEl.addEventListener('click', e => {
+      const btn = e.target.closest('.cat-filter-btn');
+      if (!btn) return;
+      document.querySelectorAll('.cat-filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeFilter = btn.dataset.filter;
+      render();
+    });
+
+    /* Ordenação */
+    document.getElementById('catSort').addEventListener('change', render);
+
+    /* Tenta buscar da API, com fallback ao products.js */
+    (async function () {
+      try {
+        const _API = (window.RAFFINATO_CONFIG && window.RAFFINATO_CONFIG.API_URL) || 'http://localhost:5000/api';
+        const url = genero
+          ? `${_API}/products?genero=${genero}&ativo=true&limit=100`
+          : `${_API}/products?ativo=true&limit=100`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        const ps = (data.products || data || []).map(p => ({ ...p, id: p.id || p._id }));
+        if (ps.length) { baseProducts = ps; }
+      } catch {}
+      render();
+    })();
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAFFINATO Admin — Detalhe do Pedido</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo"><span>RAFFINATO</span><small>Admin Panel</small></div>
+    <nav class="sidebar-nav">
+      <div class="nav-label">Principal</div>
+      <a href="dashboard.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <div class="nav-label">Loja</div>
+      <a href="products.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+        Produtos
+      </a>
+      <a href="orders.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+        Pedidos
+      </a>
+      <div class="nav-label">Loja</div>
+      <a href="../index.html" class="nav-item" target="_blank">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Ver Site
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="admin-info">
+        <div class="admin-avatar" id="adminAvatar">A</div>
+        <div><div class="admin-name" id="adminName">Carregando...</div><div class="admin-role">Administrador</div></div>
+      </div>
+      <button class="btn-logout" id="logoutBtn">Sair</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <div>
+          <div class="topbar-title" id="topbarTitle">Pedido</div>
+          <div class="topbar-sub" id="topbarDate"></div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <a href="orders.html" class="btn btn-ghost btn-sm">← Voltar aos Pedidos</a>
+      </div>
+    </header>
+
+    <div class="page-body" id="pageBody">
+      <div style="text-align:center;padding:80px;color:var(--muted)">Carregando pedido...</div>
+    </div>
+  </div>
+</div>
+
+<script src="../config.js"></script>
+<script src="admin.js"></script>
+<script>
+(async () => {
+  if (!Admin.requireAuth()) return;
+  Admin.initSidebar();
+  Admin.initTopbarDate();
+
+  const params = new URLSearchParams(location.search);
+  const id = params.get('id');
+  if (!id) { window.location.href = 'orders.html'; return; }
+
+  const PAYMENT_LABELS = { pix: 'PIX (5% off)', cartao: 'Cartão de Crédito', boleto: 'Boleto Bancário' };
+
+  async function loadOrder() {
+    try {
+      const order = await Admin.apiGet(`/admin/orders/${id}`);
+      render(order);
+    } catch (err) {
+      if (err.status === 401) Admin.logout();
+      document.getElementById('pageBody').innerHTML = `<div style="text-align:center;padding:80px;color:var(--red)">${err.message}</div>`;
+    }
+  }
+
+  function render(o) {
+    document.getElementById('topbarTitle').textContent = `Pedido #${o.orderNumber}`;
+
+    const addr = o.address || {};
+    const addrStr = addr.rua
+      ? `${addr.rua}, ${addr.numero}${addr.complemento ? ' ' + addr.complemento : ''} — ${addr.bairro}, ${addr.cidade}/${addr.estado} — CEP ${addr.cep}`
+      : '—';
+
+    document.getElementById('pageBody').innerHTML = `
+      <!-- STATUS BAR -->
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-body" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+          <div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:6px">Status atual</div>
+            <div id="currentBadge">${Admin.statusBadge(o.status)}</div>
+          </div>
+          <div class="status-select-block">
+            <select class="filter-select" id="statusSelect">
+              <option value="pending"          ${o.status==='pending'          ?'selected':''}>Aguardando</option>
+              <option value="awaiting_payment" ${o.status==='awaiting_payment' ?'selected':''}>Aguard. Pagamento</option>
+              <option value="paid"             ${o.status==='paid'             ?'selected':''}>Pago</option>
+              <option value="preparing"        ${o.status==='preparing'        ?'selected':''}>Em Separação</option>
+              <option value="shipped"          ${o.status==='shipped'          ?'selected':''}>Enviado</option>
+              <option value="delivered"        ${o.status==='delivered'        ?'selected':''}>Entregue</option>
+              <option value="canceled"         ${o.status==='canceled'         ?'selected':''}>Cancelado</option>
+              <option value="payment_failed"   ${o.status==='payment_failed'   ?'selected':''}>Pagto. Recusado</option>
+              <option value="stock_unavailable" ${o.status==='stock_unavailable' ?'selected':''}>Sem Estoque</option>
+            </select>
+            <button class="btn btn-primary" id="updateStatusBtn">Atualizar Status</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-grid" style="margin-bottom:20px">
+        <!-- CLIENTE -->
+        <div class="detail-section">
+          <div class="detail-section-title">Cliente</div>
+          <div class="detail-row"><span>Nome</span><strong>${o.customer?.name || '—'}</strong></div>
+          <div class="detail-row"><span>E-mail</span><strong>${o.customer?.email || '—'}</strong></div>
+          <div class="detail-row"><span>Telefone</span><strong>${o.customer?.phone || '—'}</strong></div>
+          <div class="detail-row"><span>CPF</span><strong>${o.customer?.cpf || '—'}</strong></div>
+        </div>
+
+        <!-- ENTREGA -->
+        <div class="detail-section">
+          <div class="detail-section-title">Entrega</div>
+          <div class="detail-row"><span>Endereço</span></div>
+          <div style="font-size:13px;color:var(--text);line-height:1.6">${addrStr}</div>
+          <div class="detail-row" style="margin-top:14px"><span>Data do pedido</span><strong>${Admin.fmtDate(o.createdAt)}</strong></div>
+        </div>
+      </div>
+
+      <!-- FRETE & PAGAMENTO -->
+      <div class="detail-grid" style="margin-bottom:20px">
+        <div class="detail-section">
+          <div class="detail-section-title">Frete</div>
+          ${o.shippingOption?.serviceName ? `
+          <div class="detail-row"><span>Transportadora</span><strong>${o.shippingOption.companyName || '—'}</strong></div>
+          <div class="detail-row"><span>Serviço</span><strong>${o.shippingOption.serviceName}</strong></div>
+          <div class="detail-row"><span>Prazo</span><strong>${o.shippingOption.deadline ? o.shippingOption.deadline + ' dias úteis' : '—'}</strong></div>
+          ` : '<div class="detail-row"><span>Método</span><strong>Envio Padrão</strong></div>'}
+          <div class="detail-row"><span>Valor</span><strong>${o.shipping > 0 ? Admin.fmtMoney(o.shipping) : 'Grátis'}</strong></div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-section-title">Pagamento</div>
+          <div class="detail-row"><span>Método</span><strong>${PAYMENT_LABELS[o.paymentMethod] || o.paymentMethod || '—'}</strong></div>
+          <div class="detail-row"><span>Status MP</span><strong>${o.payment?.status || '—'}</strong></div>
+          ${o.payment?.paymentId ? `<div class="detail-row"><span>ID Pagamento</span><strong style="font-size:11px;word-break:break-all">${o.payment.paymentId}</strong></div>` : ''}
+          ${o.payment?.paidAt   ? `<div class="detail-row"><span>Pago em</span><strong>${Admin.fmtDate(o.payment.paidAt)}</strong></div>` : ''}
+        </div>
+      </div>
+
+      <!-- TIMELINE -->
+      ${(o.timeline && o.timeline.length) ? `
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-header"><span class="card-title">Histórico do Pedido</span></div>
+        <div class="card-body">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            ${o.timeline.map(t => `
+              <div style="display:flex;align-items:flex-start;gap:12px">
+                <div style="width:8px;height:8px;border-radius:50%;background:var(--gold);margin-top:5px;flex-shrink:0"></div>
+                <div>
+                  <div style="font-size:13px;font-weight:600">${t.label || t.status}</div>
+                  <div style="font-size:11px;color:var(--muted)">${t.date ? Admin.fmtDate(t.date) : ''}</div>
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>
+      </div>` : ''}
+
+      <!-- ITENS -->
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-header"><span class="card-title">Itens do Pedido</span></div>
+        <div class="card-body">
+          <div class="order-items-list">
+            ${(o.items || []).map(item => `
+              <div class="order-item-row">
+                <img class="order-item-img" src="${item.imagem || ''}" alt="${item.nome}" onerror="this.src='https://placehold.co/50x56/1e1e1e/888?text=?'">
+                <div class="order-item-info">
+                  <div class="order-item-name">${item.nome}</div>
+                  <div class="order-item-meta">${item.cor ? `<span style="display:inline-flex;align-items:center;gap:4px"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${item.corHex||'#888'};border:1px solid rgba(0,0,0,.2)"></span>${item.cor}</span> &nbsp;|&nbsp; ` : ''}Tam: ${item.tamanho || '—'} &nbsp;|&nbsp; Qtd: ${item.quantidade}</div>
+                </div>
+                <div class="order-item-price">${Admin.fmtMoney(item.preco * item.quantidade)}</div>
+              </div>
+            `).join('')}
+          </div>
+          <div class="totals-block">
+            <div class="total-line"><span>Subtotal</span><span>${Admin.fmtMoney(o.subtotal)}</span></div>
+            ${o.discount > 0 ? `<div class="total-line" style="color:var(--green)"><span>Desconto</span><span>-${Admin.fmtMoney(o.discount)}</span></div>` : ''}
+            <div class="total-line"><span>Frete</span><span>${o.shipping > 0 ? Admin.fmtMoney(o.shipping) : 'Grátis'}</span></div>
+            <div class="total-line"><span>Total</span><span>${Admin.fmtMoney(o.total)}</span></div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('updateStatusBtn').addEventListener('click', async () => {
+      const newStatus = document.getElementById('statusSelect').value;
+      const btn = document.getElementById('updateStatusBtn');
+      btn.disabled = true; btn.textContent = 'Salvando...';
+      try {
+        const res = await Admin.apiPatch(`/admin/orders/${id}/status`, { status: newStatus });
+        document.getElementById('currentBadge').innerHTML = Admin.statusBadge(res.status);
+        Admin.toast('Status atualizado com sucesso!');
+      } catch (err) {
+        Admin.toast('Erro: ' + err.message, 'error');
+      } finally {
+        btn.disabled = false; btn.textContent = 'Atualizar Status';
+      }
+    });
+  }
+
+  loadOrder();
+})();
+</script>
+</body>
+</html>

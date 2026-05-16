@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rastrear Pedido — RAFFINATO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black: #0a0a0a; --white: #fff; --text: #111; --muted: #777;
+      --border: #e4e4e4; --bg: #f7f6f4; --gold: #c8a96e; --green: #2d6a4f;
+      --error: #c0392b; --font: 'Montserrat', system-ui, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+    body { font-family: var(--font); color: var(--text); background: var(--bg); min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: var(--font); cursor: pointer; background: none; border: none; padding: 0; }
+    img { display: block; max-width: 100%; }
+
+    .topbar { background: #050505; height: 36px; display: flex; align-items: center; justify-content: center; }
+    .topbar p { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; color: #fff; }
+
+    .tr-header { background: #fff; border-bottom: 1px solid var(--border); height: 80px; display: flex; align-items: center; justify-content: space-between; padding: 0 48px; }
+    .tr-header img { height: 56px; object-fit: contain; }
+    .tr-header a { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: var(--muted); transition: color 0.2s; }
+    .tr-header a:hover { color: var(--black); }
+
+    .tr-hero {
+      background: var(--black); padding: 64px 24px 72px; text-align: center;
+    }
+    .tr-hero__eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; display: block; }
+    .tr-hero__title { font-size: clamp(28px, 4vw, 48px); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #fff; margin-bottom: 12px; }
+    .tr-hero__sub { font-size: 14px; color: rgba(255,255,255,0.5); }
+
+    .tr-body { max-width: 720px; margin: 0 auto; padding: 48px 24px 100px; }
+
+    /* SEARCH FORM */
+    .tr-form {
+      background: #fff; border-radius: 16px; border: 1px solid var(--border);
+      padding: 36px; margin-bottom: 32px;
+    }
+    .tr-form h2 { font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 24px; }
+    .tr-field { margin-bottom: 16px; }
+    .tr-field label { display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 8px; }
+    .tr-field input {
+      width: 100%; height: 52px; padding: 0 18px;
+      border: 1.5px solid var(--border); border-radius: 10px;
+      font-size: 14px; font-family: var(--font); color: var(--text); outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .tr-field input:focus { border-color: var(--black); box-shadow: 0 0 0 3px rgba(0,0,0,0.06); }
+    .tr-field input.is-error { border-color: var(--error); }
+    .tr-err { font-size: 11px; color: var(--error); margin-top: 5px; display: none; }
+    .tr-search-btn {
+      width: 100%; height: 54px; background: var(--black); color: #fff;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.16em; border-radius: 999px; margin-top: 8px;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .tr-search-btn:hover { background: #1c1c1c; transform: translateY(-1px); }
+
+    /* RESULT */
+    .tr-result { display: none; }
+    .tr-result.is-active { display: block; }
+
+    .tr-card { background: #fff; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 20px; overflow: hidden; }
+    .tr-card__head { padding: 20px 28px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .tr-card__head h3 { font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+    .tr-status-badge {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 5px 14px; border-radius: 999px; background: #dcfce7; color: var(--green);
+    }
+    .tr-card__body { padding: 24px 28px; }
+
+    /* TIMELINE */
+    .tr-timeline { display: flex; flex-direction: column; }
+    .tr-step { display: flex; gap: 16px; }
+    .tr-step__left { display: flex; flex-direction: column; align-items: center; width: 32px; flex-shrink: 0; }
+    .tr-step__dot { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .tr-step__dot--done { background: var(--green); color: #fff; }
+    .tr-step__dot--pending { background: #f1f1f1; color: #bbb; border: 1.5px solid var(--border); }
+    .tr-step__line { flex: 1; width: 2px; background: var(--border); margin: 5px 0; min-height: 20px; }
+    .tr-step:last-child .tr-step__line { display: none; }
+    .tr-step__info { padding: 5px 0 24px; }
+    .tr-step__name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+    .tr-step__date { font-size: 11px; color: var(--muted); }
+
+    /* ORDER INFO */
+    .tr-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .tr-info-item label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 4px; }
+    .tr-info-item span { font-size: 13px; font-weight: 500; }
+
+    /* ITEMS */
+    .tr-item { display: flex; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .tr-item:last-child { border-bottom: none; }
+    .tr-item img { width: 60px; height: 76px; object-fit: cover; border-radius: 8px; background: var(--bg); flex-shrink: 0; }
+    .tr-item__name { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+    .tr-item__meta { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+    .tr-item__price { font-size: 13px; font-weight: 700; }
+
+    /* NOT FOUND */
+    .tr-not-found { background: #fff; border-radius: 16px; border: 1px solid var(--border); padding: 48px 28px; text-align: center; }
+    .tr-not-found h3 { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+    .tr-not-found p { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+    .tr-not-found a { display: inline-block; padding: 12px 28px; background: var(--black); color: #fff; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; }
+
+    @media (max-width: 600px) {
+      .tr-header { padding: 0 16px; }
+      .tr-header img { height: 44px; }
+      .tr-body { padding: 28px 16px 80px; }
+      .tr-form { padding: 24px; }
+      .tr-card__body { padding: 20px; }
+      .tr-info-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar"><p>🚚 FRETE GRÁTIS ACIMA DE R$ 299,00</p></div>
+
+  <header class="tr-header">
+    <a href="index.html">
+      <img src="assets/logo-raffinato-header.png" alt="RAFFINATO">
+    </a>
+    <a href="index.html">← Voltar para a loja</a>
+  </header>
+
+  <div class="tr-hero">
+    <span class="tr-hero__eyebrow">ACOMPANHE SEU PEDIDO</span>
+    <h1 class="tr-hero__title">Rastrear Pedido</h1>
+    <p class="tr-hero__sub">Informe seus dados para consultar o status da sua entrega.</p>
+  </div>
+
+  <div class="tr-body">
+
+    <div class="tr-form">
+      <h2>Consultar pedido</h2>
+      <div class="tr-field">
+        <label>E-mail *</label>
+        <input type="email" id="trEmail" placeholder="E-mail usado na compra">
+        <p class="tr-err" id="trEmailErr">Informe um e-mail válido</p>
+      </div>
+      <div class="tr-field">
+        <label>Número do pedido *</label>
+        <input type="text" id="trNum" placeholder="Ex: RAF12345678">
+        <p class="tr-err" id="trNumErr">Informe o número do pedido</p>
+      </div>
+      <button class="tr-search-btn" id="trSearchBtn">BUSCAR PEDIDO</button>
+    </div>
+
+    <div class="tr-result" id="trResult"></div>
+
+  </div>
+
+  <script src="config.js"></script>
+  <script>
+  (function() {
+    const fmt = n => 'R$ ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+    const ORDER_KEY = 'raffinato_orders';
+
+    const STEPS = [
+      { name: 'Pedido recebido',      icon: 'check' },
+      { name: 'Pagamento em análise', icon: 'clock' },
+      { name: 'Pedido em separação',  icon: 'box' },
+      { name: 'Enviado',              icon: 'truck' },
+      { name: 'Entregue',             icon: 'check' }
+    ];
+
+    function iconSVG(type) {
+      const icons = {
+        check: '<polyline points="20 6 9 17 4 12"/>',
+        clock: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+        box:   '<path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
+        truck: '<rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>'
+      };
+      return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${icons[type]||icons.check}</svg>`;
+    }
+
+    document.getElementById('trSearchBtn').addEventListener('click', async () => {
+      const emailEl = document.getElementById('trEmail');
+      const numEl   = document.getElementById('trNum');
+      const emailErr = document.getElementById('trEmailErr');
+      const numErr   = document.getElementById('trNumErr');
+
+      let ok = true;
+      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value.trim());
+      emailEl.classList.toggle('is-error', !emailOk);
+      emailErr.style.display = emailOk ? 'none' : 'block';
+      if (!emailOk) ok = false;
+
+      const numOk = numEl.value.trim().length > 3;
+      numEl.classList.toggle('is-error', !numOk);
+      numErr.style.display = numOk ? 'none' : 'block';
+      if (!numOk) ok = false;
+
+      if (!ok) return;
+
+      const result = document.getElementById('trResult');
+      result.classList.add('is-active');
+      result.innerHTML = '<div style="text-align:center;padding:48px;color:var(--muted)">Buscando pedido...</div>';
+
+      const email     = emailEl.value.trim().toLowerCase();
+      const orderNum  = numEl.value.trim().toUpperCase();
+
+      /* STATUS mapping for API orders */
+      const STATUS_STEP = { pending: 0, awaiting_payment: 0, paid: 1, preparing: 2, shipped: 3, delivered: 4, canceled: 0, payment_failed: 0, stock_unavailable: 0 };
+      const STATUS_LABEL = { pending: 'Pedido recebido', awaiting_payment: 'Aguardando pagamento', paid: 'Pagamento confirmado', preparing: 'Em separação', shipped: 'Enviado', delivered: 'Entregue', canceled: 'Cancelado', payment_failed: 'Pagamento recusado', stock_unavailable: 'Estoque indisponível' };
+
+      let order = null;
+      let fromApi = false;
+
+      /* Try API first */
+      try {
+        const _API = (window.RAFFINATO_CONFIG && window.RAFFINATO_CONFIG.API_URL) || 'http://localhost:5000/api';
+        const res = await fetch(`${_API}/orders/track?email=${encodeURIComponent(email)}&orderNumber=${encodeURIComponent(orderNum)}`);
+        if (res.ok) {
+          const data = await res.json();
+          order = {
+            id:       data.orderNumber,
+            data:     data.createdAt,
+            status:   STATUS_LABEL[data.status] || data.status,
+            apiStatus: data.status,
+            cliente:  { nome: data.customer?.name, email: data.customer?.email },
+            endereco: data.address || {},
+            itens:    (data.items || []).map(i => ({ nome: i.nome, imagem: i.imagem, size: i.tamanho, qty: i.quantidade, preco: i.preco })),
+            total:    data.total,
+            pagamento: 'pix'
+          };
+          fromApi = true;
+        }
+      } catch {}
+
+      /* Fallback to localStorage */
+      if (!order) {
+        let orders = [];
+        try { orders = JSON.parse(localStorage.getItem(ORDER_KEY)) || []; } catch {}
+        order = orders.find(o =>
+          (o.id || o.orderNumber || '').toUpperCase() === orderNum &&
+          (o.cliente?.email || '').toLowerCase() === email
+        );
+      }
+
+      if (!order) {
+        result.innerHTML = `
+          <div class="tr-not-found">
+            <h3>Pedido não encontrado</h3>
+            <p>Verifique o e-mail e o número do pedido e tente novamente.</p>
+            <a href="index.html">Voltar para a loja</a>
+          </div>`;
+        return;
+      }
+
+      const dt = new Date(order.data || order.createdAt);
+      const dtStr = dt.toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric' });
+      const currentStep = fromApi ? (STATUS_STEP[order.apiStatus] || 0) : 0;
+
+      result.innerHTML = `
+        <div class="tr-card">
+          <div class="tr-card__head">
+            <h3>Pedido ${order.id}</h3>
+            <span class="tr-status-badge">${order.status}</span>
+          </div>
+          <div class="tr-card__body">
+            <div class="tr-info-grid" style="margin-bottom:24px">
+              <div class="tr-info-item"><label>Data do pedido</label><span>${dtStr}</span></div>
+              <div class="tr-info-item"><label>Pagamento</label><span>${order.pagamento.charAt(0).toUpperCase()+order.pagamento.slice(1)}</span></div>
+              <div class="tr-info-item"><label>Total</label><span>${fmt(order.total)}</span></div>
+              <div class="tr-info-item"><label>Itens</label><span>${order.itens.length} produto(s)</span></div>
+            </div>
+            <div class="tr-timeline">
+              ${STEPS.map((s, i) => `
+                <div class="tr-step">
+                  <div class="tr-step__left">
+                    <div class="tr-step__dot ${i <= currentStep ? 'tr-step__dot--done' : 'tr-step__dot--pending'}">${iconSVG(s.icon)}</div>
+                    <div class="tr-step__line"></div>
+                  </div>
+                  <div class="tr-step__info">
+                    <p class="tr-step__name">${s.name}</p>
+                    <p class="tr-step__date">${i === 0 ? dtStr : i <= currentStep ? dtStr : '—'}</p>
+                  </div>
+                </div>`).join('')}
+            </div>
+          </div>
+        </div>
+
+        <div class="tr-card">
+          <div class="tr-card__head"><h3>Produtos</h3></div>
+          <div class="tr-card__body">
+            ${order.itens.map(i => `
+              <div class="tr-item">
+                <img src="${i.imagem}" alt="${i.nome}">
+                <div>
+                  <p class="tr-item__name">${i.nome}</p>
+                  <p class="tr-item__meta">Tam: ${i.size} · Qtd: ${i.qty}</p>
+                  <p class="tr-item__price">${fmt(i.preco * i.qty)}</p>
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <div class="tr-card">
+          <div class="tr-card__head"><h3>Endereço de entrega</h3></div>
+          <div class="tr-card__body">
+            <p style="font-size:13px;line-height:1.8;color:var(--text)">
+              ${order.cliente.nome}<br>
+              ${order.endereco.rua}, ${order.endereco.num || order.endereco.numero || ''}${(order.endereco.comp||order.endereco.complemento)?', '+(order.endereco.comp||order.endereco.complemento):''}<br>
+              ${order.endereco.bairro} — ${order.endereco.cidade} / ${order.endereco.estado}<br>
+              CEP: ${order.endereco.cep}
+            </p>
+          </div>
+        </div>
+
+        <div style="text-align:center;margin-top:32px">
+          <a href="index.html" style="display:inline-block;padding:14px 36px;background:var(--black);color:#fff;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:0.14em">Continuar comprando</a>
+        </div>`;
+
+      result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  })();
+  </script>
+</body>
+</html>

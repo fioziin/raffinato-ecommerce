@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAFFINATO Admin — Pedidos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo"><span>RAFFINATO</span><small>Admin Panel</small></div>
+    <nav class="sidebar-nav">
+      <div class="nav-label">Principal</div>
+      <a href="dashboard.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <div class="nav-label">Loja</div>
+      <a href="products.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+        Produtos
+      </a>
+      <a href="orders.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+        Pedidos
+      </a>
+      <div class="nav-label">Loja</div>
+      <a href="../index.html" class="nav-item" target="_blank">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Ver Site
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="admin-info">
+        <div class="admin-avatar" id="adminAvatar">A</div>
+        <div><div class="admin-name" id="adminName">Carregando...</div><div class="admin-role">Administrador</div></div>
+      </div>
+      <button class="btn-logout" id="logoutBtn">Sair</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <div><div class="topbar-title">Pedidos</div><div class="topbar-sub" id="topbarDate"></div></div>
+      </div>
+    </header>
+
+    <div class="page-body">
+      <!-- STATUS TABS -->
+      <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap">
+        <button class="btn btn-ghost btn-sm status-tab active" data-status="">Todos</button>
+        <button class="btn btn-ghost btn-sm status-tab" data-status="pending">Aguardando</button>
+        <button class="btn btn-ghost btn-sm status-tab" data-status="paid">Pago</button>
+        <button class="btn btn-ghost btn-sm status-tab" data-status="preparing">Separando</button>
+        <button class="btn btn-ghost btn-sm status-tab" data-status="shipped">Enviado</button>
+        <button class="btn btn-ghost btn-sm status-tab" data-status="delivered">Entregue</button>
+        <button class="btn btn-ghost btn-sm status-tab" data-status="canceled">Cancelado</button>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="search-box" style="max-width:380px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="searchInput" placeholder="Buscar por número, cliente...">
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Pedido</th>
+                <th>Cliente</th>
+                <th>E-mail</th>
+                <th>Itens</th>
+                <th>Total</th>
+                <th>Data</th>
+                <th>Status</th>
+                <th>Detalhe</th>
+              </tr>
+            </thead>
+            <tbody id="ordersBody">
+              <tr><td colspan="8" style="text-align:center;padding:48px;color:var(--muted)">Carregando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination" id="paginationBar" style="display:none">
+          <span class="pagination-info" id="paginationInfo"></span>
+          <div class="pagination-btns" id="paginationBtns"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.status-tab.active {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+</style>
+
+<script src="../config.js"></script>
+<script src="admin.js"></script>
+<script>
+(async () => {
+  if (!Admin.requireAuth()) return;
+  Admin.initSidebar();
+  Admin.initTopbarDate();
+
+  let currentPage = 1;
+  let currentStatus = '';
+
+  async function loadOrders() {
+    const q = document.getElementById('searchInput').value.trim();
+    const params = new URLSearchParams({ page: currentPage, limit: 20 });
+    if (q) params.set('q', q);
+    if (currentStatus) params.set('status', currentStatus);
+
+    const tbody = document.getElementById('ordersBody');
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--muted)">Carregando...</td></tr>';
+
+    try {
+      const data = await Admin.apiGet('/admin/orders?' + params);
+      renderOrders(data.orders || []);
+      renderPagination(data);
+    } catch (err) {
+      if (err.status === 401) Admin.logout();
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--red)">${err.message}</td></tr>`;
+    }
+  }
+
+  function renderOrders(orders) {
+    const tbody = document.getElementById('ordersBody');
+    if (!orders.length) {
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:48px;color:var(--muted)">Nenhum pedido encontrado.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = orders.map(o => `
+      <tr>
+        <td><span class="fw-600 text-gold">#${o.orderNumber}</span></td>
+        <td>${o.customer?.name || '—'}</td>
+        <td style="color:var(--muted);font-size:12px">${o.customer?.email || '—'}</td>
+        <td>${o.items?.length || 0} ${o.items?.length === 1 ? 'item' : 'itens'}</td>
+        <td class="fw-600">${Admin.fmtMoney(o.total)}</td>
+        <td style="color:var(--muted);font-size:12px;white-space:nowrap">${Admin.fmtDateShort(o.createdAt)}</td>
+        <td>${Admin.statusBadge(o.status)}</td>
+        <td>
+          <a href="order-detail.html?id=${o._id}" class="btn btn-ghost btn-sm">Ver</a>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function renderPagination(data) {
+    const bar = document.getElementById('paginationBar');
+    const info = document.getElementById('paginationInfo');
+    const btns = document.getElementById('paginationBtns');
+    if (!data.pages || data.pages <= 1) { bar.style.display = 'none'; return; }
+    bar.style.display = 'flex';
+    info.textContent = `${data.total} pedidos — página ${data.page} de ${data.pages}`;
+    btns.innerHTML = `
+      <button class="page-btn" ${data.page <= 1 ? 'disabled' : ''} onclick="goPage(${data.page - 1})">‹</button>
+      ${Array.from({ length: Math.min(data.pages, 7) }, (_, i) => `
+        <button class="page-btn ${data.page === i+1 ? 'active' : ''}" onclick="goPage(${i+1})">${i+1}</button>
+      `).join('')}
+      <button class="page-btn" ${data.page >= data.pages ? 'disabled' : ''} onclick="goPage(${data.page + 1})">›</button>
+    `;
+  }
+
+  window.goPage = function(p) { currentPage = p; loadOrders(); };
+
+  document.querySelectorAll('.status-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.status-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentStatus = btn.dataset.status;
+      currentPage = 1;
+      loadOrders();
+    });
+  });
+
+  document.getElementById('searchInput').addEventListener('input', Admin.debounce(() => {
+    currentPage = 1;
+    loadOrders();
+  }));
+
+  loadOrders();
+})();
+</script>
+</body>
+</html>

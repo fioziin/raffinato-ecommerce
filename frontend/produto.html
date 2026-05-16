@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camisa Oxford Premium — RAFFINATO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    /* ── RESET ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+    body { font-family: 'Montserrat', sans-serif; color: #111; background: #faf9f7; }
+    a { text-decoration: none; color: inherit; }
+    button { font-family: inherit; cursor: pointer; background: none; border: none; padding: 0; }
+    ul { list-style: none; }
+    img { display: block; max-width: 100%; }
+
+    /* ── TOPBAR ─────────────────────────────────────────────── */
+    .topbar {
+      background: #050505;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .topbar p {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    /* ── HEADER ─────────────────────────────────────────────── */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(0,0,0,0.07);
+      box-shadow: 0 2px 24px rgba(0,0,0,0.05);
+    }
+    .header__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 48px;
+      height: 88px;
+      position: relative;
+    }
+    /* logo handled by styles.css */
+    .header__nav {
+      display: flex;
+      gap: 28px;
+    }
+    .header__nav a {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      color: #111;
+      opacity: 0.7;
+      transition: opacity 0.18s;
+    }
+    .header__nav a:hover { opacity: 1; }
+    .header__actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .action-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #111;
+      transition: background 0.18s;
+    }
+    .action-btn:hover { background: rgba(0,0,0,0.05); }
+    .cart-wrap { position: relative; }
+    .cart-badge {
+      position: absolute;
+      top: 3px;
+      right: 2px;
+      background: #0a0a0a;
+      color: #fff;
+      font-size: 8px;
+      font-weight: 700;
+      min-width: 16px;
+      height: 16px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 3px;
+    }
+
+    /* ── BREADCRUMB ─────────────────────────────────────────── */
+    .breadcrumb {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px 48px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: #999;
+    }
+    .breadcrumb a { color: #999; transition: color 0.15s; }
+    .breadcrumb a:hover { color: #111; }
+    .breadcrumb__sep { color: #ccc; }
+    .breadcrumb__current { color: #111; }
+
+    /* ── PRODUCT PAGE ───────────────────────────────────────── */
+    .product-page {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 36px 48px 100px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    /* ── GALLERY ────────────────────────────────────────────── */
+    .product-gallery {
+      position: sticky;
+      top: 108px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .product-gallery__main {
+      width: 100%;
+      aspect-ratio: 3/4;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #f0ede7;
+      cursor: zoom-in;
+    }
+    .product-gallery__main img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.55s cubic-bezier(0.4,0,0.2,1),
+                  opacity 0.35s ease;
+    }
+    .product-gallery__main:hover img { transform: scale(1.04); }
+
+    .product-gallery__thumbs {
+      display: flex;
+      gap: 12px;
+    }
+    .thumb {
+      flex: 0 0 88px;
+      aspect-ratio: 3/4;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #f0ede7;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color 0.2s, opacity 0.2s;
+      opacity: 0.65;
+    }
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .thumb:hover { opacity: 0.9; }
+    .thumb:hover img { transform: scale(1.05); }
+    .thumb.is-active {
+      border-color: #111;
+      opacity: 1;
+    }
+
+    /* ── PRODUCT INFO ───────────────────────────────────────── */
+    .product-info {
+      padding-top: 8px;
+    }
+    .product-info__category {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: #8a7356;
+      margin-bottom: 12px;
+      display: block;
+    }
+    .product-info__name {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #0a0a0a;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .product-info__description {
+      font-size: 14px;
+      font-weight: 400;
+      color: rgba(0,0,0,0.55);
+      line-height: 1.8;
+      letter-spacing: 0.02em;
+      margin-bottom: 28px;
+    }
+    .product-info__stars {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+    .stars { font-size: 13px; color: #c8a96e; letter-spacing: 0.04em; }
+    .stars-count { font-size: 12px; color: #999; }
+
+    /* Price */
+    .product-info__price-wrap {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+    .product-info__price {
+      font-size: 30px;
+      font-weight: 700;
+      color: #0a0a0a;
+      letter-spacing: 0.01em;
+    }
+    .product-info__old-price {
+      font-size: 16px;
+      font-weight: 400;
+      color: #aaa;
+      text-decoration: line-through;
+    }
+    .product-info__badge {
+      display: inline-flex;
+      align-items: center;
+      background: #111;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+    .product-info__installments {
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 32px;
+    }
+
+    /* Divider */
+    .divider {
+      border: none;
+      border-top: 1px solid #e8e4df;
+      margin: 0 0 28px;
+    }
+
+    /* Sizes */
+    .product-info__label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #0a0a0a;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .product-info__label a {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: #999;
+      border-bottom: 1px solid #ccc;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .product-info__label a:hover { color: #111; border-color: #111; }
+
+    .size-grid {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+    .size-btn {
+      width: 54px;
+      height: 54px;
+      border-radius: 999px;
+      border: 1.5px solid #d8d4cf;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: #111;
+      background: #fff;
+      cursor: pointer;
+      transition: background 0.18s, border-color 0.18s, color 0.18s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .size-btn:hover { border-color: #111; }
+    .size-btn.is-selected {
+      background: #0a0a0a;
+      border-color: #0a0a0a;
+      color: #fff;
+    }
+    .size-btn.is-unavailable {
+      opacity: 0.35;
+      cursor: not-allowed;
+      text-decoration: line-through;
+    }
+
+    /* Quantity */
+    .qty-wrap {
+      display: inline-flex;
+      align-items: center;
+      border: 1.5px solid #d8d4cf;
+      border-radius: 999px;
+      overflow: hidden;
+      background: #fff;
+      margin-bottom: 24px;
+    }
+    .qty-btn {
+      width: 46px;
+      height: 46px;
+      font-size: 22px;
+      font-weight: 300;
+      color: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+      user-select: none;
+    }
+    .qty-btn:hover { background: #f5f2ed; }
+    .qty-display {
+      min-width: 48px;
+      height: 46px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      color: #0a0a0a;
+      border: none;
+      border-left: 1px solid #e8e4df;
+      border-right: 1px solid #e8e4df;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+    }
+
+    /* Add to cart */
+    .btn-add {
+      width: 100%;
+      height: 58px;
+      background: #0a0a0a;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      margin-bottom: 16px;
+    }
+    .btn-add:hover {
+      background: #1c1c1c;
+      transform: translateY(-2px);
+      box-shadow: 0 14px 36px rgba(0,0,0,0.22);
+    }
+    .btn-add:active { transform: translateY(0); box-shadow: none; }
+    .btn-add svg { flex-shrink: 0; }
+
+    .btn-wishlist {
+      width: 100%;
+      height: 52px;
+      background: transparent;
+      color: #111;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      border: 1.5px solid #d8d4cf;
+      border-radius: 999px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: border-color 0.18s, background 0.18s;
+      margin-bottom: 32px;
+    }
+    .btn-wishlist:hover { border-color: #111; background: #f5f2ed; }
+
+    /* Perks */
+    .product-perks {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 28px 0 0;
+      border-top: 1px solid #e8e4df;
+    }
+    .perk {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 13px;
+      font-weight: 400;
+      color: #555;
+      letter-spacing: 0.01em;
+    }
+    .perk svg { flex-shrink: 0; color: #8a7356; }
+    .perk strong { color: #111; font-weight: 600; }
+
+    /* ── COLOR SWATCHES ────────────────────────────────────── */
+    .color-selector-wrap { margin-bottom: 24px; }
+    .color-swatches {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    .color-swatch-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 2.5px solid transparent;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+    .color-swatch-btn:hover { transform: scale(1.12); }
+    .color-swatch-btn.is-selected {
+      box-shadow: 0 0 0 2px #fff, 0 0 0 4px #111;
+    }
+    .color-label-text { font-weight: 600; }
+
+    /* ── MOBILE ─────────────────────────────────────────────── */
+    @media (max-width: 1023px) {
+      .header__inner { padding: 0 24px; height: 72px; }
+      .header__nav { display: none; }
+      .breadcrumb { padding: 20px 24px 0; }
+      .product-page { padding: 28px 24px 80px; gap: 48px; }
+    }
+
+    @media (max-width: 860px) {
+      .product-page {
+        grid-template-columns: 1fr;
+        gap: 32px;
+        padding: 24px 20px 80px;
+      }
+      .product-gallery { position: static; }
+      .product-info__name { font-size: 26px; }
+      .breadcrumb { padding: 16px 20px 0; }
+    }
+
+    @media (max-width: 479px) {
+      .header__inner { padding: 0 16px; }
+      .product-page { padding: 20px 16px 80px; }
+      .breadcrumb { padding: 14px 16px 0; font-size: 10px; }
+      .product-gallery__thumbs { gap: 8px; }
+      .thumb { flex: 0 0 72px; }
+      .btn-add { font-size: 11px; height: 52px; }
+    }
+    #relacionadosSection { padding: 40px 16px 60px !important; }
+    @media (max-width: 767px) {
+      #relacionadosGrid { grid-template-columns: repeat(2, 1fr) !important; gap: 14px !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <p>🚚 FRETE GRÁTIS ACIMA DE R$&nbsp;299,00</p>
+  </div>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header__inner">
+
+      <nav class="header__nav">
+        <a href="index.html">INÍCIO</a>
+        <a href="#">LANÇAMENTOS</a>
+        <a href="#">MASCULINO</a>
+        <a href="#">FEMININO</a>
+        <a href="#">KIT</a>
+      </nav>
+
+      <a href="index.html" class="header__logo">
+        <img src="assets/logo-raffinato-header.png" alt="RAFFINATO" class="header__logo-img">
+      </a>
+
+      <div class="header__actions">
+        <!-- Search -->
+        <button class="action-btn" aria-label="Buscar">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </button>
+        <!-- Account -->
+        <a href="conta.html" class="action-btn" aria-label="Minha conta">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+        </a>
+        <!-- Cart -->
+        <button class="action-btn action-btn--cart" id="cartBtn" aria-label="Carrinho">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 0 1-8 0"/>
+          </svg>
+          <span class="cart-badge" id="cartCount" data-empty="true">0</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- CART OVERLAY -->
+  <div class="cart-overlay" id="cartOverlay" aria-hidden="true"></div>
+
+  <!-- CART DRAWER -->
+  <div class="cart-drawer" id="cartDrawer" aria-hidden="true">
+    <div class="cart-drawer__header">
+      <span class="cart-drawer__title">CARRINHO</span>
+      <button class="cart-drawer__close" id="cartClose" aria-label="Fechar carrinho">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="cart-drawer__body" id="cartBody"></div>
+    <div class="cart-drawer__footer" id="cartFooter">
+      <div class="cart-summary">
+        <span class="cart-summary__label">Subtotal</span>
+        <strong class="cart-summary__value" id="cartTotal">R$ 0,00</strong>
+      </div>
+      <a href="checkout.html" class="cart-checkout-btn">FINALIZAR COMPRA</a>
+      <p class="cart-shipping-note">🚚 Frete grátis acima de R$ 299,00</p>
+    </div>
+  </div>
+
+  <!-- BREADCRUMB -->
+  <nav class="breadcrumb" aria-label="Navegação">
+    <a href="index.html">Início</a>
+    <span class="breadcrumb__sep">/</span>
+    <a href="produtos.html">Catálogo</a>
+    <span class="breadcrumb__sep">/</span>
+    <span class="breadcrumb__current">Camisa Oxford Premium</span>
+  </nav>
+
+  <!-- PRODUCT PAGE -->
+  <main>
+    <div class="product-page">
+
+      <!-- ── GALERIA ─────────────────────────────────────────── -->
+      <div class="product-gallery">
+
+        <div class="product-gallery__main" id="mainImageWrap">
+          <img
+            id="mainImage"
+            src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=900&h=1200&q=85"
+            alt="Camisa Oxford Premium"
+          >
+        </div>
+
+        <div class="product-gallery__thumbs">
+          <div class="thumb is-active" data-img="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=900&h=1200&q=85">
+            <img src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=200&h=267&q=80" alt="Vista frontal">
+          </div>
+          <div class="thumb" data-img="https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=900&h=1200&q=85">
+            <img src="https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=200&h=267&q=80" alt="Vista lateral">
+          </div>
+          <div class="thumb" data-img="https://images.unsplash.com/photo-1602810316498-ab67cf68c8e1?auto=format&fit=crop&w=900&h=1200&q=85">
+            <img src="https://images.unsplash.com/photo-1602810316498-ab67cf68c8e1?auto=format&fit=crop&w=200&h=267&q=80" alt="Detalhe">
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── INFORMAÇÕES ─────────────────────────────────────── -->
+      <div class="product-info">
+
+        <span class="product-info__category">MASCULINO · Camisas</span>
+
+        <h1 class="product-info__name">Camisa Oxford Premium</h1>
+
+        <div class="product-info__stars">
+          <span class="stars">★★★★★</span>
+          <span class="stars-count">(47 avaliações)</span>
+        </div>
+
+        <p class="product-info__description">
+          Camisa de algodão Oxford premium com caimento slim moderno. Tecido de altíssima qualidade, macio e respirável — perfeita para ambientes formais e casuais com elegância duradoura.
+        </p>
+
+        <!-- Preços -->
+        <div class="product-info__price-wrap">
+          <s class="product-info__old-price">R$ 289,00</s>
+          <span class="product-info__price">R$ 199,00</span>
+          <span class="product-info__badge">30% OFF</span>
+        </div>
+        <p class="product-info__installments">ou 3x de R$ 66,33 sem juros</p>
+
+        <hr class="divider">
+
+        <!-- Seletor de Cor (exibido apenas para produtos com variações) -->
+        <div class="color-selector-wrap" id="colorSelectorWrap" style="display:none">
+          <div class="product-info__label">
+            COR: <span id="colorLabelText" class="color-label-text"></span>
+          </div>
+          <div class="color-swatches" id="colorSwatches"></div>
+        </div>
+
+        <!-- Tamanhos -->
+        <div>
+          <div class="product-info__label">
+            TAMANHO
+            <a href="#">Guia de tamanhos</a>
+          </div>
+          <div class="size-grid" id="sizeGrid">
+            <button class="size-btn" data-size="P">P</button>
+            <button class="size-btn is-selected" data-size="M">M</button>
+            <button class="size-btn" data-size="G">G</button>
+            <button class="size-btn" data-size="GG">GG</button>
+          </div>
+          <div id="stockStatus" style="margin-top:-12px;margin-bottom:20px;min-height:20px;font-size:12px;font-weight:600;letter-spacing:0.05em"></div>
+        </div>
+
+        <!-- Quantidade -->
+        <div class="product-info__label">QUANTIDADE</div>
+        <div class="qty-wrap">
+          <button class="qty-btn" id="qtyDec" aria-label="Diminuir quantidade">−</button>
+          <div class="qty-display" id="qtyVal">1</div>
+          <button class="qty-btn" id="qtyInc" aria-label="Aumentar quantidade">+</button>
+        </div>
+
+        <!-- CEP / Frete -->
+        <div style="margin-bottom:24px">
+          <div class="product-info__label" style="margin-bottom:10px">CALCULAR FRETE</div>
+          <div style="display:flex;gap:8px">
+            <input id="cepInput" type="text" placeholder="00000-000" maxlength="9" style="flex:1;height:48px;padding:0 14px;border:1.5px solid #d8d4cf;border-radius:999px;font-family:inherit;font-size:13px;outline:none;transition:border-color 0.2s">
+            <button id="cepBtn" style="height:48px;padding:0 20px;background:#0a0a0a;color:#fff;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:0.1em;transition:background 0.2s">VER</button>
+          </div>
+          <p id="cepResult" style="font-size:12px;color:#555;margin-top:8px;display:none"></p>
+        </div>
+
+        <!-- Botões -->
+        <button class="btn-add" id="addToCartBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 0 1-8 0"/>
+          </svg>
+          ADICIONAR AO CARRINHO
+        </button>
+
+        <button class="btn-wishlist" id="buyNowBtn" style="background:#f5f2ed;border:none;font-weight:700;letter-spacing:0.14em">
+          COMPRAR AGORA
+        </button>
+
+        <!-- Perks -->
+        <div class="product-perks">
+          <div class="perk">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span><strong>Compra segura</strong> — dados criptografados</span>
+          </div>
+          <div class="perk">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+            </svg>
+            <span><strong>Frete grátis</strong> acima de R$ 299,00</span>
+          </div>
+          <div class="perk">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3"/>
+            </svg>
+            <span><strong>Troca fácil</strong> em até 7 dias corridos</span>
+          </div>
+          <div class="perk">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+            </svg>
+            <span><strong>Pagamento seguro</strong> — Pix, Cartão, Boleto</span>
+          </div>
+        </div>
+
+      </div><!-- /.product-info -->
+
+    </div><!-- /.product-page -->
+
+    <!-- PRODUTOS RELACIONADOS -->
+    <section id="relacionadosSection" style="max-width:1280px;margin:0 auto;padding:60px 48px 80px;display:none">
+      <div style="text-align:center;margin-bottom:40px">
+        <p style="font-size:11px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:#c8a96e;margin-bottom:10px">VOCÊ TAMBÉM PODE GOSTAR</p>
+        <h2 style="font-size:28px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#0a0a0a">Produtos Relacionados</h2>
+      </div>
+      <div id="relacionadosGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:24px"></div>
+    </section>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="products.js"></script>
+  <script src="main.js"></script>
+  <script>
+  /* CEP e Frete */
+  document.getElementById('cepInput')?.addEventListener('input', function() {
+    let v = this.value.replace(/\D/g,'').slice(0,8);
+    if (v.length > 5) v = v.slice(0,5)+'-'+v.slice(5);
+    this.value = v;
+  });
+  document.getElementById('cepBtn')?.addEventListener('click', function() {
+    const cep = document.getElementById('cepInput').value.replace(/\D/g,'');
+    const res = document.getElementById('cepResult');
+    res.style.display = 'block';
+    if (cep.length < 8) { res.style.color='#c0392b'; res.textContent='CEP inválido.'; return; }
+    res.style.color='#555'; res.textContent='Consultando...';
+    fetch('https://viacep.com.br/ws/'+cep+'/json/')
+      .then(r=>r.json()).then(d=>{
+        if (d.erro) { res.style.color='#c0392b'; res.textContent='CEP não encontrado.'; return; }
+        res.style.color='#2d6a4f';
+        res.textContent='✓ Entrega para '+d.localidade+'/'+d.uf+' — Frete Padrão estimado em 5 a 10 dias úteis.';
+      }).catch(()=>{ res.style.color='#c0392b'; res.textContent='Erro ao consultar CEP.'; });
+  });
+  </script>
+  <script>
+    /* ── CARREGAR PRODUTO ────────────────────────────────────── */
+    (async function () {
+      const _API    = (window.RAFFINATO_CONFIG && window.RAFFINATO_CONFIG.API_URL) || 'http://localhost:5000/api';
+      const params  = new URLSearchParams(window.location.search);
+      const idParam = params.get('id');
+
+      function showNotFound() {
+        document.querySelector('main').innerHTML =
+          '<div style="max-width:560px;margin:100px auto;text-align:center;padding:0 24px">' +
+          '<h2 style="font-size:20px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#111;margin-bottom:14px">Produto não encontrado.</h2>' +
+          '<p style="font-size:13px;color:#999;margin-bottom:32px">O produto que você procura não existe ou foi removido.</p>' +
+          '<a href="index.html" style="display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#fff;background:#111;padding:14px 32px;border-radius:999px;text-decoration:none">Voltar para a loja</a>' +
+          '</div>';
+        document.title = 'Produto não encontrado — RAFFINATO';
+      }
+
+      let produto = null;
+
+      if (idParam) {
+        /* 1) Tenta por MongoDB ObjectId (24 hex) */
+        if (/^[0-9a-f]{24}$/i.test(idParam)) {
+          try {
+            const r = await fetch(`${_API}/products/${idParam}`);
+            if (r.ok) produto = await r.json();
+          } catch {}
+        }
+        /* 2) Tenta por slug via API */
+        if (!produto) {
+          try {
+            const r = await fetch(`${_API}/products/slug/${idParam}`);
+            if (r.ok) produto = await r.json();
+          } catch {}
+        }
+        /* 3) Fallback: catálogo estático (products.js) */
+        if (!produto && typeof PRODUCTS !== 'undefined') {
+          produto = PRODUCTS.find(p => p.id === idParam) || null;
+        }
+      }
+
+      /* Normaliza _id → id para compatibilidade com cart */
+      const legacyStock = {};
+      if (produto && produto._id) produto.id = produto._id;
+
+      if (!produto) {
+        showNotFound();
+        return;
+      }
+
+      /* ── PREENCHER INFORMAÇÕES BÁSICAS ─────────────────────── */
+      document.title = produto.nome + ' — RAFFINATO';
+      document.querySelector('.breadcrumb__current').textContent = produto.nome;
+
+      const fmt = n => 'R$ ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+
+      const gen = (produto.genero || '').charAt(0).toUpperCase() + (produto.genero || '').slice(1);
+      const cat = (produto.categoria || '').charAt(0).toUpperCase() + (produto.categoria || '').slice(1);
+      document.querySelector('.product-info__category').textContent = gen.toUpperCase() + ' · ' + cat;
+      document.querySelector('.product-info__name').textContent = produto.nome;
+      document.querySelector('.product-info__description').textContent = produto.descricao || '';
+      document.querySelector('.product-info__price').textContent = fmt(produto.preco);
+
+      const oldPriceEl = document.querySelector('.product-info__old-price');
+      const badgeEl    = document.querySelector('.product-info__badge');
+      if (produto.precoAntigo) {
+        oldPriceEl.textContent   = fmt(produto.precoAntigo);
+        oldPriceEl.style.display = '';
+        badgeEl.textContent      = Math.round((1 - produto.preco / produto.precoAntigo) * 100) + '% OFF';
+        badgeEl.style.display    = '';
+      } else {
+        oldPriceEl.style.display = 'none';
+        badgeEl.style.display    = 'none';
+      }
+      document.querySelector('.product-info__installments').textContent =
+        'ou 3x de ' + fmt(produto.preco / 3) + ' sem juros';
+
+      /* ── ESTADO DAS VARIAÇÕES ──────────────────────────────── */
+      const hasVariants   = produto.variants && produto.variants.length > 0;
+      let selectedVariant = hasVariants ? produto.variants[0] : null;
+      let qty = 1;
+
+      /* ── IMAGEM ─────────────────────────────────────────────── */
+      function setImages(mainUrl, hoverUrl) {
+        const mainImg = document.getElementById('mainImage');
+        const thumbEls = document.querySelectorAll('.thumb');
+        const urls = [mainUrl, hoverUrl].filter(Boolean);
+
+        mainImg.src = mainUrl || '';
+        mainImg.alt = produto.nome;
+
+        thumbEls.forEach((thumb, i) => {
+          if (urls[i]) {
+            thumb.dataset.img = urls[i];
+            thumb.querySelector('img').src = urls[i];
+            thumb.style.display = '';
+            thumb.classList.toggle('is-active', i === 0);
+          } else {
+            thumb.style.display = 'none';
+          }
+        });
+      }
+
+      if (hasVariants) {
+        setImages(selectedVariant.imagem, selectedVariant.hoverImagem);
+      } else {
+        setImages(produto.imagem, produto.hoverImagem);
+      }
+
+      /* ── GALERIA: CLIQUE NOS THUMBS ────────────────────────── */
+      const mainImg = document.getElementById('mainImage');
+      document.querySelectorAll('.thumb').forEach(thumb => {
+        thumb.addEventListener('click', () => {
+          if (!thumb.dataset.img) return;
+          document.querySelectorAll('.thumb').forEach(t => t.classList.remove('is-active'));
+          thumb.classList.add('is-active');
+          mainImg.style.opacity = '0';
+          setTimeout(() => { mainImg.src = thumb.dataset.img; mainImg.style.opacity = '1'; }, 200);
+        });
+      });
+
+      /* ── STATUS DE ESTOQUE ─────────────────────────────────────── */
+      function updateStockStatus() {
+        const el     = document.getElementById('stockStatus');
+        const addBtn = document.getElementById('addToCartBtn');
+        const buyBtn = document.getElementById('buyNowBtn');
+        if (!el) return;
+
+        let totalStock = 0;
+        if (hasVariants && selectedVariant) {
+          totalStock = (selectedVariant.tamanhos || []).reduce((s, t) => s + (Number(t.estoque) || 0), 0);
+        } else {
+          const stock = legacyStock[produto.id] || produto.estoque || {};
+          totalStock = Object.values(stock).reduce((s, v) => s + Number(v), 0);
+        }
+
+        if (totalStock === 0) {
+          el.innerHTML = '<span style="color:#e05252;font-size:13px">⊘ Produto esgotado nesta cor</span>';
+          if (addBtn) { addBtn.style.opacity = '0.45'; addBtn.style.pointerEvents = 'none'; }
+          if (buyBtn) buyBtn.style.display = 'none';
+        } else if (totalStock <= 3) {
+          el.innerHTML = `<span style="color:#c8a96e;font-size:13px">⚠ Últimas ${totalStock} ${totalStock === 1 ? 'unidade disponível' : 'unidades disponíveis'}</span>`;
+          if (addBtn) { addBtn.style.opacity = '1'; addBtn.style.pointerEvents = ''; }
+          if (buyBtn) buyBtn.style.display = '';
+        } else {
+          el.innerHTML = '';
+          if (addBtn) { addBtn.style.opacity = '1'; addBtn.style.pointerEvents = ''; }
+          if (buyBtn) buyBtn.style.display = '';
+        }
+      }
+
+      /* ── GRADE DE TAMANHOS ─────────────────────────────────── */
+      function renderSizeGrid(variant) {
+        const grid = document.getElementById('sizeGrid');
+        if (!grid) return;
+
+        if (variant) {
+          grid.innerHTML = (variant.tamanhos || []).map((t, i) => {
+            const sem   = Number(t.estoque) === 0;
+            const first = !sem && i === 0 ? ' is-selected' : '';
+            return `<button class="size-btn${sem ? ' is-unavailable' : ''}${first}" data-size="${t.tamanho}">${t.tamanho}</button>`;
+          }).join('');
+        } else {
+          const stock = legacyStock[produto.id] || produto.estoque || {};
+          grid.innerHTML = (produto.tamanhos || []).map((s, i) => {
+            const sem = stock[s] === 0;
+            return `<button class="size-btn${sem ? ' is-unavailable' : ''}${i === 0 && !sem ? ' is-selected' : ''}" data-size="${s}">${s}</button>`;
+          }).join('');
+        }
+
+        grid.querySelectorAll('.size-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            if (btn.classList.contains('is-unavailable')) return;
+            grid.querySelectorAll('.size-btn').forEach(b => b.classList.remove('is-selected'));
+            btn.classList.add('is-selected');
+          });
+        });
+
+        updateStockStatus();
+      }
+
+      /* ── SELETOR DE COR ─────────────────────────────────────── */
+      if (hasVariants) {
+        const wrap     = document.getElementById('colorSelectorWrap');
+        const swatches = document.getElementById('colorSwatches');
+        const label    = document.getElementById('colorLabelText');
+        wrap.style.display = '';
+        label.textContent  = selectedVariant.cor;
+
+        swatches.innerHTML = produto.variants.map((v, i) =>
+          `<button class="color-swatch-btn${i === 0 ? ' is-selected' : ''}"
+            style="background:${v.hex || '#888'}"
+            title="${v.cor}"
+            data-idx="${i}"></button>`
+        ).join('');
+
+        swatches.querySelectorAll('.color-swatch-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const vi = parseInt(btn.dataset.idx);
+            selectedVariant = produto.variants[vi];
+            swatches.querySelectorAll('.color-swatch-btn').forEach(b => b.classList.remove('is-selected'));
+            btn.classList.add('is-selected');
+            label.textContent = selectedVariant.cor;
+            setImages(
+              selectedVariant.imagem      || produto.imagem,
+              selectedVariant.hoverImagem || produto.hoverImagem
+            );
+            renderSizeGrid(selectedVariant);
+          });
+        });
+      }
+
+      renderSizeGrid(hasVariants ? selectedVariant : null);
+
+      /* ── QUANTIDADE ─────────────────────────────────────────── */
+      const qtyVal   = document.getElementById('qtyVal');
+      const priceEl  = document.querySelector('.product-info__price');
+      const installEl = document.querySelector('.product-info__installments');
+
+      function updateQtyPrice() {
+        const total = produto.preco * qty;
+        if (priceEl)   priceEl.textContent  = fmt(total);
+        if (installEl) installEl.textContent = 'ou 3x de ' + fmt(total / 3) + ' sem juros';
+      }
+
+      document.getElementById('qtyDec').addEventListener('click', () => {
+        qty = Math.max(1, qty - 1); qtyVal.textContent = qty; updateQtyPrice();
+      });
+      document.getElementById('qtyInc').addEventListener('click', () => {
+        qty = Math.min(99, qty + 1); qtyVal.textContent = qty; updateQtyPrice();
+      });
+
+      /* ── PRODUTOS RELACIONADOS ──────────────────────────────── */
+      try {
+        const generoQ = produto.genero ? `?genero=${produto.genero}` : '';
+        const r = await fetch(`${_API}/products${generoQ}`);
+        if (r.ok) {
+          const lista = await r.json();
+          const relacionados = lista
+            .filter(p => String(p._id) !== String(produto._id) && p._id !== produto.id)
+            .slice(0, 4);
+          if (relacionados.length) {
+            const section = document.getElementById('relacionadosSection');
+            const grid    = document.getElementById('relacionadosGrid');
+            if (section && grid) {
+              section.style.display = 'block';
+              grid.innerHTML = relacionados.map(p => {
+                const thumb = (p.variants && p.variants[0]?.imagem) || p.imagem || '';
+                return `
+                  <a href="produto.html?id=${p._id}" style="display:block;border-radius:12px;overflow:hidden;border:1px solid rgba(0,0,0,0.07);background:#fff;transition:transform 0.3s,box-shadow 0.3s;text-decoration:none;color:inherit" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 48px rgba(0,0,0,0.11)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+                    <div style="aspect-ratio:3/4;overflow:hidden;background:#f5f2ed">
+                      <img src="${thumb}" alt="${p.nome}" style="width:100%;height:100%;object-fit:cover" onerror="this.src='https://placehold.co/300x400/f5f2ed/999?text=?'">
+                    </div>
+                    <div style="padding:14px 16px 18px">
+                      <h3 style="font-size:13px;font-weight:600;margin-bottom:6px">${p.nome}</h3>
+                      <div style="display:flex;align-items:baseline;gap:8px">
+                        ${p.precoAntigo ? `<s style="font-size:11px;color:#777">${fmt(p.precoAntigo)}</s>` : ''}
+                        <strong style="font-size:15px;font-weight:700">${fmt(p.preco)}</strong>
+                      </div>
+                    </div>
+                  </a>`;
+              }).join('');
+            }
+          }
+        }
+      } catch {}
+
+      /* ── HELPER: MONTAR ITEM DO CARRINHO ───────────────────── */
+      function buildCartItem(size) {
+        const imagem = hasVariants ? (selectedVariant.imagem || produto.imagem) : produto.imagem;
+        /* id = _id MongoDB (quando carregado da API) ou slug estático */
+        const item = { id: produto._id || produto.id, nome: produto.nome, preco: produto.preco, imagem, size, qty };
+        if (hasVariants && selectedVariant) {
+          item.cor    = selectedVariant.cor;
+          item.corHex = selectedVariant.hex;
+          /* tamanho explícito para validação de estoque no backend */
+          item.tamanho = size;
+        }
+        return item;
+      }
+
+      /* ── COMPRAR AGORA ──────────────────────────────────────── */
+      document.getElementById('buyNowBtn')?.addEventListener('click', () => {
+        const size = document.querySelector('.size-btn.is-selected')?.dataset.size;
+        if (!size) {
+          const lbl = document.querySelector('.product-info__label');
+          if (lbl) { lbl.style.color = '#c0392b'; setTimeout(() => lbl.style.color = '', 1800); }
+          return;
+        }
+        /* Valida estoque da variante+tamanho */
+        if (hasVariants && selectedVariant) {
+          const sz = (selectedVariant.tamanhos || []).find(t => t.tamanho === size);
+          if (sz && Number(sz.estoque) <= 0) return;
+        }
+        const CART_KEY = 'raffinato_cart';
+        const cart2    = (() => { try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch { return []; } })();
+        const newItem  = buildCartItem(size);
+        const existing = cart2.find(i => i.id === newItem.id && i.size === newItem.size && (i.cor || '') === (newItem.cor || ''));
+        if (existing) existing.qty += qty; else cart2.push(newItem);
+        localStorage.setItem(CART_KEY, JSON.stringify(cart2));
+        window.location.href = 'checkout.html';
+      });
+
+      /* ── ADICIONAR AO CARRINHO ──────────────────────────────── */
+      document.getElementById('addToCartBtn').addEventListener('click', () => {
+        const size = document.querySelector('.size-btn.is-selected')?.dataset.size;
+        if (!size) {
+          const sizeLabel = document.querySelector('.product-info__label');
+          if (sizeLabel) { sizeLabel.style.color = '#c0392b'; setTimeout(() => sizeLabel.style.color = '', 1800); }
+          return;
+        }
+        /* Valida estoque da variante+tamanho selecionado */
+        if (hasVariants && selectedVariant) {
+          const sz = (selectedVariant.tamanhos || []).find(t => t.tamanho === size);
+          if (sz && Number(sz.estoque) <= 0) return;
+        }
+        if (window.raffinato) window.raffinato.addCartItem(buildCartItem(size));
+      });
+    })();
+  </script>
+
+
+</body>
+</html>
