@@ -187,13 +187,16 @@
   function pcardHTML(p) {
     const off = p.precoAntigo ? Math.round((1 - p.preco / p.precoAntigo) * 100) : 0;
     const wished = getWishlist().includes(String(p.id));
+    const resolve = typeof resolveImageUrl === 'function' ? resolveImageUrl : u => u || '';
+    const img   = resolve(p.imagem);
+    const hover = p.hoverImagem ? resolve(p.hoverImagem) : null;
     return `
       <a class="pcard reveal" href="produto.html?id=${p.id}">
         <div class="pcard__img-wrap">
           ${p.promocao ? `<span class="pcard__badge pcard__badge--off">${off}% OFF</span>` : ''}
           ${p.lancamento && !p.promocao ? '<span class="pcard__badge pcard__badge--new">NOVO</span>' : ''}
-          <img class="pcard__img pcard__img--primary" src="${p.imagem}" alt="${p.nome}" loading="lazy">
-          ${p.hoverImagem ? `<img class="pcard__img pcard__img--hover" src="${p.hoverImagem}" alt="" loading="lazy" aria-hidden="true">` : ''}
+          <img class="pcard__img pcard__img--primary" src="${img}" alt="${p.nome}" loading="lazy">
+          ${hover ? `<img class="pcard__img pcard__img--hover" src="${hover}" alt="" loading="lazy" aria-hidden="true">` : ''}
           <button class="pcard__wish${wished ? ' is-wishlisted' : ''}" data-wish-id="${p.id}" aria-label="Lista de desejos">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="${wished ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>

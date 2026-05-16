@@ -702,7 +702,8 @@ function bindUploadBtn(btnId, inputId, previewId, onUrlChange) {
 
     tbody.innerHTML = items.map(p => {
       const effectiveVariants = (p.variants && p.variants.length) ? p.variants : migrateToVariants(p);
-      const thumb      = effectiveVariants[0]?.imagem || p.imagem || '';
+      const rawThumb   = effectiveVariants[0]?.imagem || p.imagem || '';
+      const thumb      = typeof resolveImageUrl === 'function' ? resolveImageUrl(rawThumb) : rawThumb;
       const totalSt    = variantsTotalStock(effectiveVariants);
       const colorCount = effectiveVariants.length;
       const skuCount   = variantsSKUCount(effectiveVariants);

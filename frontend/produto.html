@@ -795,6 +795,8 @@
         return;
       }
 
+      console.log('Produto carregado:', produto);
+
       /* ── PREENCHER INFORMAÇÕES BÁSICAS ─────────────────────── */
       document.title = produto.nome + ' — RAFFINATO';
       document.querySelector('.breadcrumb__current').textContent = produto.nome;
@@ -829,6 +831,10 @@
 
       /* ── IMAGEM ─────────────────────────────────────────────── */
       function setImages(mainUrl, hoverUrl) {
+        const resolve = typeof resolveImageUrl === 'function' ? resolveImageUrl : u => u || '';
+        mainUrl  = resolve(mainUrl);
+        hoverUrl = hoverUrl ? resolve(hoverUrl) : null;
+
         const mainImg = document.getElementById('mainImage');
         const thumbEls = document.querySelectorAll('.thumb');
         const urls = [mainUrl, hoverUrl].filter(Boolean);
@@ -853,6 +859,8 @@
       } else {
         setImages(produto.imagem, produto.hoverImagem);
       }
+
+      console.log('Imagem usada:', hasVariants ? selectedVariant?.imagem : produto.imagem);
 
       /* ── GALERIA: CLIQUE NOS THUMBS ────────────────────────── */
       const mainImg = document.getElementById('mainImage');
@@ -992,7 +1000,8 @@
             if (section && grid) {
               section.style.display = 'block';
               grid.innerHTML = relacionados.map(p => {
-                const thumb = (p.variants && p.variants[0]?.imagem) || p.imagem || '';
+                const rawThumb = (p.variants && p.variants[0]?.imagem) || p.imagem || '';
+              const thumb = typeof resolveImageUrl === 'function' ? resolveImageUrl(rawThumb) : rawThumb;
                 return `
                   <a href="produto.html?id=${p._id}" style="display:block;border-radius:12px;overflow:hidden;border:1px solid rgba(0,0,0,0.07);background:#fff;transition:transform 0.3s,box-shadow 0.3s;text-decoration:none;color:inherit" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 48px rgba(0,0,0,0.11)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
                     <div style="aspect-ratio:3/4;overflow:hidden;background:#f5f2ed">
