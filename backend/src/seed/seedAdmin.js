@@ -7,7 +7,7 @@ async function seed() {
   const uri  = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/raffinato';
   const name  = process.env.ADMIN_NAME     || 'Admin RAFFINATO';
   const email = process.env.ADMIN_EMAIL    || 'admin@raffinato.com';
-  const pass  = process.env.ADMIN_PASSWORD || 'admin123456';
+  const pass  = process.env.ADMIN_PASSWORD || 'Admin@123456';
 
   await mongoose.connect(uri);
   console.log('✅ MongoDB conectado');

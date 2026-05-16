@@ -9,6 +9,7 @@ const mongoose  = require('mongoose');
 
 const connectDB       = require('./config/database');
 const errorMiddleware = require('./middleware/error.middleware');
+const Admin           = require('./models/Admin');
 
 const authRoutes     = require('./routes/auth.routes');
 const productRoutes  = require('./routes/product.routes');
@@ -63,7 +64,20 @@ app.use('/api',      webhookRoutes);
 /* ── ERRO GLOBAL ── */
 app.use(errorMiddleware);
 
+/* ── SEED ADMIN ── */
+async function ensureAdmin() {
+  const email = (process.env.ADMIN_EMAIL || 'admin@raffinato.com').toLowerCase();
+  const exists = await Admin.findOne({ email });
+  if (exists) return;
+  const passwordHash = await Admin.hashPassword(process.env.ADMIN_PASSWORD || 'Admin@123456');
+  await Admin.create({ name: process.env.ADMIN_NAME || 'Admin RAFFINATO', email, passwordHash });
+  console.log(`✅ Admin padrão criado: ${email}`);
+}
+
 /* ── INICIAR ── */
 connectDB()
-  .then(() => app.listen(PORT, () => console.log(`🚀 RAFFINATO API rodando em http://localhost:${PORT}`)))
+  .then(async () => {
+    await ensureAdmin();
+    app.listen(PORT, () => console.log(`🚀 RAFFINATO API rodando em http://localhost:${PORT}`));
+  })
   .catch(err => { console.error('❌ Falha ao conectar MongoDB:', err.message); process.exit(1); });
