@@ -752,6 +752,7 @@
       const _API    = (window.RAFFINATO_CONFIG && window.RAFFINATO_CONFIG.API_URL) || 'http://localhost:5000/api';
       const params  = new URLSearchParams(window.location.search);
       const idParam = params.get('id');
+      const PLACEHOLDER = 'https://placehold.co/600x800/f5f2ed/999?text=Foto+em+breve';
 
       function showNotFound() {
         document.querySelector('main').innerHTML =
@@ -763,37 +764,56 @@
         document.title = 'Produto não encontrado — RAFFINATO';
       }
 
+      /* ── HELPER: RESOLVE URL DE IMAGEM ────────────────────── */
+      function resolve(url) {
+        return typeof resolveImageUrl === 'function' ? resolveImageUrl(url) : (url || '');
+      }
+
+      /* ── HELPER: IMAGENS DA VARIAÇÃO COM FALLBACK COMPLETO ── */
+      function getVariantImages(prod, variant) {
+        /* cadeia de fallback: variação → produto → outra variação → placeholder */
+        const anyVariantImg = (prod.variants || []).map(v => v.imagem).find(Boolean) || '';
+
+        const main = resolve(
+          (variant && variant.imagem) ||
+          prod.imagem                 ||
+          anyVariantImg               ||
+          ''
+        ) || PLACEHOLDER;
+
+        const hover = resolve(
+          (variant && variant.hoverImagem) ||
+          prod.hoverImagem                 ||
+          ''
+        ) || null;
+
+        return { main, hover };
+      }
+
       let produto = null;
 
       if (idParam) {
-        /* 1) Tenta por MongoDB ObjectId (24 hex) */
         if (/^[0-9a-f]{24}$/i.test(idParam)) {
           try {
             const r = await fetch(`${_API}/products/${idParam}`);
             if (r.ok) produto = await r.json();
           } catch {}
         }
-        /* 2) Tenta por slug via API */
         if (!produto) {
           try {
             const r = await fetch(`${_API}/products/slug/${idParam}`);
             if (r.ok) produto = await r.json();
           } catch {}
         }
-        /* 3) Fallback: catálogo estático (products.js) */
         if (!produto && typeof PRODUCTS !== 'undefined') {
           produto = PRODUCTS.find(p => p.id === idParam) || null;
         }
       }
 
-      /* Normaliza _id → id para compatibilidade com cart */
       const legacyStock = {};
       if (produto && produto._id) produto.id = produto._id;
 
-      if (!produto) {
-        showNotFound();
-        return;
-      }
+      if (!produto) { showNotFound(); return; }
 
       console.log('Produto carregado:', produto);
 
@@ -825,21 +845,24 @@
         'ou 3x de ' + fmt(produto.preco / 3) + ' sem juros';
 
       /* ── ESTADO DAS VARIAÇÕES ──────────────────────────────── */
-      const hasVariants   = produto.variants && produto.variants.length > 0;
-      let selectedVariant = hasVariants ? produto.variants[0] : null;
+      const hasVariants = produto.variants && produto.variants.length > 0;
+
+      /* Seleciona a primeira variação que tenha imagem; se nenhuma tiver, usa a primeira */
+      let selectedVariant = hasVariants
+        ? (produto.variants.find(v => v.imagem) || produto.variants[0])
+        : null;
+      let selectedVariantIdx = hasVariants ? produto.variants.indexOf(selectedVariant) : -1;
       let qty = 1;
+
+      console.log('Variações:', produto.variants);
 
       /* ── IMAGEM ─────────────────────────────────────────────── */
       function setImages(mainUrl, hoverUrl) {
-        const resolve = typeof resolveImageUrl === 'function' ? resolveImageUrl : u => u || '';
-        mainUrl  = resolve(mainUrl);
-        hoverUrl = hoverUrl ? resolve(hoverUrl) : null;
-
-        const mainImg = document.getElementById('mainImage');
+        const mainImg  = document.getElementById('mainImage');
         const thumbEls = document.querySelectorAll('.thumb');
-        const urls = [mainUrl, hoverUrl].filter(Boolean);
+        const urls     = [mainUrl, hoverUrl].filter(Boolean);
 
-        mainImg.src = mainUrl || '';
+        mainImg.src = mainUrl || PLACEHOLDER;
         mainImg.alt = produto.nome;
 
         thumbEls.forEach((thumb, i) => {
@@ -854,13 +877,13 @@
         });
       }
 
-      if (hasVariants) {
-        setImages(selectedVariant.imagem, selectedVariant.hoverImagem);
-      } else {
-        setImages(produto.imagem, produto.hoverImagem);
+      /* Renderiza imagens iniciais */
+      {
+        const imgs = getVariantImages(produto, selectedVariant);
+        console.log('Variação selecionada:', selectedVariant);
+        console.log('Imagens resolvidas:', imgs);
+        setImages(imgs.main, imgs.hover);
       }
-
-      console.log('Imagem usada:', hasVariants ? selectedVariant?.imagem : produto.imagem);
 
       /* ── GALERIA: CLIQUE NOS THUMBS ────────────────────────── */
       const mainImg = document.getElementById('mainImage');
@@ -874,7 +897,7 @@
         });
       });
 
-      /* ── STATUS DE ESTOQUE ─────────────────────────────────────── */
+      /* ── STATUS DE ESTOQUE ─────────────────────────────────── */
       function updateStockStatus() {
         const el     = document.getElementById('stockStatus');
         const addBtn = document.getElementById('addToCartBtn');
@@ -940,10 +963,10 @@
         const swatches = document.getElementById('colorSwatches');
         const label    = document.getElementById('colorLabelText');
         wrap.style.display = '';
-        label.textContent  = selectedVariant.cor;
+        label.textContent  = selectedVariant ? selectedVariant.cor : '';
 
         swatches.innerHTML = produto.variants.map((v, i) =>
-          `<button class="color-swatch-btn${i === 0 ? ' is-selected' : ''}"
+          `<button class="color-swatch-btn${i === selectedVariantIdx ? ' is-selected' : ''}"
             style="background:${v.hex || '#888'}"
             title="${v.cor}"
             data-idx="${i}"></button>`
@@ -952,14 +975,15 @@
         swatches.querySelectorAll('.color-swatch-btn').forEach(btn => {
           btn.addEventListener('click', () => {
             const vi = parseInt(btn.dataset.idx);
-            selectedVariant = produto.variants[vi];
+            selectedVariant    = produto.variants[vi];
+            selectedVariantIdx = vi;
             swatches.querySelectorAll('.color-swatch-btn').forEach(b => b.classList.remove('is-selected'));
             btn.classList.add('is-selected');
             label.textContent = selectedVariant.cor;
-            setImages(
-              selectedVariant.imagem      || produto.imagem,
-              selectedVariant.hoverImagem || produto.hoverImagem
-            );
+            const imgs = getVariantImages(produto, selectedVariant);
+            console.log('Variação selecionada:', selectedVariant);
+            console.log('Imagens resolvidas:', imgs);
+            setImages(imgs.main, imgs.hover);
             renderSizeGrid(selectedVariant);
           });
         });
@@ -968,8 +992,8 @@
       renderSizeGrid(hasVariants ? selectedVariant : null);
 
       /* ── QUANTIDADE ─────────────────────────────────────────── */
-      const qtyVal   = document.getElementById('qtyVal');
-      const priceEl  = document.querySelector('.product-info__price');
+      const qtyVal    = document.getElementById('qtyVal');
+      const priceEl   = document.querySelector('.product-info__price');
       const installEl = document.querySelector('.product-info__installments');
 
       function updateQtyPrice() {
@@ -1000,12 +1024,12 @@
             if (section && grid) {
               section.style.display = 'block';
               grid.innerHTML = relacionados.map(p => {
-                const rawThumb = (p.variants && p.variants[0]?.imagem) || p.imagem || '';
-              const thumb = typeof resolveImageUrl === 'function' ? resolveImageUrl(rawThumb) : rawThumb;
+                const rawThumb = (p.variants && p.variants.find(v => v.imagem)?.imagem) || p.imagem || '';
+                const thumb    = resolve(rawThumb) || PLACEHOLDER;
                 return `
                   <a href="produto.html?id=${p._id}" style="display:block;border-radius:12px;overflow:hidden;border:1px solid rgba(0,0,0,0.07);background:#fff;transition:transform 0.3s,box-shadow 0.3s;text-decoration:none;color:inherit" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 48px rgba(0,0,0,0.11)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
                     <div style="aspect-ratio:3/4;overflow:hidden;background:#f5f2ed">
-                      <img src="${thumb}" alt="${p.nome}" style="width:100%;height:100%;object-fit:cover" onerror="this.src='https://placehold.co/300x400/f5f2ed/999?text=?'">
+                      <img src="${thumb}" alt="${p.nome}" style="width:100%;height:100%;object-fit:cover" onerror="this.src='${PLACEHOLDER}'">
                     </div>
                     <div style="padding:14px 16px 18px">
                       <h3 style="font-size:13px;font-weight:600;margin-bottom:6px">${p.nome}</h3>
@@ -1023,13 +1047,11 @@
 
       /* ── HELPER: MONTAR ITEM DO CARRINHO ───────────────────── */
       function buildCartItem(size) {
-        const imagem = hasVariants ? (selectedVariant.imagem || produto.imagem) : produto.imagem;
-        /* id = _id MongoDB (quando carregado da API) ou slug estático */
+        const imagem = getVariantImages(produto, hasVariants ? selectedVariant : null).main;
         const item = { id: produto._id || produto.id, nome: produto.nome, preco: produto.preco, imagem, size, qty };
         if (hasVariants && selectedVariant) {
-          item.cor    = selectedVariant.cor;
-          item.corHex = selectedVariant.hex;
-          /* tamanho explícito para validação de estoque no backend */
+          item.cor     = selectedVariant.cor;
+          item.corHex  = selectedVariant.hex;
           item.tamanho = size;
         }
         return item;
@@ -1043,7 +1065,6 @@
           if (lbl) { lbl.style.color = '#c0392b'; setTimeout(() => lbl.style.color = '', 1800); }
           return;
         }
-        /* Valida estoque da variante+tamanho */
         if (hasVariants && selectedVariant) {
           const sz = (selectedVariant.tamanhos || []).find(t => t.tamanho === size);
           if (sz && Number(sz.estoque) <= 0) return;
@@ -1065,7 +1086,6 @@
           if (sizeLabel) { sizeLabel.style.color = '#c0392b'; setTimeout(() => sizeLabel.style.color = '', 1800); }
           return;
         }
-        /* Valida estoque da variante+tamanho selecionado */
         if (hasVariants && selectedVariant) {
           const sz = (selectedVariant.tamanhos || []).find(t => t.tamanho === size);
           if (sz && Number(sz.estoque) <= 0) return;
