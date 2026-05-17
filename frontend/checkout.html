@@ -447,18 +447,45 @@
 
     /* ── ViaCEP AUTO-FILL ── */
     async function autoFillCep(cleanCep) {
+      const set = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.value = val || '';
+      };
       try {
         const res  = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
         const addr = await res.json();
-        if (!addr.erro) {
-          const set = (id, val) => { const el = document.getElementById(id); if (el && !el.value) el.value = val || ''; };
-          set('fRua',    addr.logradouro);
-          set('fBairro', addr.bairro);
-          set('fCidade', addr.localidade);
-          const est = document.getElementById('fEstado');
-          if (est && !est.value) est.value = addr.uf || '';
+        console.log('[CEP] ViaCEP retornou:', addr);
+
+        if (addr.erro) {
+          /* CEP não encontrado — limpa campos de endereço */
+          set('fRua', ''); set('fBairro', ''); set('fCidade', '');
+          const cepEl = document.getElementById('fCep');
+          if (cepEl) {
+            cepEl.classList.add('is-error');
+            const errEl = cepEl.parentElement?.querySelector('.field__err');
+            if (errEl) { errEl.textContent = 'CEP não encontrado.'; errEl.style.display = 'block'; }
+          }
+          return;
         }
-      } catch {}
+
+        /* Preenche sempre (sobrescreve valores anteriores) */
+        set('fRua',    addr.logradouro);
+        set('fBairro', addr.bairro);
+        set('fCidade', addr.localidade);
+        const est = document.getElementById('fEstado');
+        if (est) est.value = addr.uf || '';
+
+        /* Remove estado de erro do CEP se havia */
+        const cepEl = document.getElementById('fCep');
+        if (cepEl) cepEl.classList.remove('is-error');
+
+        /* Foca no campo Número para o cliente continuar o preenchimento */
+        setTimeout(() => document.getElementById('fNum')?.focus(), 50);
+
+      } catch (err) {
+        console.warn('[CEP] Falha ao consultar ViaCEP:', err.message);
+        /* Não bloqueia — o cliente preenche manualmente */
+      }
     }
 
     /* ── CEP MASK + TRIGGER ── */
@@ -468,11 +495,12 @@
         let v = fCep.value.replace(/\D/g,'').slice(0,8);
         if (v.length > 5) v = v.slice(0,5) + '-' + v.slice(5);
         fCep.value = v;
+        fCep.classList.remove('is-error');
         const clean = v.replace(/\D/g,'');
         if (clean.length === 8) {
           await autoFillCep(clean);
           quoteFrete(clean);
-        } else if (clean.length < 8) {
+        } else {
           document.getElementById('freteContainer').innerHTML = '<p class="frete-hint">Digite o CEP completo para calcular o frete.</p>';
         }
       });
@@ -624,6 +652,7 @@
 
       try {
         /* 1. Criar pedido */
+        console.log('[Checkout] Enviando pedido para API:', _API + '/orders');
         const orderRes = await fetch(`${_API}/orders`, {
           method:  'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -632,13 +661,16 @@
 
         if (!orderRes.ok) {
           const errData = await orderRes.json().catch(() => ({}));
+          console.error('[Checkout] Erro ao criar pedido:', orderRes.status, errData);
           clearLoading();
           btn.disabled = false;
           alert(errData.message || 'Erro ao criar pedido. Tente novamente.');
           return;
         }
 
-        const { orderNumber, id: orderId } = await orderRes.json();
+        const orderData = await orderRes.json();
+        const { orderNumber, id: orderId } = orderData;
+        console.log('[Checkout] Pedido criado:', orderNumber, 'ID:', orderId);
 
         /* Salvar no localStorage como fallback para obrigado.html */
         localStorage.setItem('raffinato_last_order', JSON.stringify({
@@ -656,6 +688,7 @@
 
         /* 2. Criar preference no Mercado Pago */
         setLoading('Abrindo pagamento...', 'Redirecionando para o Mercado Pago');
+        console.log('[Checkout] Criando preference MP para orderId:', orderId);
 
         const mpRes = await fetch(`${_API}/payments/mercadopago/create-preference`, {
           method:  'POST',
@@ -664,28 +697,44 @@
         });
 
         if (!mpRes.ok) {
+          const mpErr = await mpRes.json().catch(() => ({}));
+          console.error('[Checkout] Erro na preference MP:', mpRes.status, mpErr);
           clearLoading();
           btn.disabled = false;
           const payErr = document.getElementById('ckPayErr');
-          if (payErr) { payErr.style.display = 'block'; payErr.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+          if (payErr) {
+            payErr.textContent = `⚠ ${mpErr.message || 'Não foi possível iniciar o pagamento. Tente novamente.'}`;
+            payErr.style.display = 'block';
+            payErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
           return;
         }
 
         const mpData = await mpRes.json();
+        console.log('[Checkout] Preference MP criada:', mpData);
 
-        /* 3. Redirecionar para MP — só remove o carrinho agora */
+        /* 3. Redirecionar para MP */
         const checkoutUrl = isSandbox
           ? (mpData.sandbox_init_point || mpData.init_point)
           : mpData.init_point;
 
+        if (!checkoutUrl) {
+          console.error('[Checkout] URL de pagamento não retornada pelo MP:', mpData);
+          clearLoading();
+          btn.disabled = false;
+          alert('Não foi possível abrir o pagamento. Contate o suporte.');
+          return;
+        }
+
+        console.log('[Checkout] Redirecionando para:', checkoutUrl);
         localStorage.removeItem(CART_KEY);
         window.location.href = checkoutUrl;
 
       } catch (err) {
+        console.error('[Checkout] Erro inesperado:', err);
         clearLoading();
         btn.disabled = false;
         alert('Erro de conexão. Verifique sua internet e tente novamente.');
-        console.error(err);
       }
     });
 
