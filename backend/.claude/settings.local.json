@@ -34,7 +34,8 @@
       "Bash(git -C \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\" add frontend/checkout.html)",
       "Bash(git -C \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\" add backend/src/controllers/payment.controller.js backend/src/services/mercadoPago.service.js frontend/checkout.html)",
       "Bash(git -C \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\" add backend/src/services/melhorEnvio.service.js backend/src/controllers/shipping.controller.js frontend/produto.html frontend/checkout.html)",
-      "Bash(git -C \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\" add backend/src/controllers/order.controller.js backend/src/services/email.service.js)"
+      "Bash(git -C \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\" add backend/src/controllers/order.controller.js backend/src/services/email.service.js)",
+      "Bash(git -C \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\" add backend/src/services/email.service.js)"
     ],
     "additionalDirectories": [
       "c:\\Users\\Vinicius\\Desktop\\SITE\\frontend\\assets"
