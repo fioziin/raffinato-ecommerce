@@ -450,6 +450,18 @@
     if (path) path.setAttribute('fill', isNowWished ? 'currentColor' : 'none');
   });
 
+  /* ── HERO SLIDESHOW ── */
+  (function initHeroSlideshow() {
+    const slides = document.querySelectorAll('.hero-slide');
+    if (slides.length < 2) return;
+    let current = 0;
+    setInterval(() => {
+      slides[current].classList.remove('active');
+      current = (current + 1) % slides.length;
+      slides[current].classList.add('active');
+    }, 10000);
+  })();
+
   /* ── INIT ── */
   updateCartBadge();
   observeReveal(document);

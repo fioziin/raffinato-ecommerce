@@ -321,22 +321,35 @@ img { display: block; max-width: 100%; }
   position: relative; height: 100vh; min-height: 620px;
   display: flex; align-items: center; overflow: hidden;
 }
-.hero__bg {
+.hero-slides { position: absolute; inset: 0; }
+.hero-slide {
   position: absolute; inset: 0;
-  background-image: url('./assets/banner-home-raffinato.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  opacity: 0;
+  transform: scale(1.05);
+  transition: opacity 3s ease-in-out, transform 13s ease-out;
+  will-change: opacity, transform;
+  z-index: 1;
 }
-.hero__overlay {
+.hero-slide.active {
+  opacity: 1;
+  transform: scale(1);
+  z-index: 2;
+}
+.hero-slide::after {
+  content: '';
   position: absolute; inset: 0;
   background: linear-gradient(112deg,
     rgba(0,0,0,0.78) 0%,
     rgba(0,0,0,0.42) 42%,
     rgba(0,0,0,0.06) 100%);
 }
+.slide-1 { background-image: url('./assets/banner-home-raffinato.png'); }
+.slide-2 { background-image: url('./assets/banner-home-raffinato-2.png'); }
 .hero__content {
-  position: relative; z-index: 2;
+  position: relative; z-index: 10;
   width: 100%;
   padding-left: clamp(40px, 6vw, 96px);
   padding-right: clamp(40px, 52%, 52%);
@@ -742,11 +755,11 @@ img { display: block; max-width: 100%; }
   .trust-bar__inner { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .trust-item__icon { width: 34px; height: 34px; }
   .hero { height: auto; min-height: 680px; max-height: 100svh; }
-  .hero__bg {
+  .hero-slide {
     background-size: cover;
     background-position: 60% center;
   }
-  .hero__overlay {
+  .hero-slide::after {
     background: linear-gradient(
       90deg,
       rgba(0,0,0,0.82) 0%,
@@ -778,7 +791,7 @@ img { display: block; max-width: 100%; }
 }
 @media (max-width: 479px) {
   .hero { min-height: 640px; }
-  .hero__bg { background-position: 58% center; }
+  .hero-slide { background-position: 58% center; }
   .hero__content { max-width: 280px; padding-left: 20px; padding-right: 20px; }
   .hero__title { font-size: clamp(38px, 12vw, 52px); }
   .hero__sub { font-size: 9.5px; letter-spacing: 0.20em; margin-bottom: 26px; }
