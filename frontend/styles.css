@@ -321,37 +321,46 @@ img { display: block; max-width: 100%; }
   position: relative; height: 100vh; min-height: 560px;
   display: flex; align-items: center; overflow: hidden;
 }
-.hero__bg { position: absolute; inset: 0; }
-.hero__img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+.hero__bg {
+  position: absolute; inset: 0;
+  background-image: url('./assets/banner-home-raffinato.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
 .hero__overlay {
   position: absolute; inset: 0;
-  background: linear-gradient(105deg, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.25) 60%, rgba(0,0,0,0.1) 100%);
+  background: linear-gradient(105deg, rgba(0,0,0,0.60) 0%, rgba(0,0,0,0.22) 55%, rgba(0,0,0,0.08) 100%);
 }
 .hero__content {
   position: relative; z-index: 2;
   max-width: var(--max-w); margin: 0 auto; padding: 0 var(--px);
   width: 100%;
 }
-.hero__eyebrow {
-  font-size: 11px; font-weight: 700; letter-spacing: 0.28em;
-  text-transform: uppercase; color: var(--gold); margin-bottom: 20px; display: block;
-  animation: heroFadeUp 0.8s ease 0.2s both;
-}
 .hero__title {
   font-family: var(--serif);
   font-size: clamp(48px, 6.5vw, 96px); font-weight: 700;
   letter-spacing: 0.04em; color: #fff; line-height: 1.04;
-  text-transform: uppercase; margin-bottom: 20px;
-  animation: heroFadeUp 0.9s ease 0.4s both;
+  text-transform: uppercase; margin-bottom: 0;
+  animation: heroFadeUp 0.9s ease 0.2s both;
+}
+.hero__title::after {
+  content: '';
+  display: block;
+  width: 56px; height: 2px;
+  background: var(--gold);
+  margin-top: 20px; margin-bottom: 20px;
+  animation: heroFadeUp 0.8s ease 0.5s both;
 }
 .hero__sub {
-  font-size: 15px; font-weight: 400; color: rgba(255,255,255,0.75);
-  letter-spacing: 0.03em; margin-bottom: 40px; max-width: 420px;
+  font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.82);
+  letter-spacing: 0.22em; text-transform: uppercase;
+  margin-bottom: 40px; max-width: 480px;
   animation: heroFadeUp 0.8s ease 0.62s both;
 }
 .hero__actions {
   display: flex; gap: 14px; flex-wrap: wrap;
-  animation: heroFadeUp 0.8s ease 0.8s both;
+  animation: heroFadeUp 0.8s ease 0.82s both;
 }
 .hero__btn {
   display: inline-flex; align-items: center; justify-content: center;
@@ -703,7 +712,9 @@ img { display: block; max-width: 100%; }
   .trust-bar__inner { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .trust-item__icon { width: 34px; height: 34px; }
   .hero { height: 90vh; }
+  .hero__bg { background-position: 65% center; }
   .hero__title { font-size: clamp(38px, 9vw, 56px); }
+  .hero__title::after { width: 44px; margin-top: 16px; margin-bottom: 16px; }
   .pcard-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
   .prod-section { padding: 60px 0; }
   .prod-section__head { margin-bottom: 32px; }
@@ -716,7 +727,8 @@ img { display: block; max-width: 100%; }
   .back-to-top { bottom: 20px; right: 20px; width: 40px; height: 40px; }
 }
 @media (max-width: 479px) {
-  .hero__sub { display: none; }
+  .hero__bg { background-position: 70% center; }
+  .hero__sub { font-size: 10px; letter-spacing: 0.18em; margin-bottom: 32px; }
   .hero__actions { gap: 10px; }
   .hero__btn { height: 46px; padding: 0 24px; font-size: 11px; }
   .newsletter__form { flex-direction: column; border-radius: 16px; gap: 0; }
