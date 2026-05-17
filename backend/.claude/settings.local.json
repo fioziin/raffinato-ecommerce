@@ -22,7 +22,8 @@
       "Bash(git -C \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\" restore --staged \"backend/.claude/settings.local.json\")",
       "Bash(git -C 'c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE' commit -m ' *)",
       "Bash(git -C \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\" push origin main)",
-      "Bash(git -C \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\" add frontend/styles.css)"
+      "Bash(git -C \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\" add frontend/styles.css)",
+      "Bash(git -C \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\" add frontend/index.html frontend/styles.css frontend/main.js)"
     ],
     "additionalDirectories": [
       "c:\\Users\\Vinicius\\Desktop\\SITE\\frontend\\assets"
