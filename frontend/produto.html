@@ -471,6 +471,14 @@
       .product-page { padding: 28px 24px 80px; gap: 48px; }
     }
 
+    @media (max-width: 768px) {
+      .header__inner { height: 64px; padding: 0 16px; }
+      .header__logo { width: 150px; height: 42px; }
+      .header__actions { margin-left: auto; gap: 4px; }
+      .header__actions a.action-btn { display: none; }
+      .header__actions button.action-btn:not(.action-btn--cart) { display: none; }
+    }
+
     @media (max-width: 860px) {
       .product-page {
         grid-template-columns: 1fr;

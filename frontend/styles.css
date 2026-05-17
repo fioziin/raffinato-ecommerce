@@ -677,6 +677,26 @@ img { display: block; max-width: 100%; }
   .header__actions { right: 24px; }
   .footer__inner { grid-template-columns: 1fr 1fr; gap: 36px; }
 }
+@media (max-width: 768px) {
+  :root { --header-h: 64px; }
+  .topbar__message { font-size: 10px; letter-spacing: 0.06em; }
+  .header__inner { padding: 0 16px; }
+  .header__logo { width: 150px; height: 42px; }
+  .header__actions {
+    position: static;
+    transform: none;
+    margin-left: auto;
+    gap: 4px;
+  }
+  .header__actions #searchBtn,
+  .header__actions a.action-btn { display: none; }
+  .hamburger {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
 @media (max-width: 767px) {
   :root { --px: 16px; }
   .trust-bar { padding: 16px var(--px); }
@@ -696,7 +716,6 @@ img { display: block; max-width: 100%; }
   .back-to-top { bottom: 20px; right: 20px; width: 40px; height: 40px; }
 }
 @media (max-width: 479px) {
-  .header__logo { width: 190px; height: 50px; }
   .hero__sub { display: none; }
   .hero__actions { gap: 10px; }
   .hero__btn { height: 46px; padding: 0 24px; font-size: 11px; }
