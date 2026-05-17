@@ -6,462 +6,610 @@
   <title>RAFFINATO — Minha Conta</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
-      --black: #0d0d0d;
-      --white: #ffffff;
-      --gold:  #c8a96e;
-      --muted: #888;
-      --border: rgba(0,0,0,0.11);
-      --serif: 'Cormorant Garamond', Georgia, serif;
-      --sans:  'Montserrat', sans-serif;
-      --t: 0.22s ease;
-    }
-    html, body {
-      height: 100%;
-      font-family: var(--sans);
-      -webkit-font-smoothing: antialiased;
+      --gold:      #D6B06F;
+      --gold-2:    #C99D55;
+      --gold-glow: rgba(201,157,85,0.35);
+      --gold-dim:  rgba(201,168,106,0.28);
+      --glass:     rgba(7,7,8,0.84);
+      --serif:     'Cormorant Garamond', Georgia, serif;
+      --sans:      'Inter', system-ui, sans-serif;
+      --t:         0.22s ease;
     }
 
-    /* ── BACKGROUND ── */
-    .ca-bg {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-    }
-    .ca-bg-img {
+    html, body {
       width: 100%; height: 100%;
-      object-fit: cover;
-      object-position: center 30%;
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+      background: #0a0a0a;
     }
-    .ca-bg-overlay {
-      position: absolute;
-      inset: 0;
+
+    /* ── BACKGROUND ───────────────────────────────────── */
+    .ca-bg {
+      position: fixed; inset: 0; z-index: 0;
+      background-image: url('./assets/banner-home-raffinato-2.png');
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+    .ca-bg::after {
+      content: '';
+      position: absolute; inset: 0;
       background: linear-gradient(
-        135deg,
-        rgba(5,5,5,0.72) 0%,
-        rgba(10,10,10,0.55) 50%,
-        rgba(5,5,5,0.68) 100%
+        90deg,
+        rgba(0,0,0,0.76) 0%,
+        rgba(0,0,0,0.48) 38%,
+        rgba(0,0,0,0.64) 100%
       );
     }
 
-    /* ── PAGE ── */
+    /* ── PAGE ─────────────────────────────────────────── */
     .ca-page {
-      position: relative;
-      z-index: 1;
-      min-height: 100vh;
+      position: relative; z-index: 1;
+      width: 100vw; height: 100vh;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 40px 16px;
+      overflow: hidden;
     }
 
-    /* ── BACK LINK ── */
+    /* ── BACK LINK ────────────────────────────────────── */
     .ca-back {
-      position: fixed;
-      top: 24px; left: 28px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: #fff;
-      text-decoration: none;
-      z-index: 10;
-      background: rgba(255,255,255,0.13);
-      border: 1px solid rgba(255,255,255,0.28);
-      backdrop-filter: blur(8px);
+      position: fixed; top: 28px; left: 28px;
+      display: flex; align-items: center; gap: 8px;
+      font-size: 9px; font-weight: 600;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(255,255,255,0.68);
+      text-decoration: none; z-index: 20;
       padding: 10px 18px;
-      transition: background var(--t), border-color var(--t);
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(0,0,0,0.28);
+      backdrop-filter: blur(8px);
+      transition: color var(--t), border-color var(--t), background var(--t);
     }
     .ca-back:hover {
-      background: rgba(255,255,255,0.22);
-      border-color: rgba(255,255,255,0.55);
+      color: var(--gold);
+      border-color: var(--gold-dim);
+      background: rgba(0,0,0,0.45);
     }
 
-    /* ── CARD ── */
-    .ca-card {
-      width: 100%;
-      max-width: 420px;
-      background: #fff;
-      padding: 48px 44px 44px;
-      box-shadow: 0 32px 80px rgba(0,0,0,0.35), 0 4px 16px rgba(0,0,0,0.12);
+    /* ── LEFT BRANDING ────────────────────────────────── */
+    .ca-brand {
+      flex: 1;
+      padding-left: 90px;
+      animation: fadeInLeft 0.9s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    .ca-brand-name {
+      font-family: var(--serif);
+      font-size: clamp(40px, 4.8vw, 72px);
+      font-weight: 500;
+      letter-spacing: 0.34em;
+      color: #fff;
+      text-shadow: 0 4px 30px rgba(0,0,0,0.45);
+      line-height: 1;
+      margin-bottom: 22px;
+    }
+    .ca-brand-line {
+      width: 120px; height: 1px;
+      background: linear-gradient(90deg, transparent, #C9A86A, transparent);
+      margin-bottom: 22px;
+    }
+    .ca-brand-tagline {
+      font-family: var(--sans);
+      font-size: clamp(10px, 1.1vw, 15px);
+      font-weight: 400;
+      letter-spacing: 0.30em;
+      text-transform: uppercase;
+      color: rgba(201,168,106,0.92);
     }
 
-    .ca-card-logo {
+    /* ── CARD WRAP ────────────────────────────────────── */
+    .ca-card-wrap {
       display: flex;
+      align-items: center;
       justify-content: center;
-      margin-bottom: 28px;
+      padding: 32px 40px 32px 24px;
+      min-width: 0;
+      overflow-y: auto;
+      max-height: 100vh;
+    }
+
+    /* ── CARD ─────────────────────────────────────────── */
+    .ca-card {
+      width: 520px;
+      max-width: calc(100vw - 48px);
+      padding: 52px 56px;
+      border-radius: 28px;
+      background: var(--glass);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid rgba(201,168,106,0.16);
+      box-shadow:
+        0 40px 120px rgba(0,0,0,0.62),
+        0 0 80px rgba(201,168,106,0.06),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+      animation: fadeInUp 0.7s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
+    /* ── LOGO ─────────────────────────────────────────── */
+    .ca-card-logo {
+      display: flex; justify-content: center;
+      margin-bottom: 24px;
     }
     .ca-card-logo img {
-      height: 38px;
+      width: 200px; max-width: 100%;
       object-fit: contain;
+      filter: brightness(0) invert(1);
+      opacity: 0.92;
     }
 
+    /* ── TITLE ────────────────────────────────────────── */
     .ca-card-title {
-      font-family: var(--sans);
-      font-size: 17px;
-      font-weight: 300;
-      color: var(--black);
+      font-family: var(--serif);
+      font-size: 50px;
+      font-weight: 600;
+      line-height: 1.05;
       text-align: center;
+      color: var(--gold);
       margin-bottom: 8px;
-      letter-spacing: 0.48em;
-      text-transform: uppercase;
-      text-indent: 0.48em;
     }
     .ca-card-sub {
-      font-size: 10px;
-      color: #bbb;
+      font-size: 15px;
+      color: rgba(255,255,255,0.68);
       text-align: center;
-      margin-bottom: 32px;
-      letter-spacing: 0.14em;
-      font-weight: 400;
-      text-transform: uppercase;
+      margin-bottom: 36px;
+      line-height: 1.5;
     }
 
-    /* TABS */
+    /* ── TABS ─────────────────────────────────────────── */
     .ca-tabs {
       display: flex;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 30px;
+      border-bottom: 1px solid rgba(255,255,255,0.09);
+      margin-bottom: 32px;
     }
     .ca-tab {
-      flex: 1;
-      text-align: center;
-      padding-bottom: 12px;
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--muted);
+      flex: 1; text-align: center;
+      padding-bottom: 14px;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.24em; text-transform: uppercase;
+      color: rgba(255,255,255,0.40);
       cursor: pointer;
-      border-bottom: 1.5px solid transparent;
+      border-bottom: 2px solid transparent;
       margin-bottom: -1px;
       transition: color var(--t), border-color var(--t);
     }
-    .ca-tab.active {
-      color: var(--black);
-      border-bottom-color: var(--black);
-    }
+    .ca-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+    .ca-tab:hover:not(.active) { color: rgba(255,255,255,0.65); }
 
-    /* FORM */
+    /* ── FORMS ────────────────────────────────────────── */
     .ca-form { display: none; }
     .ca-form.active { display: block; }
 
-    .cf-field {
-      margin-bottom: 22px;
-    }
+    .cf-field { margin-bottom: 20px; }
+
     .cf-label {
       display: block;
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: #aaa;
-      margin-bottom: 8px;
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.26em; text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 10px;
       transition: color var(--t);
     }
-    .cf-field:focus-within .cf-label { color: var(--black); }
-    .cf-input {
-      width: 100%;
-      height: 42px;
-      border: none;
-      border-bottom: 1px solid rgba(0,0,0,0.15);
-      background: transparent;
-      font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 400;
-      color: var(--black);
-      outline: none;
-      transition: border-color var(--t);
-    }
-    .cf-input::placeholder { color: rgba(0,0,0,0.22); }
-    .cf-input:focus { border-bottom-color: var(--black); }
+    .cf-field:focus-within .cf-label { color: var(--gold); }
 
-    .cf-btn {
-      width: 100%;
-      height: 52px;
-      background: var(--black);
+    /* Input base */
+    .cf-input {
+      width: 100%; height: 58px;
+      border-radius: 14px;
+      padding: 0 18px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
       color: #fff;
       font-family: var(--sans);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      border: none;
+      font-size: 15px;
+      outline: none;
+      transition: border-color var(--t), box-shadow var(--t), background var(--t);
+    }
+    .cf-input::placeholder { color: rgba(255,255,255,0.28); }
+    .cf-input:focus {
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(214,176,111,0.60);
+      box-shadow: 0 0 0 4px rgba(214,176,111,0.08);
+    }
+
+    /* Input with left icon */
+    .cf-input-left { position: relative; }
+    .cf-input-left .cf-input { padding-left: 48px; }
+    .cf-left-icon {
+      position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+      color: rgba(255,255,255,0.28); pointer-events: none;
+      display: flex; align-items: center;
+    }
+
+    /* Input with right icon */
+    .cf-input-wrap { position: relative; }
+    .cf-input-wrap .cf-input { padding-right: 52px; }
+    .cf-eye {
+      position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+      color: rgba(255,255,255,0.30); cursor: pointer;
+      display: flex; align-items: center;
+      background: none; border: none; padding: 4px;
+      transition: color var(--t);
+    }
+    .cf-eye:hover { color: rgba(255,255,255,0.65); }
+
+    /* Extras row */
+    .cf-extras {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: -4px; margin-bottom: 24px;
+    }
+    .cf-check {
+      display: flex; align-items: center; gap: 9px;
+      font-size: 13px; color: rgba(255,255,255,0.65);
+      cursor: pointer; user-select: none;
+    }
+    .cf-check input[type=checkbox] {
+      width: 17px; height: 17px;
+      accent-color: var(--gold); cursor: pointer;
+      flex-shrink: 0;
+    }
+    .cf-forgot {
+      font-size: 13px; font-weight: 500;
+      color: var(--gold); text-decoration: none;
+      transition: color var(--t);
+    }
+    .cf-forgot:hover { color: #E4C789; }
+
+    /* Primary button */
+    .cf-btn {
+      width: 100%; height: 60px;
+      border-radius: 14px; border: none;
+      background: linear-gradient(135deg, #E2C27A 0%, #C99D55 100%);
+      color: #0B0B0C;
+      font-family: var(--sans);
+      font-size: 13px; font-weight: 700;
+      letter-spacing: 0.24em; text-transform: uppercase;
       cursor: pointer;
-      margin-top: 10px;
-      transition: background var(--t), transform var(--t), box-shadow var(--t);
+      box-shadow: 0 16px 45px var(--gold-glow);
+      transition: transform var(--t), box-shadow var(--t);
     }
     .cf-btn:hover {
-      background: #1a1a1a;
       transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.22);
+      box-shadow: 0 22px 55px rgba(201,157,85,0.48);
     }
-    .cf-btn:active { transform: none; box-shadow: none; }
+    .cf-btn:active { transform: none; }
+    .cf-btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
 
-    .cf-switch {
-      text-align: center;
-      font-size: 11.5px;
-      color: var(--muted);
-      margin-top: 22px;
-      letter-spacing: 0.02em;
+    /* Divider */
+    .cf-divider {
+      display: flex; align-items: center; gap: 16px;
+      margin: 20px 0;
+      font-size: 11px; font-weight: 500;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(255,255,255,0.28);
     }
-    .cf-switch a {
-      color: var(--black);
-      font-weight: 700;
-      text-decoration: underline;
-      text-underline-offset: 3px;
-      transition: opacity var(--t);
+    .cf-divider::before, .cf-divider::after {
+      content: ''; flex: 1; height: 1px;
+      background: rgba(255,255,255,0.09);
     }
-    .cf-switch a:hover { opacity: 0.5; }
 
+    /* Secondary button */
+    .cf-btn-sec {
+      width: 100%; height: 60px;
+      border-radius: 14px;
+      background: transparent;
+      border: 1px solid rgba(201,168,106,0.30);
+      color: #fff;
+      font-family: var(--sans);
+      font-size: 13px; font-weight: 700;
+      letter-spacing: 0.24em; text-transform: uppercase;
+      cursor: pointer;
+      transition: background var(--t), border-color var(--t);
+    }
+    .cf-btn-sec:hover {
+      background: rgba(201,168,106,0.08);
+      border-color: rgba(201,168,106,0.55);
+    }
+
+    /* Messages */
     .cf-error {
-      font-size: 11px;
-      color: #b71c1c;
-      background: #fff5f5;
-      border-left: 2.5px solid #e53935;
-      padding: 9px 13px;
-      margin-bottom: 18px;
-      letter-spacing: 0.02em;
+      font-size: 12px; line-height: 1.5;
+      color: #ff8a80;
+      background: rgba(183,28,28,0.16);
+      border: 1px solid rgba(239,83,80,0.28);
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-bottom: 20px;
       display: none;
     }
     .cf-success {
-      font-size: 11px;
-      color: #1b5e20;
-      background: #f1fff4;
-      border-left: 2.5px solid #43a047;
-      padding: 9px 13px;
-      margin-bottom: 18px;
-      letter-spacing: 0.02em;
+      font-size: 12px; line-height: 1.5;
+      color: #a5d6a7;
+      background: rgba(27,94,32,0.16);
+      border: 1px solid rgba(67,160,71,0.28);
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-bottom: 20px;
       display: none;
     }
 
-    /* ── DASHBOARD ── */
+    /* ── DASHBOARD ────────────────────────────────────── */
     .ca-dash { display: none; }
 
     .cd-avatar-wrap {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding-bottom: 28px;
-      margin-bottom: 28px;
-      border-bottom: 1px solid var(--border);
+      display: flex; flex-direction: column; align-items: center;
+      padding-bottom: 28px; margin-bottom: 28px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
     }
     .cd-avatar {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: var(--black);
-      color: #fff;
+      width: 66px; height: 66px; border-radius: 50%;
+      background: linear-gradient(135deg, #E2C27A 0%, #C99D55 100%);
+      color: #0B0B0C;
       font-family: var(--serif);
-      font-size: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 12px;
+      font-size: 28px; font-weight: 600;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 14px;
+      box-shadow: 0 8px 28px var(--gold-glow);
     }
     .cd-name {
       font-family: var(--serif);
-      font-size: 28px;
-      font-weight: 500;
-      font-style: italic;
-      color: var(--black);
-      margin-bottom: 2px;
+      font-size: 28px; font-weight: 500; font-style: italic;
+      color: var(--gold); margin-bottom: 4px;
     }
-    .cd-email-txt { font-size: 11px; color: var(--muted); }
+    .cd-email-txt { font-size: 12px; color: rgba(255,255,255,0.40); }
 
     .cd-menu {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
+      display: flex; flex-direction: column;
       margin-bottom: 24px;
-      border: 1px solid var(--border);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px; overflow: hidden;
     }
     .cd-menu-item {
-      display: flex;
-      align-items: center;
-      gap: 13px;
-      padding: 15px 16px;
-      border-bottom: 1px solid var(--border);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      color: var(--black);
-      cursor: pointer;
-      text-decoration: none;
-      transition: background var(--t);
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.10em; text-transform: uppercase;
+      color: rgba(255,255,255,0.75);
+      cursor: pointer; text-decoration: none;
+      transition: background var(--t), color var(--t);
     }
     .cd-menu-item:last-child { border-bottom: none; }
-    .cd-menu-item:hover { background: #f7f6f4; }
-    .cd-menu-item svg { color: var(--muted); }
+    .cd-menu-item:hover { background: rgba(255,255,255,0.04); color: var(--gold); }
+    .cd-menu-item svg { color: rgba(255,255,255,0.32); flex-shrink: 0; }
     .cd-menu-item span { flex: 1; }
-    .cd-menu-item .arr { color: rgba(0,0,0,0.2); }
+    .cd-menu-item .arr { color: rgba(255,255,255,0.16); }
 
     .cd-logout {
-      width: 100%;
-      height: 42px;
+      width: 100%; height: 48px;
       background: transparent;
-      border: 1px solid var(--border);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 12px;
       font-family: var(--sans);
-      font-size: 8.5px;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--muted);
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(255,255,255,0.38);
       cursor: pointer;
       transition: border-color var(--t), color var(--t);
     }
-    .cd-logout:hover { border-color: #c62828; color: #c62828; }
+    .cd-logout:hover { border-color: rgba(239,83,80,0.50); color: #ff8a80; }
 
-    /* ── MODALS ── */
+    /* ── MODALS ───────────────────────────────────────── */
     .ca-overlay {
-      display: none;
-      position: fixed; inset: 0;
-      background: rgba(5,5,5,0.65);
-      backdrop-filter: blur(6px);
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.80);
+      backdrop-filter: blur(14px);
       z-index: 9999;
-      align-items: center;
-      justify-content: center;
+      align-items: center; justify-content: center;
       padding: 20px;
     }
     .ca-overlay.open { display: flex; }
     .ca-modal {
-      background: #fff;
-      width: 100%; max-width: 380px;
-      padding: 40px 36px 36px;
+      background: rgba(10,10,12,0.97);
+      border: 1px solid rgba(201,168,106,0.18);
+      border-radius: 24px;
+      width: 100%; max-width: 400px;
+      padding: 44px 40px 40px;
       position: relative;
-      box-shadow: 0 24px 60px rgba(0,0,0,0.3);
+      box-shadow: 0 40px 100px rgba(0,0,0,0.75);
+      animation: fadeInUp 0.4s ease both;
     }
     .ca-modal-x {
-      position: absolute; top: 14px; right: 18px;
+      position: absolute; top: 18px; right: 20px;
       background: none; border: none;
-      font-size: 20px; color: var(--muted); cursor: pointer;
-      line-height: 1;
+      font-size: 24px; color: rgba(255,255,255,0.36);
+      cursor: pointer; line-height: 1;
+      transition: color var(--t);
     }
+    .ca-modal-x:hover { color: var(--gold); }
     .ca-modal-title {
       font-family: var(--serif);
-      font-size: 22px; font-weight: 400;
-      color: var(--black);
-      margin-bottom: 26px;
+      font-size: 30px; font-weight: 500;
+      color: var(--gold); margin-bottom: 28px;
     }
 
-    /* responsive */
+    /* ── ANIMATIONS ───────────────────────────────────── */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInLeft {
+      from { opacity: 0; transform: translateX(-36px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ── RESPONSIVE ───────────────────────────────────── */
+    @media (max-width: 991px) {
+      .ca-brand { display: none; }
+      .ca-page { justify-content: center; overflow-y: auto; height: auto; min-height: 100vh; }
+      .ca-card-wrap { padding: 20px; width: 100%; }
+      .ca-card { width: 100%; max-width: 480px; padding: 40px 28px; }
+      .ca-card-title { font-size: 40px; }
+      .ca-card-logo img { width: 180px; }
+    }
     @media (max-width: 480px) {
-      .ca-card { padding: 36px 24px 32px; }
+      .ca-card { padding: 36px 22px; border-radius: 20px; }
+      .ca-card-title { font-size: 34px; }
+      .ca-card-sub { font-size: 13px; }
+      .ca-back { top: 16px; left: 16px; padding: 8px 14px; }
     }
   </style>
 </head>
 <body>
 
 <!-- BACKGROUND -->
-<div class="ca-bg">
-  <img
-    class="ca-bg-img"
-    src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1920&q=85"
-    alt=""
-  >
-  <div class="ca-bg-overlay"></div>
-</div>
+<div class="ca-bg"></div>
 
 <!-- BACK -->
 <a href="index.html" class="ca-back">
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
   Voltar à loja
 </a>
 
 <!-- PAGE -->
 <div class="ca-page">
-  <div class="ca-card">
 
-    <!-- logo -->
-    <div class="ca-card-logo">
-      <img src="assets/logo-raffinato-header.png" alt="RAFFINATO">
-    </div>
+  <!-- LEFT BRANDING -->
+  <div class="ca-brand">
+    <div class="ca-brand-name">RAFFINATO</div>
+    <div class="ca-brand-line"></div>
+    <div class="ca-brand-tagline">Essência em cada detalhe</div>
+  </div>
 
-    <!-- AUTH -->
-    <div id="authSection">
-      <h1 class="ca-card-title" id="formTitle">Bem-vindo</h1>
-      <p class="ca-card-sub" id="formSub">Entre na sua conta para continuar</p>
+  <!-- CARD -->
+  <div class="ca-card-wrap">
+    <div class="ca-card">
 
-      <div class="ca-tabs">
-        <div class="ca-tab active" id="tabLogin" onclick="switchTab('login')">Entrar</div>
-        <div class="ca-tab" id="tabCad" onclick="switchTab('cad')">Criar conta</div>
+      <!-- Logo -->
+      <div class="ca-card-logo">
+        <img src="assets/logo-raffinato-header.png" alt="RAFFINATO">
       </div>
 
-      <!-- LOGIN -->
-      <form class="ca-form active" id="formLogin" novalidate>
-        <div class="cf-error" id="loginErr"></div>
-        <div class="cf-field">
-          <label class="cf-label">E-mail</label>
-          <input type="email" class="cf-input" id="loginEmail" placeholder="seu@email.com" autocomplete="email">
-        </div>
-        <div class="cf-field">
-          <label class="cf-label">Senha</label>
-          <input type="password" class="cf-input" id="loginSenha" placeholder="••••••••" autocomplete="current-password">
-        </div>
-        <button type="submit" class="cf-btn">Entrar</button>
-        <p class="cf-switch">Ainda não tem conta? <a href="#" onclick="switchTab('cad');return false;">Criar agora</a></p>
-      </form>
+      <!-- AUTH SECTION -->
+      <div id="authSection">
+        <h1 class="ca-card-title" id="formTitle">Bem-vindo de volta</h1>
+        <p class="ca-card-sub" id="formSub">Entre na sua conta para continuar</p>
 
-      <!-- CADASTRO -->
-      <form class="ca-form" id="formCad" novalidate>
-        <div class="cf-error" id="cadErr"></div>
-        <div class="cf-field">
-          <label class="cf-label">Nome completo</label>
-          <input type="text" class="cf-input" id="cadNome" placeholder="Seu nome" autocomplete="name">
+        <div class="ca-tabs">
+          <div class="ca-tab active" id="tabLogin" onclick="switchTab('login')">Entrar</div>
+          <div class="ca-tab" id="tabCad" onclick="switchTab('cad')">Criar conta</div>
         </div>
-        <div class="cf-field">
-          <label class="cf-label">E-mail</label>
-          <input type="email" class="cf-input" id="cadEmail" placeholder="seu@email.com" autocomplete="email">
-        </div>
-        <div class="cf-field">
-          <label class="cf-label">Senha</label>
-          <input type="password" class="cf-input" id="cadSenha" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
-        </div>
-        <div class="cf-field">
-          <label class="cf-label">Confirmar senha</label>
-          <input type="password" class="cf-input" id="cadConf" placeholder="Repita a senha" autocomplete="new-password">
-        </div>
-        <button type="submit" class="cf-btn">Criar conta</button>
-        <p class="cf-switch">Já tem conta? <a href="#" onclick="switchTab('login');return false;">Entrar</a></p>
-      </form>
-    </div>
 
-    <!-- DASHBOARD -->
-    <div class="ca-dash" id="dashSection">
-      <div class="cd-avatar-wrap">
-        <div class="cd-avatar" id="dashAvatar">?</div>
-        <div class="cd-name" id="dashName">—</div>
-        <div class="cd-email-txt" id="dashEmail">—</div>
+        <!-- LOGIN -->
+        <form class="ca-form active" id="formLogin" novalidate>
+          <div class="cf-error" id="loginErr"></div>
+
+          <div class="cf-field">
+            <label class="cf-label">E-mail</label>
+            <div class="cf-input-left">
+              <div class="cf-left-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <input type="email" class="cf-input" id="loginEmail" placeholder="seu@email.com" autocomplete="email">
+            </div>
+          </div>
+
+          <div class="cf-field">
+            <label class="cf-label">Senha</label>
+            <div class="cf-input-wrap">
+              <input type="password" class="cf-input" id="loginSenha" placeholder="Digite sua senha" autocomplete="current-password">
+              <button type="button" class="cf-eye" onclick="togglePwd('loginSenha',this)" aria-label="Mostrar senha">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="cf-extras">
+            <label class="cf-check">
+              <input type="checkbox" id="lembrarMe">
+              Lembrar-me
+            </label>
+            <a href="#" class="cf-forgot" onclick="return false">Esqueceu sua senha?</a>
+          </div>
+
+          <button type="submit" class="cf-btn">Entrar</button>
+          <div class="cf-divider">ou</div>
+          <button type="button" class="cf-btn-sec" onclick="switchTab('cad')">Criar conta</button>
+        </form>
+
+        <!-- CADASTRO -->
+        <form class="ca-form" id="formCad" novalidate>
+          <div class="cf-error" id="cadErr"></div>
+
+          <div class="cf-field">
+            <label class="cf-label">Nome completo</label>
+            <input type="text" class="cf-input" id="cadNome" placeholder="Seu nome completo" autocomplete="name">
+          </div>
+
+          <div class="cf-field">
+            <label class="cf-label">E-mail</label>
+            <div class="cf-input-left">
+              <div class="cf-left-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <input type="email" class="cf-input" id="cadEmail" placeholder="seu@email.com" autocomplete="email">
+            </div>
+          </div>
+
+          <div class="cf-field">
+            <label class="cf-label">Senha</label>
+            <div class="cf-input-wrap">
+              <input type="password" class="cf-input" id="cadSenha" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+              <button type="button" class="cf-eye" onclick="togglePwd('cadSenha',this)" aria-label="Mostrar senha">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="cf-field">
+            <label class="cf-label">Confirmar senha</label>
+            <div class="cf-input-wrap">
+              <input type="password" class="cf-input" id="cadConf" placeholder="Repita a senha" autocomplete="new-password">
+              <button type="button" class="cf-eye" onclick="togglePwd('cadConf',this)" aria-label="Mostrar senha">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="cf-btn">Criar conta</button>
+          <div class="cf-divider">ou</div>
+          <button type="button" class="cf-btn-sec" onclick="switchTab('login')">Já tenho conta</button>
+        </form>
       </div>
 
-      <div class="cd-menu">
-        <a href="rastrear.html" class="cd-menu-item">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          <span>Rastrear pedido</span>
-          <svg class="arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-        </a>
-        <div class="cd-menu-item" onclick="openModal('editModal')">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          <span>Editar dados</span>
-          <svg class="arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      <!-- DASHBOARD -->
+      <div class="ca-dash" id="dashSection">
+        <div class="cd-avatar-wrap">
+          <div class="cd-avatar" id="dashAvatar">?</div>
+          <div class="cd-name" id="dashName">—</div>
+          <div class="cd-email-txt" id="dashEmail">—</div>
         </div>
-        <div class="cd-menu-item" onclick="openModal('senhaModal')">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          <span>Alterar senha</span>
-          <svg class="arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+
+        <div class="cd-menu">
+          <a href="rastrear.html" class="cd-menu-item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>Rastrear pedido</span>
+            <svg class="arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </a>
+          <div class="cd-menu-item" onclick="openModal('editModal')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Editar dados</span>
+            <svg class="arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+          <div class="cd-menu-item" onclick="openModal('senhaModal')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span>Alterar senha</span>
+            <svg class="arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
         </div>
+
+        <button class="cd-logout" onclick="logout()">Sair da conta</button>
       </div>
 
-      <button class="cd-logout" onclick="logout()">Sair da conta</button>
     </div>
-
   </div>
 </div>
 
@@ -508,12 +656,24 @@
 </div>
 
 <script>
-  const getUsers   = () => JSON.parse(localStorage.getItem('raffinato_users') || '[]');
+  /* ── TOGGLE SENHA ── */
+  function togglePwd(id, btn) {
+    const inp  = document.getElementById(id);
+    const show = inp.type === 'password';
+    inp.type = show ? 'text' : 'password';
+    btn.innerHTML = show
+      ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`
+      : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+  }
+
+  /* ── STORAGE ── */
+  const getUsers   = () => JSON.parse(localStorage.getItem('raffinato_users')   || '[]');
   const saveUsers  = u  => localStorage.setItem('raffinato_users', JSON.stringify(u));
   const getSession = () => JSON.parse(localStorage.getItem('raffinato_session') || 'null');
   const setSession = u  => localStorage.setItem('raffinato_session', JSON.stringify(u));
   const clearSess  = () => localStorage.removeItem('raffinato_session');
 
+  /* ── MENSAGENS ── */
   function msg(id, txt, err) {
     const el = document.getElementById(id);
     el.textContent = txt; el.style.display = 'block';
@@ -521,26 +681,26 @@
   }
   function hideMsg(id) { document.getElementById(id).style.display = 'none'; }
 
-  /* tabs */
+  /* ── ABAS ── */
   function switchTab(tab) {
     const isLogin = tab === 'login';
     document.getElementById('tabLogin').classList.toggle('active', isLogin);
     document.getElementById('tabCad').classList.toggle('active', !isLogin);
     document.getElementById('formLogin').classList.toggle('active', isLogin);
     document.getElementById('formCad').classList.toggle('active', !isLogin);
-    document.getElementById('formTitle').textContent = isLogin ? 'Bem-vindo' : 'Criar conta';
-    document.getElementById('formSub').textContent = isLogin
+    document.getElementById('formTitle').textContent = isLogin ? 'Bem-vindo de volta' : 'Criar conta';
+    document.getElementById('formSub').textContent   = isLogin
       ? 'Entre na sua conta para continuar'
       : 'Preencha os dados para se cadastrar';
   }
 
-  /* render */
+  /* ── RENDER ── */
   function renderDash(u) {
     document.getElementById('authSection').style.display = 'none';
     document.getElementById('dashSection').style.display = 'block';
-    document.getElementById('dashAvatar').textContent = u.nome.charAt(0).toUpperCase();
-    document.getElementById('dashName').textContent   = u.nome;
-    document.getElementById('dashEmail').textContent  = u.email;
+    document.getElementById('dashAvatar').textContent   = u.nome.charAt(0).toUpperCase();
+    document.getElementById('dashName').textContent     = u.nome;
+    document.getElementById('dashEmail').textContent    = u.email;
   }
   function renderAuth() {
     document.getElementById('authSection').style.display = 'block';
@@ -550,7 +710,7 @@
   const _s = getSession();
   if (_s) renderDash(_s); else renderAuth();
 
-  /* login */
+  /* ── LOGIN ── */
   document.getElementById('formLogin').addEventListener('submit', e => {
     e.preventDefault();
     const email = document.getElementById('loginEmail').value.trim().toLowerCase();
@@ -562,7 +722,7 @@
     setSession(user); renderDash(user);
   });
 
-  /* cadastro */
+  /* ── CADASTRO ── */
   document.getElementById('formCad').addEventListener('submit', e => {
     e.preventDefault();
     const nome  = document.getElementById('cadNome').value.trim();
@@ -579,10 +739,10 @@
     hideMsg('cadErr'); renderDash(user);
   });
 
-  /* logout */
+  /* ── LOGOUT ── */
   function logout() { clearSess(); renderAuth(); switchTab('login'); }
 
-  /* modals */
+  /* ── MODAIS ── */
   function openModal(id) {
     if (id === 'editModal') {
       const u = getSession();
@@ -600,7 +760,7 @@
     o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
   });
 
-  /* save edit */
+  /* ── SALVAR DADOS ── */
   function saveEdit() {
     const nome  = document.getElementById('editNome').value.trim();
     const email = document.getElementById('editEmail').value.trim().toLowerCase();
@@ -614,7 +774,7 @@
     setTimeout(() => closeModal('editModal'), 1500);
   }
 
-  /* save senha */
+  /* ── ALTERAR SENHA ── */
   function saveSenha() {
     const atual = document.getElementById('senhaAtual').value;
     const nova  = document.getElementById('senhaNova').value;
