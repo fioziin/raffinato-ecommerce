@@ -31,7 +31,8 @@
       "Bash(npm install *)",
       "Bash(git -C 'c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE' add backend/src/services/email.service.js backend/src/controllers/coupon.controller.js backend/src/routes/coupon.routes.js backend/src/controllers/order.controller.js backend/src/routes/webhook.routes.js backend/src/server.js backend/.env.example backend/package.json backend/package-lock.json frontend/obrigado.html frontend/checkout.html)",
       "Bash(git -C \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\" status)",
-      "Bash(git -C \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\" add frontend/checkout.html)"
+      "Bash(git -C \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\" add frontend/checkout.html)",
+      "Bash(git -C \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\" add backend/src/controllers/payment.controller.js backend/src/services/mercadoPago.service.js frontend/checkout.html)"
     ],
     "additionalDirectories": [
       "c:\\Users\\Vinicius\\Desktop\\SITE\\frontend\\assets"
