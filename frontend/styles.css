@@ -145,20 +145,20 @@ img { display: block; max-width: 100%; }
 }
 .so-logo { display: flex; align-items: center; flex-shrink: 0; }
 .so-logo__img { height: 30px; }
-.so-nav { display: flex; align-items: center; gap: 28px; }
+.so-nav { display: flex; align-items: center; gap: 32px; }
 .so-nav__link {
-  font-family: var(--serif, 'Cormorant Garamond', Georgia, serif);
-  font-size: 14px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
-  color: #111; transition: color 0.2s;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 16px; font-weight: 600; letter-spacing: 0.20em; text-transform: uppercase;
+  color: #000; transition: color 0.2s;
 }
 .so-nav__link:hover { color: #D6B06F; }
 .so-close {
   width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
-  background: #F2F2F2; color: #444;
+  background: #F2F2F2; color: #000;
   display: flex; align-items: center; justify-content: center;
   transition: background 0.2s, color 0.2s;
 }
-.so-close:hover { background: #E8E8E8; color: #111; }
+.so-close:hover { background: #E8E8E8; }
 
 /* SO Body */
 .so-body { max-width: 1200px; margin: 0 auto; padding: 52px 48px 80px; }
@@ -170,8 +170,8 @@ img { display: block; max-width: 100%; }
   text-transform: uppercase; color: #D6B06F; margin-bottom: 10px;
 }
 .so-title {
-  font-family: var(--serif, 'Cormorant Garamond', Georgia, serif);
-  font-size: clamp(36px, 5vw, 62px); font-weight: 600; color: #111; line-height: 1.1; margin: 0;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(40px, 5vw, 68px); font-weight: 600; color: #000; line-height: 1.1; margin: 0;
 }
 .so-gold { color: #D6B06F; font-style: italic; }
 
@@ -179,22 +179,23 @@ img { display: block; max-width: 100%; }
 .so-field {
   display: flex; align-items: center; gap: 14px;
   height: 72px; padding: 0 20px 0 24px;
-  border: 1.5px solid #E8E8E8; border-radius: 16px; background: #FAFAFA;
+  border: 1.5px solid #E0E0E0; border-radius: 16px; background: #FAFAFA;
   margin-bottom: 24px; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
 }
 .so-field:focus-within {
   border-color: #D6B06F; background: #fff;
   box-shadow: 0 0 0 4px rgba(214,176,111,0.08);
 }
-.so-field__icon { color: #C8C8C8; flex-shrink: 0; }
+.so-field__icon { color: #AAAAAA; flex-shrink: 0; }
 .so-input {
   flex: 1; border: none; background: transparent; outline: none;
-  font-family: inherit; font-size: 17px; font-weight: 400; color: #111;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 22px; font-weight: 500; color: #000;
 }
-.so-input::placeholder { color: #C8C8C8; }
+.so-input::placeholder { color: #BBBBBB; font-weight: 400; }
 .so-field__arrow {
   width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
-  background: #111; color: #fff;
+  background: #000; color: #fff;
   display: flex; align-items: center; justify-content: center;
   transition: background 0.2s;
 }
@@ -208,10 +209,12 @@ img { display: block; max-width: 100%; }
 .so-chip {
   display: inline-flex; align-items: center; gap: 7px;
   height: 38px; padding: 0 20px; border-radius: 999px;
-  border: 1px solid #E8E8E8; background: #fff;
-  font-size: 12px; font-weight: 500; color: #555; transition: all 0.2s;
+  border: 1px solid #E0E0E0; background: #fff;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 14px; font-weight: 600; letter-spacing: 0.06em;
+  color: #222; transition: all 0.2s;
 }
-.so-chip svg { flex-shrink: 0; color: #AAA; transition: color 0.2s; }
+.so-chip svg { flex-shrink: 0; color: #888; transition: color 0.2s; }
 .so-chip:hover { border-color: #D6B06F; color: #D6B06F; background: rgba(214,176,111,0.04); }
 .so-chip:hover svg { color: #D6B06F; }
 
@@ -219,12 +222,13 @@ img { display: block; max-width: 100%; }
 .so-section { margin-bottom: 48px; }
 .so-section__head {
   display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid #F0F0F0;
+  margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid #EEEEEE;
 }
 .so-section__label {
   display: flex; align-items: center; gap: 8px;
-  font-size: 10px; font-weight: 700; letter-spacing: 0.22em;
-  text-transform: uppercase; color: #999;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 13px; font-weight: 700; letter-spacing: 0.24em;
+  text-transform: uppercase; color: #333;
 }
 .so-see-all {
   display: flex; align-items: center; gap: 5px;
