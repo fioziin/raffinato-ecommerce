@@ -622,12 +622,20 @@ function bindUploadBtn(btnId, inputId, previewId, onUrlChange) {
 
   /* ── MIGRAÇÃO: produto sem variants → formato variants ── */
   function migrateToVariants(p) {
-    if (p.variants && p.variants.length > 0) return JSON.parse(JSON.stringify(p.variants));
+    if (p.variants && p.variants.length > 0) {
+      return JSON.parse(JSON.stringify(p.variants)).map(v => {
+        if (!v.imagens || !v.imagens.length) {
+          v.imagens = [v.imagem, v.hoverImagem].filter(Boolean);
+        }
+        return v;
+      });
+    }
     const st    = (p.estoque && typeof p.estoque.toObject === 'function') ? Object.fromEntries(p.estoque) : (p.estoque || {});
     const sizes = (p.tamanhos && p.tamanhos.length) ? p.tamanhos : ['P', 'M', 'G', 'GG'];
     return [{
       cor: 'Padrão', hex: '#8a7356',
       imagem: p.imagem || '', hoverImagem: p.hoverImagem || '',
+      imagens: [p.imagem, p.hoverImagem].filter(Boolean),
       tamanhos: sizes.map(sz => ({ tamanho: sz, estoque: Number(st[sz]) || 0 }))
     }];
   }
@@ -883,37 +891,27 @@ function bindUploadBtn(btnId, inputId, previewId, onUrlChange) {
               </div>
             </div>
 
-            <div class="variant-images">
-              <div class="form-group" style="margin-bottom:0">
-                <label class="form-label">Imagem Principal</label>
-                <div class="img-input-row">
-                  <img src="${variant.imagem || ''}" class="img-preview ${variant.imagem ? 'visible' : ''}" id="vimg-${ci}" alt="preview">
-                  <div class="img-input-with-upload">
-                    <input type="text" class="form-input" style="font-size:12px" placeholder="https://..."
-                      value="${variant.imagem || ''}" id="vinput-${ci}"
-                      oninput="_pe.v[${ci}].imagem=this.value; var el=document.getElementById('vimg-${ci}'); if(this.value){el.src=this.value;el.classList.add('visible');}else{el.classList.remove('visible');}">
-                    <button type="button" class="upload-btn" onclick="_pe.triggerUpload(${ci},'imagem','vimg-${ci}','vinput-${ci}',this)">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                      Enviar
-                    </button>
+            <div class="variant-images" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">
+              ${[0,1,2,3,4].map(ii => {
+                const url = (variant.imagens && variant.imagens[ii]) || (ii===0 ? variant.imagem : ii===1 ? variant.hoverImagem : '') || '';
+                const lbl = ii===0 ? 'Imagem 1 — Principal' : ii===1 ? 'Imagem 2 — Hover' : `Imagem ${ii+1}`;
+                return `<div class="form-group" style="margin-bottom:0">
+                  <label class="form-label">${lbl}</label>
+                  <div class="img-input-row">
+                    <img src="${url}" class="img-preview ${url?'visible':''}" id="vimg-${ci}-${ii}" alt="preview">
+                    <div class="img-input-with-upload">
+                      <input type="text" class="form-input" style="font-size:12px" placeholder="https://..."
+                        value="${url}" id="vimginput-${ci}-${ii}"
+                        oninput="_pe.setImagem(${ci},${ii},this.value)">
+                      <button type="button" class="upload-btn"
+                        onclick="_pe.triggerUploadIdx(${ci},${ii},'vimg-${ci}-${ii}','vimginput-${ci}-${ii}',this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        Enviar
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="form-group" style="margin-bottom:0">
-                <label class="form-label">Imagem Hover</label>
-                <div class="img-input-row">
-                  <img src="${variant.hoverImagem || ''}" class="img-preview ${variant.hoverImagem ? 'visible' : ''}" id="vhov-${ci}" alt="preview">
-                  <div class="img-input-with-upload">
-                    <input type="text" class="form-input" style="font-size:12px" placeholder="https://..."
-                      value="${variant.hoverImagem || ''}" id="vhovinput-${ci}"
-                      oninput="_pe.v[${ci}].hoverImagem=this.value; var el=document.getElementById('vhov-${ci}'); if(this.value){el.src=this.value;el.classList.add('visible');}else{el.classList.remove('visible');}">
-                    <button type="button" class="upload-btn" onclick="_pe.triggerUpload(${ci},'hoverImagem','vhov-${ci}','vhovinput-${ci}',this)">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                      Enviar
-                    </button>
-                  </div>
-                </div>
-              </div>
+                </div>`;
+              }).join('')}
             </div>
 
             <div class="variant-sizes-header">
@@ -965,7 +963,16 @@ function bindUploadBtn(btnId, inputId, previewId, onUrlChange) {
 
     removeSize(ci, si) { this.v[ci].tamanhos.splice(si, 1); this.render(); },
 
-    triggerUpload(ci, field, previewId, inputId, btnEl) {
+    setImagem(ci, imgIdx, url) {
+      if (!this.v[ci].imagens) this.v[ci].imagens = [];
+      this.v[ci].imagens[imgIdx] = url;
+      this.v[ci].imagem      = this.v[ci].imagens[0] || '';
+      this.v[ci].hoverImagem = this.v[ci].imagens[1] || '';
+      const imgEl = document.getElementById(`vimg-${ci}-${imgIdx}`);
+      if (imgEl) { imgEl.src = url; imgEl.classList.toggle('visible', !!url); }
+    },
+
+    triggerUploadIdx(ci, imgIdx, previewId, inputId, btnEl) {
       const fileInput = document.createElement('input');
       fileInput.type = 'file';
       fileInput.accept = 'image/*';
@@ -973,11 +980,9 @@ function bindUploadBtn(btnId, inputId, previewId, onUrlChange) {
         const file = fileInput.files[0];
         if (!file) return;
         await uploadImage(file, (url) => {
-          this.v[ci][field] = url;
+          this.setImagem(ci, imgIdx, url);
           const inp = document.getElementById(inputId);
           if (inp) inp.value = url;
-          const img = document.getElementById(previewId);
-          if (img) { img.src = url; img.classList.add('visible'); }
         }, btnEl);
       });
       fileInput.click();
@@ -989,7 +994,7 @@ function bindUploadBtn(btnId, inputId, previewId, onUrlChange) {
   document.getElementById('btnNewProduct').addEventListener('click', () => _pe.open(null));
 
   document.getElementById('addColorBtn').addEventListener('click', () => {
-    _pe.v.push({ cor: '', hex: '#000000', imagem: '', hoverImagem: '', tamanhos: [] });
+    _pe.v.push({ cor: '', hex: '#000000', imagem: '', hoverImagem: '', imagens: [], tamanhos: [] });
     _pe.render();
     _pe.switchTab('variants');
   });
@@ -1020,6 +1025,13 @@ function bindUploadBtn(btnId, inputId, previewId, onUrlChange) {
         .replace(/\s+/g, '-')
         .replace(/[^a-z0-9-]/g, '');
     }
+
+    /* Sync imagens[] → imagem/hoverImagem before build */
+    _pe.v.forEach(v => {
+      if (!v.imagens) v.imagens = [];
+      v.imagem      = v.imagens[0] || v.imagem      || '';
+      v.hoverImagem = v.imagens[1] || v.hoverImagem || '';
+    });
 
     const pImagem    = document.getElementById('pImagem').value.trim();
     const pHover     = document.getElementById('pHoverImagem').value.trim();

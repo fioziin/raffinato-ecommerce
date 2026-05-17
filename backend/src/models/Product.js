@@ -10,6 +10,7 @@ const variantSchema = new mongoose.Schema({
   hex:         { type: String, default: '#000000' },
   imagem:      { type: String, default: '' },
   hoverImagem: { type: String, default: '' },
+  imagens:     { type: [String], default: [] },
   tamanhos:    { type: [variantSizeSchema], default: [] }
 }, { _id: false });
 

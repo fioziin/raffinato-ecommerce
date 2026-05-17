@@ -159,7 +159,13 @@
           i.id === btn.dataset.id && i.size === btn.dataset.size && (i.cor || '') === btn.dataset.cor
         );
         if (item) {
-          item.qty = Math.max(1, item.qty + (btn.dataset.action === 'inc' ? 1 : -1));
+          if (btn.dataset.action === 'inc') {
+            const cap = item.estoqueMax != null ? item.estoqueMax : 99;
+            if (item.qty >= cap) return;
+            item.qty = Math.min(cap, item.qty + 1);
+          } else {
+            item.qty = Math.max(1, item.qty - 1);
+          }
           saveCart(cart);
           renderCart();
         }
@@ -171,13 +177,19 @@
   window.raffinato = {
     openCart,
     closeCart,
+    renderCart,
     addCartItem(item) {
       const cart = getCart();
       const existing = cart.find(i =>
         i.id === item.id && i.size === item.size && (i.cor || '') === (item.cor || '')
       );
-      if (existing) existing.qty += item.qty;
-      else cart.push(item);
+      if (existing) {
+        const cap = item.estoqueMax != null ? item.estoqueMax : (existing.estoqueMax != null ? existing.estoqueMax : 99);
+        existing.qty = Math.min(cap, existing.qty + item.qty);
+        if (item.estoqueMax != null) existing.estoqueMax = item.estoqueMax;
+      } else {
+        cart.push(item);
+      }
       saveCart(cart);
       openCart();
     }
