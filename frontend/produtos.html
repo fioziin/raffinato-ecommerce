@@ -49,16 +49,33 @@
     .cat-toolbar {
       max-width: var(--max-w);
       margin: 0 auto;
-      padding: 24px var(--px) 20px;
+      padding: 20px var(--px) 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      gap: 12px;
       flex-wrap: wrap;
       border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+    @media (max-width: 640px) {
+      .cat-toolbar { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .cat-filters { width: 100%; }
+      .cat-sort { align-self: flex-end; }
+      .cat-count { font-size: 12px; }
     }
     .cat-count { font-size: 13px; color: var(--muted); }
-    .cat-filters { display: flex; gap: 10px; flex-wrap: wrap; }
+    .cat-filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: 2px;
+    }
+    .cat-filters::-webkit-scrollbar { display: none; }
+    .cat-filter-btn { white-space: nowrap; flex-shrink: 0; }
     .cat-filter-btn {
       padding: 7px 16px;
       border: 1px solid var(--border);
