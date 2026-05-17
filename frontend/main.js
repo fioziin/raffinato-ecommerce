@@ -188,8 +188,10 @@
     const off = p.precoAntigo ? Math.round((1 - p.preco / p.precoAntigo) * 100) : 0;
     const wished = getWishlist().includes(String(p.id));
     const resolve = typeof resolveImageUrl === 'function' ? resolveImageUrl : u => u || '';
-    const img   = resolve(p.imagem);
-    const hover = p.hoverImagem ? resolve(p.hoverImagem) : null;
+    const variantImg   = p.variants && p.variants.find(v => v.imagem)?.imagem;
+    const variantHover = p.variants && p.variants.find(v => v.hoverImagem)?.hoverImagem;
+    const img   = resolve(p.imagem   || variantImg   || '');
+    const hover = (p.hoverImagem || variantHover) ? resolve(p.hoverImagem || variantHover) : null;
     return `
       <a class="pcard reveal" href="produto.html?id=${p.id}">
         <div class="pcard__img-wrap">

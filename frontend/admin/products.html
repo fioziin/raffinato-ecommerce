@@ -1050,6 +1050,8 @@ function bindUploadBtn(btnId, inputId, previewId, onUrlChange) {
     btn.disabled = true;
     btn.textContent = 'Salvando...';
 
+    console.log('Payload produto enviado:', JSON.stringify(productData, null, 2));
+
     try {
       if (pid) {
         await Admin.apiPut(`/admin/products/${pid}`, productData);
