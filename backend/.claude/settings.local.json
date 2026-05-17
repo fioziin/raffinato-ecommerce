@@ -8,7 +8,11 @@
       "PowerShell(New-Item -ItemType File -Force \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\\\\backend\\\\uploads\\\\products\\\\.gitkeep\")",
       "Bash(node -e \"require\\('multer-storage-cloudinary'\\); console.log\\('ok'\\)\")",
       "Bash(node -e \"require\\('cloudinary'\\); console.log\\('cloudinary ok'\\)\")",
-      "Bash(findstr cloudinary *)"
+      "Bash(findstr cloudinary *)",
+      "Bash(mkdir -p \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\\\\frontend\\\\assets\")"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\Vinicius\\Desktop\\SITE\\frontend\\assets"
     ]
   }
 }
