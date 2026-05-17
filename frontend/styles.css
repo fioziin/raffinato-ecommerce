@@ -171,9 +171,10 @@ img { display: block; max-width: 100%; }
 }
 .so-title {
   font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: clamp(40px, 5vw, 68px); font-weight: 600; color: #000; line-height: 1.1; margin: 0;
+  font-size: clamp(38px, 4.2vw, 58px); font-weight: 300; color: #111; line-height: 1.1; margin: 0;
+  letter-spacing: 0.01em;
 }
-.so-gold { color: #D6B06F; font-style: italic; }
+.so-gold { color: #C8A96E; font-style: italic; font-weight: 400; }
 
 /* Search field */
 .so-field {
