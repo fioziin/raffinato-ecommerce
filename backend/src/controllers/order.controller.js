@@ -35,8 +35,18 @@ exports.create = async (req, res, next) => {
 
     res.status(201).json({ orderNumber: order.orderNumber, id: order._id, status: order.status });
 
-    // E-mail não bloqueia a resposta
-    emailService.sendOrderConfirmation(order).catch(() => {});
+    /* E-mail não bloqueia a resposta */
+    setImmediate(async () => {
+      try {
+        console.log('[Email] Iniciando envio de confirmação do pedido...');
+        console.log('[Email] Pedido:', String(order._id));
+        console.log('[Email] Cliente:', order.customer?.email);
+        await emailService.sendOrderConfirmation(order);
+        console.log('[Email] Confirmação enviada com sucesso.');
+      } catch (err) {
+        console.error('[Email] Falha ao enviar confirmação:', err.message);
+      }
+    });
   } catch (err) { next(err); }
 };
 

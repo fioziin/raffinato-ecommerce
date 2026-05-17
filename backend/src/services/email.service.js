@@ -193,13 +193,23 @@ function tplPaymentApproved(order) {
 
 /* ── Exports ──────────────────────────────────────────────────── */
 async function send(to, subject, html) {
-  if (!process.env.RESEND_API_KEY || !Resend) return;
-  try {
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    await resend.emails.send({ from: from(), to, subject, html });
-  } catch (err) {
-    console.error('[Email] erro ao enviar:', err.message);
+  if (!process.env.RESEND_API_KEY) {
+    console.warn('[Email] RESEND_API_KEY não definida — e-mail não enviado.');
+    return;
   }
+  if (!Resend) {
+    console.warn('[Email] Pacote resend não importado — e-mail não enviado.');
+    return;
+  }
+  console.log('[Email] Enviando para:', to, '| assunto:', subject);
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  const result = await resend.emails.send({ from: from(), to, subject, html });
+  if (result?.error) {
+    const err = new Error(result.error.message || JSON.stringify(result.error));
+    err.resendError = result.error;
+    throw err;
+  }
+  console.log('[Email] Resend respondeu com id:', result?.data?.id || result?.id || '(sem id)');
 }
 
 exports.sendOrderConfirmation = (order) =>
