@@ -147,8 +147,9 @@ img { display: block; max-width: 100%; }
 .so-logo__img { height: 30px; }
 .so-nav { display: flex; align-items: center; gap: 28px; }
 .so-nav__link {
-  font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
-  color: #666; transition: color 0.2s;
+  font-family: var(--serif, 'Cormorant Garamond', Georgia, serif);
+  font-size: 14px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
+  color: #111; transition: color 0.2s;
 }
 .so-nav__link:hover { color: #D6B06F; }
 .so-close {
