@@ -4,6 +4,11 @@ const mpService = require('../services/mercadoPago.service');
 
 exports.createPreference = async (req, res, next) => {
   try {
+    if (!process.env.MERCADO_PAGO_ACCESS_TOKEN) {
+      console.error('[MP] MERCADO_PAGO_ACCESS_TOKEN não definido no ambiente.');
+      return res.status(500).json({ message: 'Pagamento não configurado no servidor. Entre em contato com o suporte.' });
+    }
+
     const { orderId } = req.body;
     if (!orderId) return res.status(400).json({ message: 'orderId é obrigatório.' });
 

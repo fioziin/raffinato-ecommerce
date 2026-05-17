@@ -30,29 +30,39 @@ exports.createPreference = async ({ order }) => {
     items.push({ id: 'frete', title: label, quantity: 1, unit_price: parseFloat(order.shipping.toFixed(2)), currency_id: 'BRL' });
   }
 
-  const result = await preference.create({
-    body: {
-      external_reference: order._id.toString(),
-      items,
-      payer: {
-        name:  order.customer.name,
-        email: order.customer.email,
-        identification: {
-          type:   'CPF',
-          number: (order.customer.cpf || '').replace(/\D/g, '')
-        }
-      },
-      back_urls: {
-        success: `${FRONTEND_URL}/obrigado.html?orderNumber=${order.orderNumber}`,
-        failure: `${FRONTEND_URL}/checkout.html?payment=failed`,
-        pending: `${FRONTEND_URL}/obrigado.html?orderNumber=${order.orderNumber}&payment=pending`
-      },
-      auto_return:          'approved',
-      notification_url:     `${BACKEND_URL}/api/webhooks/mercadopago`,
-      statement_descriptor: 'RAFFINATO',
-      payment_methods:      { installments: 12 }
-    }
-  });
+  let result;
+  try {
+    result = await preference.create({
+      body: {
+        external_reference: order._id.toString(),
+        items,
+        payer: {
+          name:  order.customer.name,
+          email: order.customer.email,
+          identification: {
+            type:   'CPF',
+            number: (order.customer.cpf || '').replace(/\D/g, '')
+          }
+        },
+        back_urls: {
+          success: `${FRONTEND_URL}/obrigado.html?orderNumber=${order.orderNumber}`,
+          failure: `${FRONTEND_URL}/checkout.html?payment=failed`,
+          pending: `${FRONTEND_URL}/obrigado.html?orderNumber=${order.orderNumber}&payment=pending`
+        },
+        auto_return:          'approved',
+        notification_url:     `${BACKEND_URL}/api/webhooks/mercadopago`,
+        statement_descriptor: 'RAFFINATO',
+        payment_methods:      { installments: 12 }
+      }
+    });
+  } catch (err) {
+    console.error('[MP] Erro ao criar preference:', {
+      status:  err?.status  || err?.cause?.status,
+      data:    err?.cause   || err?.message,
+      token_prefix: (process.env.MERCADO_PAGO_ACCESS_TOKEN || '').slice(0, 12) + '...'
+    });
+    throw err;
+  }
 
   return result;
 };
