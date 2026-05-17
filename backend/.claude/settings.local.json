@@ -9,7 +9,19 @@
       "Bash(node -e \"require\\('multer-storage-cloudinary'\\); console.log\\('ok'\\)\")",
       "Bash(node -e \"require\\('cloudinary'\\); console.log\\('cloudinary ok'\\)\")",
       "Bash(findstr cloudinary *)",
-      "Bash(mkdir -p \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\\\\frontend\\\\assets\")"
+      "Bash(mkdir -p \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\\\\frontend\\\\assets\")",
+      "Read(//c/Users/Vinicius/Desktop/SITE/**)",
+      "Bash(mv \"frontend/assets/banner-home-raffinato.png.png\" \"frontend/assets/banner-home-raffinato.png\")",
+      "Bash(git -C \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\" add frontend/index.html frontend/styles.css)",
+      "Bash(git -C \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\" status --short)",
+      "Bash(git -C \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\" diff --name-only HEAD)",
+      "Bash(git -C \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\" diff --cached --name-only)",
+      "Bash(git -C \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\" diff --name-only)",
+      "Bash(git -C \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\" diff HEAD -- frontend/index.html)",
+      "Bash(git -C \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\" log --oneline -5)",
+      "Bash(git -C \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\" restore --staged \"backend/.claude/settings.local.json\")",
+      "Bash(git -C 'c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE' commit -m ' *)",
+      "Bash(git -C \"c:\\\\Users\\\\Vinicius\\\\Desktop\\\\SITE\" push origin main)"
     ],
     "additionalDirectories": [
       "c:\\Users\\Vinicius\\Desktop\\SITE\\frontend\\assets"
