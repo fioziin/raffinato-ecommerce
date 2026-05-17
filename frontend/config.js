@@ -11,12 +11,17 @@ window.RAFFINATO_CONFIG.BASE_URL =
   window.RAFFINATO_CONFIG.API_URL.replace(/\/api$/, '');
 
 /**
- * Garante que toda URL de imagem seja absoluta.
- * URLs relativas (ex: /uploads/...) são prefixadas com BASE_URL.
+ * Converte qualquer valor de URL de imagem para URL absoluta válida.
+ * Retorna "" se não houver URL utilizável.
  */
 window.resolveImageUrl = function (url) {
-  if (!url) return '';
-  if (url.startsWith('http://') || url.startsWith('https://')) return url;
-  const base = window.RAFFINATO_CONFIG.BASE_URL;
-  return base + (url.startsWith('/') ? '' : '/') + url;
+  if (!url || typeof url !== 'string') return '';
+  const clean = url.trim();
+  if (!clean) return '';
+  if (clean.startsWith('http://') || clean.startsWith('https://')) return clean;
+  const base = (window.RAFFINATO_CONFIG && window.RAFFINATO_CONFIG.BASE_URL)
+    || 'https://raffinato-ecommerce-production.up.railway.app';
+  if (clean.startsWith('/uploads')) return base + clean;
+  if (clean.startsWith('uploads'))  return base + '/' + clean;
+  return clean;
 };

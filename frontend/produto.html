@@ -764,30 +764,40 @@
         document.title = 'Produto não encontrado — RAFFINATO';
       }
 
-      /* ── HELPER: RESOLVE URL DE IMAGEM ────────────────────── */
-      function resolve(url) {
-        return typeof resolveImageUrl === 'function' ? resolveImageUrl(url) : (url || '');
+      /* ── RESOLVE URL: usa a global de config.js, com fallback local ── */
+      function resolveUrl(url) {
+        if (!url || typeof url !== 'string') return '';
+        const clean = url.trim();
+        if (!clean) return '';
+        if (clean.startsWith('http://') || clean.startsWith('https://')) return clean;
+        const base = (window.RAFFINATO_CONFIG && window.RAFFINATO_CONFIG.BASE_URL)
+          || 'https://raffinato-ecommerce-production.up.railway.app';
+        if (clean.startsWith('/uploads')) return base + clean;
+        if (clean.startsWith('uploads'))  return base + '/' + clean;
+        return clean;
       }
 
-      /* ── HELPER: IMAGENS DA VARIAÇÃO COM FALLBACK COMPLETO ── */
-      function getVariantImages(prod, variant) {
-        /* cadeia de fallback: variação → produto → outra variação → placeholder */
-        const anyVariantImg = (prod.variants || []).map(v => v.imagem).find(Boolean) || '';
+      /*
+       * Os campos reais do banco são: imagem / hoverImagem (português).
+       * As funções abaixo testam esses campos primeiro e depois aliases
+       * em inglês como segurança, caso o schema mude no futuro.
+       */
+      function getMainImage(prod, variant) {
+        return resolveUrl(
+          (variant && (variant.imagem || variant.image || variant.imageUrl ||
+            variant.mainImage || (variant.images && variant.images.main))) ||
+          prod.imagem || prod.image || prod.imageUrl || prod.mainImage ||
+          (prod.images && prod.images.main) || ''
+        );
+      }
 
-        const main = resolve(
-          (variant && variant.imagem) ||
-          prod.imagem                 ||
-          anyVariantImg               ||
-          ''
-        ) || PLACEHOLDER;
-
-        const hover = resolve(
-          (variant && variant.hoverImagem) ||
-          prod.hoverImagem                 ||
-          ''
-        ) || null;
-
-        return { main, hover };
+      function getHoverImage(prod, variant) {
+        return resolveUrl(
+          (variant && (variant.hoverImagem || variant.hoverImage ||
+            variant.imageHover || (variant.images && variant.images.hover))) ||
+          prod.hoverImagem || prod.hoverImage || prod.imageHover ||
+          (prod.images && prod.images.hover) || ''
+        ) || getMainImage(prod, variant);
       }
 
       let produto = null;
@@ -864,11 +874,18 @@
 
         mainImg.src = mainUrl || PLACEHOLDER;
         mainImg.alt = produto.nome;
+        mainImg.onerror = function() {
+          if (this.src !== PLACEHOLDER) { this.onerror = null; this.src = PLACEHOLDER; }
+        };
 
         thumbEls.forEach((thumb, i) => {
           if (urls[i]) {
             thumb.dataset.img = urls[i];
-            thumb.querySelector('img').src = urls[i];
+            const thumbImg = thumb.querySelector('img');
+            thumbImg.src = urls[i];
+            thumbImg.onerror = function() {
+              if (this.src !== PLACEHOLDER) { this.onerror = null; this.src = PLACEHOLDER; }
+            };
             thumb.style.display = '';
             thumb.classList.toggle('is-active', i === 0);
           } else {
@@ -879,10 +896,12 @@
 
       /* Renderiza imagens iniciais */
       {
-        const imgs = getVariantImages(produto, selectedVariant);
+        const mainImg  = getMainImage(produto, selectedVariant);
+        const hoverImg = getHoverImage(produto, selectedVariant);
         console.log('Variação selecionada:', selectedVariant);
-        console.log('Imagens resolvidas:', imgs);
-        setImages(imgs.main, imgs.hover);
+        console.log('Imagens fields:', { imagem: produto.imagem, hoverImagem: produto.hoverImagem, variants: produto.variants });
+        console.log('Imagens resolvidas:', { main: mainImg, hover: hoverImg });
+        setImages(mainImg, hoverImg);
       }
 
       /* ── GALERIA: CLIQUE NOS THUMBS ────────────────────────── */
@@ -980,10 +999,11 @@
             swatches.querySelectorAll('.color-swatch-btn').forEach(b => b.classList.remove('is-selected'));
             btn.classList.add('is-selected');
             label.textContent = selectedVariant.cor;
-            const imgs = getVariantImages(produto, selectedVariant);
+            const mainImg  = getMainImage(produto, selectedVariant);
+            const hoverImg = getHoverImage(produto, selectedVariant);
             console.log('Variação selecionada:', selectedVariant);
-            console.log('Imagens resolvidas:', imgs);
-            setImages(imgs.main, imgs.hover);
+            console.log('Imagens resolvidas:', { main: mainImg, hover: hoverImg });
+            setImages(mainImg, hoverImg);
             renderSizeGrid(selectedVariant);
           });
         });
@@ -1025,7 +1045,7 @@
               section.style.display = 'block';
               grid.innerHTML = relacionados.map(p => {
                 const rawThumb = (p.variants && p.variants.find(v => v.imagem)?.imagem) || p.imagem || '';
-                const thumb    = resolve(rawThumb) || PLACEHOLDER;
+                const thumb    = resolveUrl(rawThumb) || PLACEHOLDER;
                 return `
                   <a href="produto.html?id=${p._id}" style="display:block;border-radius:12px;overflow:hidden;border:1px solid rgba(0,0,0,0.07);background:#fff;transition:transform 0.3s,box-shadow 0.3s;text-decoration:none;color:inherit" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 48px rgba(0,0,0,0.11)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
                     <div style="aspect-ratio:3/4;overflow:hidden;background:#f5f2ed">
@@ -1047,7 +1067,7 @@
 
       /* ── HELPER: MONTAR ITEM DO CARRINHO ───────────────────── */
       function buildCartItem(size) {
-        const imagem = getVariantImages(produto, hasVariants ? selectedVariant : null).main;
+        const imagem = getMainImage(produto, hasVariants ? selectedVariant : null);
         const item = { id: produto._id || produto.id, nome: produto.nome, preco: produto.preco, imagem, size, qty };
         if (hasVariants && selectedVariant) {
           item.cor     = selectedVariant.cor;
