@@ -1,18 +1,20 @@
 'use strict';
 
+const cloudinary = require('../config/cloudinary');
+
 exports.uploadImage = (req, res) => {
   if (!req.file) return res.status(400).json({ message: 'Nenhum arquivo enviado.' });
 
-  /* Prioridade: BASE_URL env var > X-Forwarded-Host + proto > req.protocol + host */
-  let base = process.env.BASE_URL;
-  if (!base) {
-    const proto = req.get('X-Forwarded-Proto') || req.protocol;
-    const host  = req.get('X-Forwarded-Host')  || req.get('host');
-    base = `${proto}://${host}`;
-  }
-  base = base.replace(/\/+$/, ''); /* remove trailing slash */
+  const stream = cloudinary.uploader.upload_stream(
+    { folder: 'raffinato/products', resource_type: 'image' },
+    (error, result) => {
+      if (error) {
+        console.error('Cloudinary upload error:', error);
+        return res.status(500).json({ message: 'Erro ao enviar imagem para o Cloudinary.', detail: error.message });
+      }
+      res.json({ success: true, url: result.secure_url, public_id: result.public_id });
+    }
+  );
 
-  const url = `${base}/uploads/products/${req.file.filename}`;
-
-  res.json({ success: true, url, filename: req.file.filename });
+  stream.end(req.file.buffer);
 };

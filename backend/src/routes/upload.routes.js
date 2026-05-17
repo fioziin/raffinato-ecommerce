@@ -1,23 +1,13 @@
 'use strict';
-const path   = require('path');
 const router = require('express').Router();
 const multer = require('multer');
 const authMw = require('../middleware/auth.middleware');
 const uploadCtrl = require('../controllers/upload.controller');
 
 const ALLOWED_MIMES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-const UPLOAD_DIR    = path.join(__dirname, '../../uploads/products');
-
-const storage = multer.diskStorage({
-  destination(_req, _file, cb) { cb(null, UPLOAD_DIR); },
-  filename(_req, file, cb) {
-    const safe = file.originalname.toLowerCase().replace(/[^a-z0-9._-]/g, '_');
-    cb(null, `${Date.now()}-${safe}`);
-  }
-});
 
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   limits:  { fileSize: 5 * 1024 * 1024 },
   fileFilter(_req, file, cb) {
     if (!ALLOWED_MIMES.includes(file.mimetype))
