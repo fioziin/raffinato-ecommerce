@@ -379,7 +379,9 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Categoria *</label>
-            <input type="text" id="pCategoria" class="form-input" required placeholder="camisas, calças, vestidos...">
+            <select id="pCategoria" class="form-select" required>
+              <option value="">Selecione uma categoria</option>
+            </select>
           </div>
           <div class="form-group">
             <label class="form-label">Gênero *</label>
@@ -395,11 +397,11 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Preço *</label>
-            <input type="number" id="pPreco" class="form-input" required min="0" step="0.01" placeholder="0.00">
+            <input type="text" id="pPreco" class="form-input" placeholder="R$ 0,00" autocomplete="off" inputmode="decimal">
           </div>
           <div class="form-group">
-            <label class="form-label">Preço Antigo (exibe desconto)</label>
-            <input type="number" id="pPrecoAntigo" class="form-input" min="0" step="0.01" placeholder="0.00">
+            <label class="form-label">Preço Antigo <span style="font-weight:400;opacity:.6">(opcional — exibe desconto)</span></label>
+            <input type="text" id="pPrecoAntigo" class="form-input" placeholder="R$ 0,00" autocomplete="off" inputmode="decimal">
           </div>
         </div>
 
@@ -612,6 +614,70 @@ function bindUploadBtn(btnId, inputId, previewId, onUrlChange) {
     fileInput.click();
   });
 }
+
+/* ── CATEGORIAS POR GÊNERO ── */
+const CATEGORIAS = {
+  masculino: [
+    { label: 'Camisetas', value: 'camisetas' },
+    { label: 'Polos',     value: 'polos' },
+    { label: 'Shorts',    value: 'shorts' },
+    { label: 'Calças',    value: 'calcas' }
+  ],
+  feminino: [
+    { label: 'Blusas',    value: 'blusas' },
+    { label: 'Vestidos',  value: 'vestidos' },
+    { label: 'Conjuntos', value: 'conjuntos' },
+    { label: 'Calças',    value: 'calcas' }
+  ],
+  unissex: [
+    { label: 'Camisetas', value: 'camisetas' },
+    { label: 'Polos',     value: 'polos' },
+    { label: 'Blusas',    value: 'blusas' },
+    { label: 'Shorts',    value: 'shorts' },
+    { label: 'Calças',    value: 'calcas' },
+    { label: 'Vestidos',  value: 'vestidos' },
+    { label: 'Conjuntos', value: 'conjuntos' }
+  ]
+};
+
+function normalizeCatSlug(cat, genero) {
+  if (!cat) return '';
+  const c = (cat + '').toLowerCase().trim().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const MAP = {
+    camisa:    genero === 'feminino' ? 'blusas' : 'camisetas',
+    camiseta: 'camisetas', camisetas: 'camisetas',
+    polo:     'polos',     polos:     'polos',
+    short:    'shorts',    shorts:    'shorts',
+    calca:    'calcas',    calcas:    'calcas',
+    blusa:    'blusas',    blusas:    'blusas',
+    vestido:  'vestidos',  vestidos:  'vestidos',
+    conjunto: 'conjuntos', conjuntos: 'conjuntos'
+  };
+  return MAP[c] || c;
+}
+
+function updateCategoriaSelect(genero, currentCat) {
+  const sel = document.getElementById('pCategoria');
+  if (!sel) return;
+  const opts = CATEGORIAS[genero] || [];
+  const norm = normalizeCatSlug(currentCat, genero);
+  sel.innerHTML = '<option value="">Selecione uma categoria</option>' +
+    opts.map(c => `<option value="${c.value}"${c.value === norm ? ' selected' : ''}>${c.label}</option>`).join('');
+}
+
+/* ── PREÇO EM REAL BRASILEIRO ── */
+function parseBRL(str) {
+  if (!str && str !== 0) return null;
+  const clean = String(str).replace(/R\$\s?/g, '').replace(/\./g, '').replace(',', '.').trim();
+  const n = parseFloat(clean);
+  return isNaN(n) ? null : n;
+}
+
+function formatBRL(val) {
+  const n = typeof val === 'number' ? val : parseBRL(String(val));
+  if (n == null || isNaN(n)) return '';
+  return 'R$ ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
 </script>
 <script>
 (async () => {
@@ -619,6 +685,25 @@ function bindUploadBtn(btnId, inputId, previewId, onUrlChange) {
   Admin.initSidebar();
   Admin.initTopbarDate();
   Admin.initModalClose();
+
+  /* ── Price blur formatting ── */
+  ['pPreco', 'pPrecoAntigo'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('focus', () => {
+      const n = parseBRL(el.value);
+      el.value = n != null ? String(n).replace('.', ',') : '';
+    });
+    el.addEventListener('blur', () => {
+      const n = parseBRL(el.value);
+      el.value = (n != null && n > 0) ? formatBRL(n) : '';
+    });
+  });
+
+  /* ── Gender → Category sync ── */
+  document.getElementById('pGenero').addEventListener('change', function () {
+    updateCategoriaSelect(this.value, document.getElementById('pCategoria').value);
+  });
 
   /* ── MIGRAÇÃO: produto sem variants → formato variants ── */
   function migrateToVariants(p) {
@@ -809,11 +894,12 @@ function bindUploadBtn(btnId, inputId, previewId, onUrlChange) {
       document.getElementById('pId').value             = p ? p._id : '';
       document.getElementById('pNome').value           = p ? p.nome : '';
       document.getElementById('pSlug').value           = p ? (p.slug || '') : '';
-      document.getElementById('pCategoria').value      = p ? (p.categoria || '') : '';
-      document.getElementById('pGenero').value         = p ? (p.genero || '') : '';
+      const _genero = p ? (p.genero || '') : '';
+      document.getElementById('pGenero').value = _genero;
+      updateCategoriaSelect(_genero, p ? (p.categoria || '') : '');
       document.getElementById('pAtivo').value          = p ? String(!!p.ativo) : 'true';
-      document.getElementById('pPreco').value          = p ? p.preco : '';
-      document.getElementById('pPrecoAntigo').value    = p ? (p.precoAntigo || '') : '';
+      document.getElementById('pPreco').value          = p && p.preco != null ? formatBRL(p.preco) : '';
+      document.getElementById('pPrecoAntigo').value    = p && p.precoAntigo    ? formatBRL(p.precoAntigo) : '';
       document.getElementById('pImagem').value         = p ? (p.imagem || '') : '';
       document.getElementById('pHoverImagem').value    = p ? (p.hoverImagem || '') : '';
       document.getElementById('pDescricao').value      = p ? (p.descricao || '') : '';
@@ -1006,17 +1092,27 @@ function bindUploadBtn(btnId, inputId, previewId, onUrlChange) {
   /* ── SALVAR PRODUTO (API) ── */
   document.getElementById('saveProductBtn').addEventListener('click', async function () {
     const nome      = document.getElementById('pNome').value.trim();
-    const categoria = document.getElementById('pCategoria').value.trim();
+    const categoria = document.getElementById('pCategoria').value;
     const genero    = document.getElementById('pGenero').value;
-    const preco     = parseFloat(document.getElementById('pPreco').value);
+    const preco     = parseBRL(document.getElementById('pPreco').value);
 
-    if (!nome || !categoria || !genero || isNaN(preco)) {
+    if (!nome || !categoria || !genero || !preco) {
       Admin.toast('Preencha: Nome, Categoria, Gênero e Preço.', 'error');
       _pe.switchTab('info');
       return;
     }
+    if (preco <= 0 || preco > 100000) {
+      Admin.toast('Preço inválido. Use um valor entre R$ 0,01 e R$ 100.000,00.', 'error');
+      _pe.switchTab('info');
+      return;
+    }
 
-    const precoAntigo = parseFloat(document.getElementById('pPrecoAntigo').value) || null;
+    const precoAntigo = parseBRL(document.getElementById('pPrecoAntigo').value);
+    if (precoAntigo !== null && precoAntigo < preco) {
+      Admin.toast('Preço antigo deve ser maior ou igual ao preço atual.', 'error');
+      _pe.switchTab('info');
+      return;
+    }
 
     let slug = document.getElementById('pSlug').value.trim();
     if (!slug) {

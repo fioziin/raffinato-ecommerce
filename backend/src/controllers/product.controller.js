@@ -1,5 +1,23 @@
 const Product = require('../models/Product');
 
+function validatePrices(body) {
+  const preco = Number(body.preco);
+  if (isNaN(preco) || preco <= 0 || preco > 100000) {
+    return { status: 400, message: 'Preço inválido. Informe um valor entre 0.01 e 100000.' };
+  }
+  if (body.precoAntigo != null && body.precoAntigo !== '' && body.precoAntigo !== null) {
+    const pa = Number(body.precoAntigo);
+    if (!isNaN(pa) && pa < preco) {
+      return { status: 400, message: 'Preço antigo deve ser maior ou igual ao preço atual.' };
+    }
+  }
+  return null;
+}
+
+function normalizeCategoria(body) {
+  if (body.categoria) body.categoria = body.categoria.toLowerCase().trim();
+}
+
 /* ── PÚBLICOS ── */
 exports.list = async (req, res, next) => {
   try {
@@ -43,6 +61,9 @@ exports.adminList = async (req, res, next) => {
 
 exports.create = async (req, res, next) => {
   try {
+    const err = validatePrices(req.body);
+    if (err) return res.status(err.status).json({ message: err.message });
+    normalizeCategoria(req.body);
     if (!req.body.slug) {
       req.body.slug = req.body.nome.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
     }
@@ -53,6 +74,9 @@ exports.create = async (req, res, next) => {
 
 exports.update = async (req, res, next) => {
   try {
+    const err = validatePrices(req.body);
+    if (err) return res.status(err.status).json({ message: err.message });
+    normalizeCategoria(req.body);
     const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (!product) return res.status(404).json({ message: 'Produto não encontrado.' });
     res.json(product);

@@ -324,12 +324,29 @@
 
     let activeFilter = 'todos';
 
+    /* Normaliza categoria legada para slug padronizado */
+    function normalizeCatSlug(cat, gen) {
+      if (!cat) return '';
+      const c = (cat + '').toLowerCase().trim().normalize('NFD').replace(/[̀-ͯ]/g, '');
+      const MAP = {
+        camisa:    gen === 'feminino' ? 'blusas' : 'camisetas',
+        camiseta: 'camisetas', camisetas: 'camisetas',
+        polo:     'polos',     polos:     'polos',
+        short:    'shorts',    shorts:    'shorts',
+        calca:    'calcas',    calcas:    'calcas',
+        blusa:    'blusas',    blusas:    'blusas',
+        vestido:  'vestidos',  vestidos:  'vestidos',
+        conjunto: 'conjuntos', conjuntos: 'conjuntos'
+      };
+      return MAP[c] || c;
+    }
+
     /* Filtros por categoria (slug) ou por flag booleana */
     const flagFilters = { promocao: 'promocao', lancamento: 'lancamento', destaque: 'destaque' };
     function applyFilter(products) {
       if (activeFilter === 'todos') return products;
       if (flagFilters[activeFilter]) return products.filter(p => p[flagFilters[activeFilter]]);
-      return products.filter(p => p.categoria === activeFilter);
+      return products.filter(p => normalizeCatSlug(p.categoria, p.genero) === activeFilter);
     }
 
     function applySort(products) {
