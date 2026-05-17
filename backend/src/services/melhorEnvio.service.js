@@ -3,6 +3,41 @@
 const BASE_URL = process.env.MELHOR_ENVIO_BASE_URL || 'https://sandbox.melhorenvio.com.br';
 const TOKEN    = process.env.MELHOR_ENVIO_TOKEN;
 
+/* ── SIMULAÇÃO POR REGIÃO ─────────────────────────────────── */
+function getRegion(cep) {
+  const p = parseInt(String(cep).replace(/\D/g, '').slice(0, 2), 10);
+  if (p >= 1  && p <= 19) return 'sp';
+  if (p >= 20 && p <= 39) return 'sudeste';
+  return 'outros';
+}
+
+exports.simulateQuote = function(cep, subtotal) {
+  const sub = Number(subtotal) || 0;
+  const tables = {
+    sp: [
+      { id: 'pac',    name: 'PAC',    companyName: 'Correios', price: 18.90, deadline: 8,  simulated: true },
+      { id: 'sedex',  name: 'SEDEX',  companyName: 'Correios', price: 29.90, deadline: 4,  simulated: true },
+      { id: 'jadlog', name: 'Jadlog', companyName: 'Jadlog',   price: 24.90, deadline: 6,  simulated: true }
+    ],
+    sudeste: [
+      { id: 'pac',    name: 'PAC',    companyName: 'Correios', price: 24.90, deadline: 10, simulated: true },
+      { id: 'sedex',  name: 'SEDEX',  companyName: 'Correios', price: 39.90, deadline:  6, simulated: true },
+      { id: 'jadlog', name: 'Jadlog', companyName: 'Jadlog',   price: 32.90, deadline:  8, simulated: true }
+    ],
+    outros: [
+      { id: 'pac',    name: 'PAC',    companyName: 'Correios', price: 34.90, deadline: 14, simulated: true },
+      { id: 'sedex',  name: 'SEDEX',  companyName: 'Correios', price: 59.90, deadline:  8, simulated: true },
+      { id: 'jadlog', name: 'Jadlog', companyName: 'Jadlog',   price: 44.90, deadline: 12, simulated: true }
+    ]
+  };
+
+  const options = tables[getRegion(cep)].map(o => ({ ...o }));
+  if (sub >= 299) {
+    options.unshift({ id: 'gratis', name: 'Frete Grátis', companyName: 'Correios', price: 0, deadline: 10, simulated: true });
+  }
+  return options;
+};
+
 exports.quote = async ({ to, items }) => {
   if (!TOKEN) throw Object.assign(new Error('Token Melhor Envio não configurado.'), { status: 503 });
 

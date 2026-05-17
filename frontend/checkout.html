@@ -371,17 +371,23 @@
         '<div class="frete-loading"><div class="frete-spinner"></div>Calculando frete...</div>';
     }
 
+    /* Formata prazo aceitando número ou string */
+    function fmtDeadline(d) {
+      if (!d && d !== 0) return '';
+      return typeof d === 'number' ? 'até ' + d + ' dias úteis' : d;
+    }
+
     function renderFreteOptions(quotes) {
       selectedShipping = null;
-      shippingCost = quotes[0]?.price ?? (subtotal >= 299 ? 0 : 29.90);
+      shippingCost     = quotes[0]?.price ?? (subtotal >= 299 ? 0 : 29.90);
       selectedShipping = quotes[0] || null;
 
       const html = quotes.map((q, i) => `
         <label class="delivery-opt ${i === 0 ? 'is-selected' : ''}" data-idx="${i}">
           <input type="radio" name="frete" value="${i}" ${i === 0 ? 'checked' : ''}>
           <div class="delivery-opt__info">
-            <p class="delivery-opt__name">${q.companyName ? q.companyName + ' — ' : ''}${q.name}</p>
-            <p class="delivery-opt__desc">${q.deadline ? q.deadline + ' dias úteis' : ''}</p>
+            <p class="delivery-opt__name">${q.companyName ? q.companyName + ' &mdash; ' : ''}${q.name}</p>
+            <p class="delivery-opt__desc">${fmtDeadline(q.deadline)}</p>
           </div>
           <span class="delivery-opt__price">${q.price === 0 ? 'GRÁTIS' : fmt(q.price)}</span>
         </label>`).join('');
@@ -392,7 +398,7 @@
         opt.addEventListener('click', () => {
           document.querySelectorAll('.delivery-opt').forEach(o => o.classList.remove('is-selected'));
           opt.classList.add('is-selected');
-          const idx = parseInt(opt.dataset.idx);
+          const idx        = parseInt(opt.dataset.idx);
           selectedShipping = quotes[idx];
           shippingCost     = quotes[idx].price;
           updateSummaryTotals();
@@ -402,21 +408,38 @@
       updateSummaryTotals();
     }
 
-    function renderFallbackFrete() {
-      shippingCost     = subtotal >= 299 ? 0 : 29.90;
-      selectedShipping = null;
-      document.getElementById('freteContainer').innerHTML = `
-        <div class="delivery-opts">
-          <label class="delivery-opt is-selected">
-            <input type="radio" name="frete" value="padrao" checked>
-            <div class="delivery-opt__info">
-              <p class="delivery-opt__name">Envio Padrão</p>
-              <p class="delivery-opt__desc">5 a 10 dias úteis · Correios / Transportadora</p>
-            </div>
-            <span class="delivery-opt__price">${shippingCost === 0 ? 'GRÁTIS' : fmt(shippingCost)}</span>
-          </label>
-        </div>`;
-      updateSummaryTotals();
+    /* Simulação local — cópia da lógica do backend, para quando a API estiver offline */
+    function simulateFreteLocal(cep) {
+      const p = parseInt(String(cep).slice(0, 2), 10);
+      let opts;
+      if (p >= 1 && p <= 19) {
+        opts = [
+          { id: 'pac',    name: 'PAC',    companyName: 'Correios', price: 18.90, deadline: 8 },
+          { id: 'sedex',  name: 'SEDEX',  companyName: 'Correios', price: 29.90, deadline: 4 },
+          { id: 'jadlog', name: 'Jadlog', companyName: 'Jadlog',   price: 24.90, deadline: 6 }
+        ];
+      } else if (p >= 20 && p <= 39) {
+        opts = [
+          { id: 'pac',    name: 'PAC',    companyName: 'Correios', price: 24.90, deadline: 10 },
+          { id: 'sedex',  name: 'SEDEX',  companyName: 'Correios', price: 39.90, deadline:  6 },
+          { id: 'jadlog', name: 'Jadlog', companyName: 'Jadlog',   price: 32.90, deadline:  8 }
+        ];
+      } else {
+        opts = [
+          { id: 'pac',    name: 'PAC',    companyName: 'Correios', price: 34.90, deadline: 14 },
+          { id: 'sedex',  name: 'SEDEX',  companyName: 'Correios', price: 59.90, deadline:  8 },
+          { id: 'jadlog', name: 'Jadlog', companyName: 'Jadlog',   price: 44.90, deadline: 12 }
+        ];
+      }
+      if (subtotal >= 299) {
+        opts.unshift({ id: 'gratis', name: 'Frete Grátis', companyName: 'Correios', price: 0, deadline: 10 });
+      }
+      return opts;
+    }
+
+    function renderFallbackFrete(cep) {
+      const quotes = simulateFreteLocal(cep || '01000000');
+      renderFreteOptions(quotes);
     }
 
     async function quoteFrete(cleanCep) {
@@ -440,10 +463,10 @@
         if (Array.isArray(quotes) && quotes.length) {
           renderFreteOptions(quotes);
         } else {
-          renderFallbackFrete();
+          renderFallbackFrete(cleanCep);
         }
       } catch {
-        renderFallbackFrete();
+        renderFallbackFrete(cleanCep);
       }
     }
 
@@ -500,12 +523,20 @@
         fCep.classList.remove('is-error');
         const clean = v.replace(/\D/g,'');
         if (clean.length === 8) {
+          localStorage.setItem('raffinato_cep', clean);
           await autoFillCep(clean);
           quoteFrete(clean);
         } else {
           document.getElementById('freteContainer').innerHTML = '<p class="frete-hint">Digite o CEP completo para calcular o frete.</p>';
         }
       });
+
+      /* Pré-preenche CEP salvo da página de produto */
+      const savedCep = localStorage.getItem('raffinato_cep');
+      if (savedCep && savedCep.length === 8 && !fCep.value) {
+        fCep.value = savedCep.slice(0,5) + '-' + savedCep.slice(5);
+        autoFillCep(savedCep).then(() => quoteFrete(savedCep));
+      }
     }
 
     /* ── MASKS ── */
