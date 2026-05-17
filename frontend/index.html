@@ -63,22 +63,94 @@
 
   <!-- SEARCH OVERLAY -->
   <div class="search-overlay" id="searchOverlay" role="dialog" aria-label="Busca" aria-hidden="true">
-    <button class="search-overlay__close" id="searchClose" aria-label="Fechar busca">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
-    <div class="search-overlay__inner">
-      <span class="search-overlay__hint">O QUE VOCÊ PROCURA?</span>
-      <div class="search-overlay__field">
-        <svg class="search-overlay__icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="search" class="search-overlay__input" id="searchInput" placeholder="Buscar produtos..." autocomplete="off">
+
+    <!-- SO: Header -->
+    <div class="so-header">
+      <a href="index.html" class="so-logo">
+        <img src="assets/logo-raffinato-header.png" alt="RAFFINATO" class="so-logo__img">
+      </a>
+      <nav class="so-nav">
+        <a href="produtos.html?genero=masculino" class="so-nav__link">Masculino</a>
+        <a href="produtos.html?genero=feminino" class="so-nav__link">Feminino</a>
+        <a href="produtos.html?promocao=true" class="so-nav__link">Promoções</a>
+        <a href="produtos.html?lancamento=true" class="so-nav__link">Lançamentos</a>
+        <a href="#" class="so-nav__link">Sobre Nós</a>
+      </nav>
+      <button class="so-close" id="searchClose" aria-label="Fechar busca">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <!-- SO: Body -->
+    <div class="so-body">
+
+      <!-- Hero -->
+      <div class="so-hero">
+        <span class="so-hint">O QUE VOCÊ PROCURA?</span>
+        <h1 class="so-title">Buscar <span class="so-gold">produtos</span></h1>
       </div>
-      <div class="search-overlay__cats">
-        <span class="search-overlay__cats-label">EXPLORE:</span>
-        <a href="produtos.html?genero=masculino" class="search-cat">Masculino</a>
-        <a href="produtos.html?genero=feminino" class="search-cat">Feminino</a>
-        <a href="#section-promocoes" class="search-cat" data-scroll="section-promocoes">Promoções</a>
-        <a href="#section-lancamentos" class="search-cat" data-scroll="section-lancamentos">Lançamentos</a>
+
+      <!-- Search field -->
+      <div class="so-field">
+        <svg class="so-field__icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" class="so-input" id="searchInput" placeholder="Buscar produtos..." autocomplete="off">
+        <button class="so-field__arrow" id="searchSubmit" aria-label="Buscar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
       </div>
+
+      <!-- Chips -->
+      <div class="so-chips">
+        <a href="produtos.html?genero=masculino" class="so-chip">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Masculino
+        </a>
+        <a href="produtos.html?genero=feminino" class="so-chip">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Feminino
+        </a>
+        <a href="produtos.html?promocao=true" class="so-chip">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          Promoções
+        </a>
+        <a href="produtos.html?lancamento=true" class="so-chip">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Lançamentos
+        </a>
+      </div>
+
+      <!-- Destaque -->
+      <div class="so-section" id="soFeatured">
+        <div class="so-section__head">
+          <span class="so-section__label">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="#D6B06F" stroke="none"><path d="M12 2L9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.64-7.03L22 9.24z"/></svg>
+            PRODUTOS EM DESTAQUE
+          </span>
+          <a href="produtos.html" class="so-see-all">Ver todos <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+        </div>
+        <div class="so-cards" id="soFeaturedGrid"></div>
+      </div>
+
+      <!-- Resultados -->
+      <div class="so-section" id="soResults" style="display:none">
+        <div class="so-section__head">
+          <span class="so-section__label">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            RESULTADOS DA BUSCA
+          </span>
+          <a href="produtos.html" class="so-see-all" id="soAllLink">Ver todos <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+        </div>
+        <div class="so-cards" id="soResultsGrid">
+          <div class="so-empty" id="soEmpty">
+            <div class="so-empty__icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#D6B06F" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
+            <p class="so-empty__title">Digite para buscar produtos</p>
+            <p class="so-empty__sub">Encontre peças exclusivas com design sofisticado,<br>qualidade impecável e estilo atemporal.</p>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 

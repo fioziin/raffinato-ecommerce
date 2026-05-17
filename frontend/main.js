@@ -6,6 +6,9 @@
   const CART_KEY = 'raffinato_cart';
   const fmt = n => 'R$ ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
 
+  /* ── SEARCH PRODUCTS CACHE ── */
+  let _searchProducts = [];
+
   /* ── WISHLIST STATE ── */
   const WISH_KEY = 'raffinato_wishlist';
   function getWishlist() {
@@ -251,6 +254,7 @@
 
   function renderAll(products) {
     const ps = products.map(normalizeProduct);
+    _searchProducts = ps;
     renderSection('grid-mais-vendidos', ps.filter(p => p.destaque).slice(0, 8));
     renderSection('grid-masculino',     ps.filter(p => p.genero === 'masculino').slice(0, 8));
     renderSection('grid-feminino',      ps.filter(p => p.genero === 'feminino').slice(0, 4));
@@ -328,15 +332,80 @@
   mobileOverlay && mobileOverlay.addEventListener('click', closeMobileMenu);
 
   /* ── SEARCH OVERLAY ── */
-  const searchBtn     = document.getElementById('searchBtn');
-  const searchOverlay = document.getElementById('searchOverlay');
-  const searchClose   = document.getElementById('searchClose');
-  const searchInput   = document.getElementById('searchInput');
+  const searchBtn      = document.getElementById('searchBtn');
+  const searchOverlay  = document.getElementById('searchOverlay');
+  const searchClose    = document.getElementById('searchClose');
+  const searchInput    = document.getElementById('searchInput');
+  const searchSubmit   = document.getElementById('searchSubmit');
+  const soFeatured     = document.getElementById('soFeatured');
+  const soResults      = document.getElementById('soResults');
+  const soFeaturedGrid = document.getElementById('soFeaturedGrid');
+  const soResultsGrid  = document.getElementById('soResultsGrid');
+  const soAllLink      = document.getElementById('soAllLink');
+
+  let _soRendered = false;
+
+  function soCardHTML(p) {
+    const resolve = typeof resolveImageUrl === 'function' ? resolveImageUrl : u => u || '';
+    const variantImg = p.variants && p.variants.find(v => v.imagem)?.imagem;
+    const img = resolve(p.imagem || variantImg || '');
+    const wished = getWishlist().includes(String(p.id));
+    return `<a class="so-card" href="produto.html?id=${p.id}">
+      <div class="so-card__img-wrap">
+        <img class="so-card__img" src="${img}" alt="${p.nome}" loading="lazy">
+        <button class="so-card__wish${wished ? ' is-wishlisted' : ''}" data-wish-id="${p.id}" aria-label="Favorito" onclick="event.preventDefault()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="${wished ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <div class="so-card__info">
+        <p class="so-card__name">${p.nome}</p>
+        <p class="so-card__price">${fmt(p.preco)}</p>
+      </div>
+    </a>`;
+  }
+
+  function soRenderFeatured() {
+    if (_soRendered || !soFeaturedGrid) return;
+    const featured = _searchProducts.filter(p => p.destaque).slice(0, 6);
+    const show = featured.length ? featured : _searchProducts.slice(0, 6);
+    soFeaturedGrid.innerHTML = show.length
+      ? show.map(soCardHTML).join('')
+      : '<p style="color:#999;font-size:13px;padding:24px 0;">Nenhum produto disponível.</p>';
+    _soRendered = true;
+  }
+
+  function soFilter(q) {
+    if (!q.trim()) {
+      soFeatured && (soFeatured.style.display = '');
+      soResults  && (soResults.style.display  = 'none');
+      return;
+    }
+    soFeatured && (soFeatured.style.display = 'none');
+    soResults  && (soResults.style.display  = '');
+    const term = q.toLowerCase();
+    const hits = _searchProducts.filter(p =>
+      (p.nome || '').toLowerCase().includes(term) ||
+      (p.descricao || '').toLowerCase().includes(term) ||
+      (p.categoria || '').toLowerCase().includes(term)
+    ).slice(0, 12);
+    if (soAllLink) soAllLink.href = `produtos.html?busca=${encodeURIComponent(q)}`;
+    if (!soResultsGrid) return;
+    if (!hits.length) {
+      soResultsGrid.innerHTML = `<div class="so-empty">
+        <div class="so-empty__icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#D6B06F" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+        <p class="so-empty__title">Nenhum produto encontrado</p>
+        <p class="so-empty__sub">Tente buscar por outro nome ou categoria.</p>
+      </div>`;
+    } else {
+      soResultsGrid.innerHTML = hits.map(soCardHTML).join('');
+    }
+  }
 
   function openSearch() {
     searchOverlay && searchOverlay.classList.add('is-open');
     searchOverlay && searchOverlay.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
+    soRenderFeatured();
     setTimeout(() => searchInput && searchInput.focus(), 80);
   }
 
@@ -348,8 +417,10 @@
 
   searchBtn   && searchBtn.addEventListener('click', openSearch);
   searchClose && searchClose.addEventListener('click', closeSearch);
-  searchOverlay && searchOverlay.addEventListener('click', e => {
-    if (e.target === searchOverlay) closeSearch();
+  searchInput && searchInput.addEventListener('input', e => soFilter(e.target.value));
+  searchSubmit && searchSubmit.addEventListener('click', () => {
+    const q = searchInput ? searchInput.value.trim() : '';
+    if (q) window.location.href = `produtos.html?busca=${encodeURIComponent(q)}`;
   });
 
   /* ── KEYBOARD ESC ── */
