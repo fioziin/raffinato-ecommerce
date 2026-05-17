@@ -496,18 +496,46 @@
     });
 
     /* ── CUPOM ── */
-    document.getElementById('cupomBtn')?.addEventListener('click', () => {
+    document.getElementById('cupomBtn')?.addEventListener('click', async () => {
       const cod = document.getElementById('fCupom').value.trim().toUpperCase();
       const msg = document.getElementById('cupomMsg');
-      msg.style.display = 'block';
-      if (cod === 'RAFFINATO10') {
-        discount = subtotal * 0.10;
-        msg.style.color = '#2d6a4f';
-        msg.textContent = '✓ Cupom aplicado! 10% de desconto.';
-      } else {
-        discount = 0;
-        msg.style.color = '#c0392b';
-        msg.textContent = 'Cupom inválido ou expirado.';
+      const btn = document.getElementById('cupomBtn');
+      if (!cod) return;
+
+      msg.style.display  = 'block';
+      msg.style.color    = '#777';
+      msg.textContent    = 'Validando...';
+      btn.disabled       = true;
+
+      try {
+        const res  = await fetch(`${_API}/coupons/validate`, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ code: cod, subtotal })
+        });
+        const data = await res.json();
+        if (data.valid) {
+          discount           = data.discount;
+          msg.style.color    = '#2d6a4f';
+          msg.textContent    = `✓ ${data.description} aplicado!`;
+        } else {
+          discount           = 0;
+          msg.style.color    = '#c0392b';
+          msg.textContent    = data.message || 'Cupom inválido ou expirado.';
+        }
+      } catch {
+        // Fallback offline — garante que a loja nunca para por causa da API
+        if (cod === 'RAFFINATO10') {
+          discount        = subtotal * 0.10;
+          msg.style.color = '#2d6a4f';
+          msg.textContent = '✓ 10% de desconto aplicado!';
+        } else {
+          discount        = 0;
+          msg.style.color = '#c0392b';
+          msg.textContent = 'Cupom inválido ou expirado.';
+        }
+      } finally {
+        btn.disabled = false;
       }
       updateSummaryTotals();
     });
@@ -616,11 +644,12 @@
         localStorage.setItem('raffinato_last_order', JSON.stringify({
           orderNumber,
           orderId,
-          data: new Date().toISOString(),
+          data:     new Date().toISOString(),
           cliente:  orderPayload.customer,
           endereco: orderPayload.address,
           itens:    cart,
           subtotal,
+          desconto: discount,
           frete:    shippingCost,
           total:    getTotal()
         }));

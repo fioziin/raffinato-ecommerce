@@ -19,6 +19,7 @@ const uploadRoutes   = require('./routes/upload.routes');
 const shippingRoutes = require('./routes/shipping.routes');
 const paymentRoutes  = require('./routes/payment.routes');
 const webhookRoutes  = require('./routes/webhook.routes');
+const couponRoutes   = require('./routes/coupon.routes');
 
 const app  = express();
 app.set('trust proxy', 1);
@@ -64,6 +65,7 @@ app.use('/api',      uploadRoutes);
 app.use('/api',      shippingRoutes);
 app.use('/api',      paymentRoutes);
 app.use('/api',      webhookRoutes);
+app.use('/api',      couponRoutes);
 
 /* ── ERRO GLOBAL ── */
 app.use(errorMiddleware);

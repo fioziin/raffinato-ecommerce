@@ -185,8 +185,8 @@
       return;
     }
 
-    document.getElementById('orderNum').textContent = order.orderNumber || order.id;
-    document.title = 'Pedido ' + order.id + ' — RAFFINATO';
+    document.getElementById('orderNum').textContent = order.orderNumber;
+    document.title = 'Pedido ' + order.orderNumber + ' — RAFFINATO';
 
     const frete = order.frete || 0;
     const dt = new Date(order.data);
@@ -209,6 +209,7 @@
             </div>`).join('')}
           <div class="ok-totals" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
             <div class="ok-total-row"><span>Subtotal</span><strong>${fmt(order.subtotal)}</strong></div>
+            ${order.desconto > 0 ? `<div class="ok-total-row"><span>Desconto</span><strong style="color:#2d6a4f;">-${fmt(order.desconto)}</strong></div>` : ''}
             <div class="ok-total-row"><span>Frete</span><strong style="color:${frete===0?'#2d6a4f':'inherit'}">${frete===0?'GRÁTIS':fmt(frete)}</strong></div>
             <div class="ok-total-row ok-total-row--final"><span>Total</span><strong>${fmt(order.total)}</strong></div>
           </div>
@@ -220,8 +221,8 @@
         <div class="ok-card__head"><h3>Endereço de entrega</h3></div>
         <div class="ok-card__body">
           <p class="ok-addr">
-            ${order.cliente.nome}<br>
-            ${order.endereco.rua}, ${order.endereco.num}${order.endereco.comp ? ', '+order.endereco.comp : ''}<br>
+            ${order.cliente.name}<br>
+            ${order.endereco.rua}, ${order.endereco.numero}${order.endereco.complemento ? ', '+order.endereco.complemento : ''}<br>
             ${order.endereco.bairro} — ${order.endereco.cidade} / ${order.endereco.estado}<br>
             CEP: ${order.endereco.cep}
           </p>

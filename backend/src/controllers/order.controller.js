@@ -1,5 +1,6 @@
-const Order   = require('../models/Order');
-const Product = require('../models/Product');
+const Order        = require('../models/Order');
+const Product      = require('../models/Product');
+const emailService = require('../services/email.service');
 
 const STATUS_LABELS = {
   pending:           'Pedido recebido',
@@ -33,6 +34,9 @@ exports.create = async (req, res, next) => {
     });
 
     res.status(201).json({ orderNumber: order.orderNumber, id: order._id, status: order.status });
+
+    // E-mail não bloqueia a resposta
+    emailService.sendOrderConfirmation(order).catch(() => {});
   } catch (err) { next(err); }
 };
 

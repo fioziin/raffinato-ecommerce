@@ -1,9 +1,10 @@
 'use strict';
-const crypto    = require('crypto');
-const router    = require('express').Router();
-const Order     = require('../models/Order');
-const Product   = require('../models/Product');
-const mpService = require('../services/mercadoPago.service');
+const crypto       = require('crypto');
+const router       = require('express').Router();
+const Order        = require('../models/Order');
+const Product      = require('../models/Product');
+const mpService    = require('../services/mercadoPago.service');
+const emailService = require('../services/email.service');
 
 const STATUS_LABELS = {
   paid:              'Pagamento aprovado',
@@ -129,6 +130,9 @@ router.post('/webhooks/mercadopago', async (req, res) => {
         await reduceStock(order);
         order.status = 'paid';
         order.timeline.push({ status: 'paid', label: STATUS_LABELS.paid, date: now });
+        await order.save();
+        emailService.sendPaymentConfirmed(order).catch(() => {});
+        return res.sendStatus(200);
       }
     } else if (['rejected', 'cancelled'].includes(payment.status)) {
       order.status = 'payment_failed';
