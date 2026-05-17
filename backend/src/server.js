@@ -13,6 +13,7 @@ const errorMiddleware = require('./middleware/error.middleware');
 const Admin           = require('./models/Admin');
 
 const authRoutes     = require('./routes/auth.routes');
+const userRoutes     = require('./routes/user.routes');
 const productRoutes  = require('./routes/product.routes');
 const orderRoutes    = require('./routes/order.routes');
 const uploadRoutes   = require('./routes/upload.routes');
@@ -58,7 +59,8 @@ app.get('/api/health', (req, res) => res.json({
 }));
 
 /* ── ROTAS ── */
-app.use('/api/auth', authRoutes);
+app.use('/api/auth',  authRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api',      productRoutes);
 app.use('/api',      orderRoutes);
 app.use('/api',      uploadRoutes);

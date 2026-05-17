@@ -507,7 +507,7 @@
               <input type="checkbox" id="lembrarMe">
               Lembrar-me
             </label>
-            <a href="#" class="cf-forgot" onclick="return false">Esqueceu sua senha?</a>
+            <a href="#" class="cf-forgot" onclick="openModal('forgotModal');return false">Esqueceu sua senha?</a>
           </div>
 
           <button type="submit" class="cf-btn">Entrar</button>
@@ -635,7 +635,63 @@
   </div>
 </div>
 
+<!-- MODAL: Esqueceu senha -->
+<div class="ca-overlay" id="forgotModal">
+  <div class="ca-modal">
+    <button class="ca-modal-x" onclick="closeModal('forgotModal')">×</button>
+    <h3 class="ca-modal-title">Recuperar senha</h3>
+    <p style="font-size:13px;color:rgba(255,255,255,0.60);line-height:1.7;margin-bottom:24px;">
+      Informe seu e-mail e enviaremos instruções para redefinir sua senha.
+    </p>
+    <div class="cf-error"   id="forgotErr"></div>
+    <div class="cf-success" id="forgotOk"></div>
+    <div class="cf-field">
+      <label class="cf-label">E-mail</label>
+      <div class="cf-input-left">
+        <div class="cf-left-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <input type="email" class="cf-input" id="forgotEmail" placeholder="seu@email.com" autocomplete="email">
+      </div>
+    </div>
+    <button class="cf-btn" id="forgotBtn" onclick="submitForgot()">Enviar instruções</button>
+  </div>
+</div>
+
+<!-- MODAL: Redefinir senha (via link no e-mail) -->
+<div class="ca-overlay" id="resetModal">
+  <div class="ca-modal">
+    <h3 class="ca-modal-title">Nova senha</h3>
+    <p style="font-size:13px;color:rgba(255,255,255,0.60);line-height:1.7;margin-bottom:24px;">
+      Crie uma nova senha para sua conta RAFFINATO.
+    </p>
+    <div class="cf-error"   id="resetErr"></div>
+    <div class="cf-success" id="resetOk"></div>
+    <div class="cf-field">
+      <label class="cf-label">Nova senha</label>
+      <div class="cf-input-wrap">
+        <input type="password" class="cf-input" id="resetSenha" placeholder="Mínimo 6 caracteres">
+        <button type="button" class="cf-eye" onclick="togglePwd('resetSenha',this)" aria-label="Mostrar senha">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="cf-field">
+      <label class="cf-label">Confirmar nova senha</label>
+      <div class="cf-input-wrap">
+        <input type="password" class="cf-input" id="resetConf" placeholder="Repita a senha">
+        <button type="button" class="cf-eye" onclick="togglePwd('resetConf',this)" aria-label="Mostrar senha">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+    </div>
+    <button class="cf-btn" id="resetBtn" onclick="submitReset()">Redefinir senha</button>
+  </div>
+</div>
+
 <script>
+  const _API = 'https://raffinato-ecommerce-production.up.railway.app';
+
   /* ── TOGGLE SENHA ── */
   function togglePwd(id, btn) {
     const inp  = document.getElementById(id);
@@ -647,8 +703,6 @@
   }
 
   /* ── STORAGE ── */
-  const getUsers   = () => JSON.parse(localStorage.getItem('raffinato_users')   || '[]');
-  const saveUsers  = u  => localStorage.setItem('raffinato_users', JSON.stringify(u));
   const getSession = () => JSON.parse(localStorage.getItem('raffinato_session') || 'null');
   const setSession = u  => localStorage.setItem('raffinato_session', JSON.stringify(u));
   const clearSess  = () => localStorage.removeItem('raffinato_session');
@@ -657,9 +711,9 @@
   function msg(id, txt, err) {
     const el = document.getElementById(id);
     el.textContent = txt; el.style.display = 'block';
-    if (!err) setTimeout(() => el.style.display = 'none', 4000);
+    if (!err) setTimeout(() => el.style.display = 'none', 5000);
   }
-  function hideMsg(id) { document.getElementById(id).style.display = 'none'; }
+  function hideMsg(id) { const el = document.getElementById(id); if (el) el.style.display = 'none'; }
 
   /* ── ABAS ── */
   function switchTab(tab) {
@@ -678,7 +732,7 @@
   function renderDash(u) {
     document.getElementById('authSection').style.display = 'none';
     document.getElementById('dashSection').style.display = 'block';
-    document.getElementById('dashAvatar').textContent   = u.nome.charAt(0).toUpperCase();
+    document.getElementById('dashAvatar').textContent   = (u.nome || '?').charAt(0).toUpperCase();
     document.getElementById('dashName').textContent     = u.nome;
     document.getElementById('dashEmail').textContent    = u.email;
   }
@@ -691,32 +745,60 @@
   if (_s) renderDash(_s); else renderAuth();
 
   /* ── LOGIN ── */
-  document.getElementById('formLogin').addEventListener('submit', e => {
+  document.getElementById('formLogin').addEventListener('submit', async e => {
     e.preventDefault();
     const email = document.getElementById('loginEmail').value.trim().toLowerCase();
     const senha = document.getElementById('loginSenha').value;
     if (!email || !senha) { msg('loginErr', 'Preencha todos os campos.', true); return; }
-    const user = getUsers().find(u => u.email === email && u.senha === senha);
-    if (!user) { msg('loginErr', 'E-mail ou senha incorretos.', true); return; }
-    hideMsg('loginErr');
-    setSession(user); renderDash(user);
+
+    const btn = e.target.querySelector('button[type=submit]');
+    btn.disabled = true; btn.textContent = 'Entrando…';
+
+    try {
+      const r = await fetch(`${_API}/api/users/login`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, senha })
+      });
+      const data = await r.json();
+      if (!r.ok) { msg('loginErr', data.message || 'Erro ao entrar.', true); return; }
+      hideMsg('loginErr');
+      setSession(data.user); renderDash(data.user);
+    } catch {
+      msg('loginErr', 'Erro de conexão. Tente novamente.', true);
+    } finally {
+      btn.disabled = false; btn.textContent = 'Entrar';
+    }
   });
 
   /* ── CADASTRO ── */
-  document.getElementById('formCad').addEventListener('submit', e => {
+  document.getElementById('formCad').addEventListener('submit', async e => {
     e.preventDefault();
     const nome  = document.getElementById('cadNome').value.trim();
     const email = document.getElementById('cadEmail').value.trim().toLowerCase();
     const senha = document.getElementById('cadSenha').value;
     const conf  = document.getElementById('cadConf').value;
+
     if (!nome || !email || !senha || !conf) { msg('cadErr', 'Preencha todos os campos.', true); return; }
     if (senha.length < 6) { msg('cadErr', 'Senha deve ter pelo menos 6 caracteres.', true); return; }
     if (senha !== conf)   { msg('cadErr', 'As senhas não coincidem.', true); return; }
-    const users = getUsers();
-    if (users.find(u => u.email === email)) { msg('cadErr', 'E-mail já cadastrado.', true); return; }
-    const user = { nome, email, senha, criadoEm: new Date().toISOString() };
-    users.push(user); saveUsers(users); setSession(user);
-    hideMsg('cadErr'); renderDash(user);
+
+    const btn = e.target.querySelector('button[type=submit]');
+    btn.disabled = true; btn.textContent = 'Criando conta…';
+
+    try {
+      const r = await fetch(`${_API}/api/users/register`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, email, senha })
+      });
+      const data = await r.json();
+      if (!r.ok) { msg('cadErr', data.message || 'Erro ao criar conta.', true); return; }
+      hideMsg('cadErr');
+      setSession(data.user); renderDash(data.user);
+    } catch {
+      msg('cadErr', 'Erro de conexão. Tente novamente.', true);
+    } finally {
+      btn.disabled = false; btn.textContent = 'Criar conta';
+    }
   });
 
   /* ── LOGOUT ── */
@@ -726,12 +808,15 @@
   function openModal(id) {
     if (id === 'editModal') {
       const u = getSession();
-      document.getElementById('editNome').value  = u.nome;
-      document.getElementById('editEmail').value = u.email;
+      document.getElementById('editNome').value  = u.nome  || '';
+      document.getElementById('editEmail').value = u.email || '';
       hideMsg('editErr'); hideMsg('editOk');
-    } else {
+    } else if (id === 'senhaModal') {
       ['senhaAtual','senhaNova','senhaConf'].forEach(i => document.getElementById(i).value = '');
       hideMsg('senhaErr'); hideMsg('senhaOk');
+    } else if (id === 'forgotModal') {
+      document.getElementById('forgotEmail').value = '';
+      hideMsg('forgotErr'); hideMsg('forgotOk');
     }
     document.getElementById(id).classList.add('open');
   }
@@ -740,22 +825,73 @@
     o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
   });
 
+  /* ── ESQUECEU SENHA ── */
+  async function submitForgot() {
+    const email = document.getElementById('forgotEmail').value.trim().toLowerCase();
+    if (!email) { msg('forgotErr', 'Informe seu e-mail.', true); return; }
+    const btn = document.getElementById('forgotBtn');
+    btn.disabled = true; btn.textContent = 'Enviando…';
+    hideMsg('forgotErr'); hideMsg('forgotOk');
+    try {
+      const r = await fetch(`${_API}/api/users/forgot-password`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await r.json();
+      msg('forgotOk', data.message || 'Instruções enviadas!', false);
+    } catch {
+      msg('forgotErr', 'Erro de conexão. Tente novamente.', true);
+    } finally {
+      btn.disabled = false; btn.textContent = 'Enviar instruções';
+    }
+  }
+
+  /* ── REDEFINIR SENHA (via token da URL) ── */
+  const _resetToken = new URLSearchParams(location.search).get('resetToken');
+  if (_resetToken) {
+    document.getElementById('resetModal').classList.add('open');
+    history.replaceState(null, '', location.pathname);
+  }
+
+  async function submitReset() {
+    const password = document.getElementById('resetSenha').value;
+    const conf     = document.getElementById('resetConf').value;
+    if (!password || !conf) { msg('resetErr', 'Preencha todos os campos.', true); return; }
+    if (password.length < 6) { msg('resetErr', 'Mínimo 6 caracteres.', true); return; }
+    if (password !== conf)   { msg('resetErr', 'As senhas não coincidem.', true); return; }
+    const btn = document.getElementById('resetBtn');
+    btn.disabled = true; btn.textContent = 'Redefinindo…';
+    hideMsg('resetErr'); hideMsg('resetOk');
+    try {
+      const r = await fetch(`${_API}/api/users/reset-password`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: _resetToken, password })
+      });
+      const data = await r.json();
+      if (!r.ok) { msg('resetErr', data.message || 'Erro ao redefinir senha.', true); return; }
+      msg('resetOk', 'Senha alterada com sucesso! Faça login com a nova senha.', false);
+      setTimeout(() => { closeModal('resetModal'); switchTab('login'); }, 2500);
+    } catch {
+      msg('resetErr', 'Erro de conexão. Tente novamente.', true);
+    } finally {
+      btn.disabled = false; btn.textContent = 'Redefinir senha';
+    }
+  }
+
   /* ── SALVAR DADOS ── */
   function saveEdit() {
     const nome  = document.getElementById('editNome').value.trim();
     const email = document.getElementById('editEmail').value.trim().toLowerCase();
     if (!nome || !email) { msg('editErr', 'Preencha todos os campos.', true); return; }
-    const s = getSession(), users = getUsers(), idx = users.findIndex(u => u.email === s.email);
-    if (idx === -1) return;
-    if (email !== s.email && users.find(u => u.email === email)) { msg('editErr', 'E-mail já em uso.', true); return; }
-    users[idx].nome = nome; users[idx].email = email;
-    saveUsers(users); setSession(users[idx]); renderDash(users[idx]);
+    const s = getSession();
+    const updated = { ...s, nome, email };
+    setSession(updated); renderDash(updated);
     msg('editOk', 'Dados atualizados!', false);
     setTimeout(() => closeModal('editModal'), 1500);
   }
 
-  /* ── ALTERAR SENHA ── */
-  function saveSenha() {
+  /* ── ALTERAR SENHA (logado) ── */
+  async function saveSenha() {
     const atual = document.getElementById('senhaAtual').value;
     const nova  = document.getElementById('senhaNova').value;
     const conf  = document.getElementById('senhaConf').value;
@@ -763,12 +899,21 @@
     if (nova.length < 6) { msg('senhaErr', 'Mínimo 6 caracteres.', true); return; }
     if (nova !== conf)   { msg('senhaErr', 'As senhas não coincidem.', true); return; }
     const s = getSession();
-    if (s.senha !== atual) { msg('senhaErr', 'Senha atual incorreta.', true); return; }
-    const users = getUsers(), idx = users.findIndex(u => u.email === s.email);
-    if (idx === -1) return;
-    users[idx].senha = nova; saveUsers(users); setSession(users[idx]);
-    msg('senhaOk', 'Senha alterada com sucesso!', false);
-    setTimeout(() => closeModal('senhaModal'), 1500);
+    try {
+      const rLogin = await fetch(`${_API}/api/users/login`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: s.email, senha: atual })
+      });
+      if (!rLogin.ok) { msg('senhaErr', 'Senha atual incorreta.', true); return; }
+      await fetch(`${_API}/api/users/forgot-password`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: s.email })
+      });
+      msg('senhaOk', 'Enviamos um link de redefinição para o seu e-mail.', false);
+      setTimeout(() => closeModal('senhaModal'), 2000);
+    } catch {
+      msg('senhaErr', 'Erro de conexão. Tente novamente.', true);
+    }
   }
 </script>
 </body>
